@@ -1,5 +1,7 @@
--- Simple code to count the amout of friends and followers for any language,
--- taking into account all the snapshot of any user.
+/*
+* Simple code to count the amout of friends and followers for any language,
+* taking into account all the snapshot of any user.
+*/
 
 snap = LOAD '$INPUTDIR/part*' USING BinStorage() AS (user:map[],timestamp:long,id:long);
 ff = FOREACH snap GENERATE user#'lang' AS (lang:chararray), user#'friendsCount' AS (friends:long), user#'followersCount' AS (followers:long);

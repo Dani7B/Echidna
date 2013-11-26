@@ -1,5 +1,7 @@
--- Simple code to count the sum of friends and followers of the snapshots stored with even or odd id
--- and store them into HBase
+/*
+* Simple code to count the sum of friends and followers of the snapshots stored with even or odd id
+* and store them into HBase
+*/
 
 snap = LOAD '$INPUTDIR/part*' USING BinStorage() AS (user:map[],timestamp:long,id:long);
 ff = FOREACH snap GENERATE id, user#'friendsCount' AS (friends:long), user#'followersCount' AS (followers:long);

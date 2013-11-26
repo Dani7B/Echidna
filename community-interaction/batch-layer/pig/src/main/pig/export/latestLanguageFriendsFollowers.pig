@@ -1,7 +1,9 @@
--- Considering only the latest snapshot for each users,
--- it computes a rank which show the number of followers in the first column and
--- the number of users with that followersCount in the second column.
--- This code stores the results into HBase.
+/*
+* Considering only the latest snapshot for each users,
+* it computes a rank which show the number of followers in the first column and
+* the number of users with that followersCount in the second column.
+* This code stores the results into HBase.
+*/
 
 snap = LOAD '$INPUTDIR/part*' USING BinStorage() AS (user:map[],timestamp:long,id:long);
 snapshots = GROUP snap BY id;

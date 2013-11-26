@@ -1,4 +1,6 @@
--- Simple code to count the number of snapshots stored for each user
+/* 
+* Simple code to count the number of snapshots stored for each user
+*/
 
 snapshot = LOAD '$INPUTDIR/part*' USING BinStorage() AS (user:map[],timestamp:long,id:long);
 snapshots = GROUP snapshot BY id;

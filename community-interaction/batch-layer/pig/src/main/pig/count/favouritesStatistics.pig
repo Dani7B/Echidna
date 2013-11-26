@@ -1,4 +1,7 @@
--- Yields the ranking of the most favourites users; if more than one user classifies for that position, prints the list
+/*
+* It yields the ranking of the most favourites users;
+* if more than one user classifies for that position, prints the list.
+*/
 
 snap = LOAD '$INPUTDIR/part*' USING BinStorage() AS (user:map[],timestamp:long,id:long);
 snapshots = GROUP snap BY id;

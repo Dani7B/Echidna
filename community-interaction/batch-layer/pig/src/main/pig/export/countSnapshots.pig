@@ -1,5 +1,7 @@
--- Simple code to count the number of snapshots stored for each user
--- and store them into HBase
+/*
+* Simple code to count the number of snapshots stored for each user
+* and store them into HBase
+*/
 
 snapshot = LOAD '$INPUTDIR/part*' USING BinStorage() AS (user:map[],timestamp:long,id:long);
 snapshots = GROUP snapshot BY id;

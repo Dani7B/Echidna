@@ -1,6 +1,8 @@
--- Considering only the latest snapshot for each users,
--- it computes statistics about the defaultProfile and defaultProfileImage boolean values
--- and stores them into HBase
+/* 
+* Considering only the latest snapshot for each users,
+* it computes statistics about the defaultProfile and defaultProfileImage boolean values
+* and stores them into HBase
+*/
 
 snap = LOAD '$INPUTDIR/part*' USING BinStorage() AS (user:map[],timestamp:long,id:long);
 snapshots = GROUP snap BY id;
