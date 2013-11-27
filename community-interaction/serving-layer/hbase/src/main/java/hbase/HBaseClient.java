@@ -9,6 +9,9 @@ import org.apache.hadoop.hbase.HTableDescriptor;
 import org.apache.hadoop.hbase.MasterNotRunningException;
 import org.apache.hadoop.hbase.ZooKeeperConnectionException;
 import org.apache.hadoop.hbase.client.HBaseAdmin;
+import org.apache.hadoop.hbase.client.HConnection;
+import org.apache.hadoop.hbase.client.HConnectionManager;
+import org.apache.hadoop.hbase.client.HTable;
 
 /**
  * 
@@ -18,6 +21,7 @@ public class HBaseClient {
 	private Configuration config;
 	
 	private HBaseAdmin admin;
+	
 		
 	public HBaseClient() throws MasterNotRunningException, ZooKeeperConnectionException {
 		
@@ -58,6 +62,13 @@ public class HBaseClient {
 			disableTable(table);
 			admin.deleteTable(table);
 	    }
-	  }
+	}
+	
+	public HTable getTable(String table) throws IOException {
+	
+		HConnection connection = HConnectionManager.createConnection(this.config);
+		HTable htable = (HTable) connection.getTable(table);
+		return htable;
+	}
 
 }
