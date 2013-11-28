@@ -14,7 +14,6 @@ import static org.testng.Assert.assertFalse;
 import static org.testng.Assert.assertNull;
 import static org.testng.Assert.assertNotNull;
 import static org.testng.Assert.assertEquals;
-import static org.testng.Assert.assertNotEquals;
 
 /**
  * Test class for HBaseClient
@@ -82,15 +81,37 @@ public class HBaseClientTest {
     }
     
     @Test
+    public void hasInsertedRowWithoutAutoflush() throws IOException {
+    	
+    	this.testTable.setAutoFlush(false);
+    	LOGGER.info("Auto flush: " + this.testTable.isAutoFlush());
+    	
+    	this.client.put(this.testTable, "row3", "prova", "col1", System.currentTimeMillis(), "50");
+    	
+    	Result result = this.client.get(this.testTable, "row3");    	
+    	LOGGER.info(result.toString());
+    	assertEquals(result.size(),0);
+    	
+    	this.client.put(this.testTable, "row3", "prova", "col2", System.currentTimeMillis(), "51");
+    	this.testTable.flushCommits();
+
+    	result = this.client.get(this.testTable, "row3");    	
+    	assertEquals(result.size(),2);
+    	
+    	this.testTable.setAutoFlush(true);
+    }
+    
+    @Test
     public void hasInsertedRows() throws IOException {
-    	String[] rows = {"row3", "row3"};
+    	
+    	String[] rows = {"row4", "row4"};
     	String[] colfams = {"prova", "try"};
     	String[] cols = {"col1", "col1"};
     	long[] tss = {1L, 2L};
     	String[] values = {"10", "11"};
     	this.client.put(this.testTable, rows, colfams, cols, tss, values);
     	
-    	Result result = this.client.get(this.testTable, "row3");
+    	Result result = this.client.get(this.testTable, "row4");
     	LOGGER.info(result.toString());
     	assertEquals(result.size(),2);
     }
