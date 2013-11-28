@@ -33,7 +33,7 @@ public class HBaseClientTest {
 
     	if(this.client.existsTable("test"))
     		this.client.deleteTable("test");
-    	this.client.createTable("test", "prova");
+    	this.client.createTable("test", "prova", "try");
     	this.testTable = this.client.getTable("test");
     }
     
@@ -83,7 +83,16 @@ public class HBaseClientTest {
     
     @Test
     public void hasInsertedRows() throws IOException {
+    	String[] rows = {"row3", "row3"};
+    	String[] colfams = {"prova", "try"};
+    	String[] cols = {"col1", "col1"};
+    	long[] tss = {1L, 2L};
+    	String[] values = {"10", "11"};
+    	this.client.put(this.testTable, rows, colfams, cols, tss, values);
     	
+    	Result result = this.client.get(this.testTable, "row3");
+    	LOGGER.info(result.toString());
+    	assertEquals(result.size(),2);
     }
     
 }
