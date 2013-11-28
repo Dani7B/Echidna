@@ -11,14 +11,16 @@ import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
 import static org.testng.Assert.assertTrue;
-import static org.testng.Assert.assertNotEquals;
+import static org.testng.Assert.assertFalse;
+import static org.testng.Assert.assertNull;
+import static org.testng.Assert.assertNotNull;
 
 /**
  * Test class for HBaseClient
  */
 public class HBaseClientTest {
     
-    private static final Logger LOGGER = LoggerFactory.getLogger(HBaseClient.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(HBaseClientTest.class);
     
     private HBaseClient client;
     
@@ -39,7 +41,21 @@ public class HBaseClientTest {
     	
     	HTable table = this.client.getTable("testing");
     	
-    	assertNotEquals(null, table);
+    	assertNotNull(table);
     	
+    }
+    
+    @Test
+    public void hasDeletedTable() throws IOException {
+    	
+    	this.client.deleteTable("testing");
+    	
+    	boolean value = this.client.existsTable("testing");
+
+    	assertFalse(value);
+    	
+    	HTable table = this.client.getTable("testing");
+    	
+    	assertNull(table);
     }
 }

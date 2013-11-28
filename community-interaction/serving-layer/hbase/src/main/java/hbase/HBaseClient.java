@@ -12,6 +12,8 @@ import org.apache.hadoop.hbase.client.HBaseAdmin;
 import org.apache.hadoop.hbase.client.HConnection;
 import org.apache.hadoop.hbase.client.HConnectionManager;
 import org.apache.hadoop.hbase.client.HTable;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * 
@@ -22,29 +24,38 @@ public class HBaseClient {
 	
 	private HBaseAdmin admin;
 	
+	private HConnection connection;
+	
+    private static final Logger LOGGER = LoggerFactory.getLogger(HBaseClient.class);
 		
+    
 	public HBaseClient() throws MasterNotRunningException, ZooKeeperConnectionException {
 		
 		this.config = HBaseConfiguration.create();
 		this.admin = new HBaseAdmin(config);
+		this.connection = HConnectionManager.createConnection(this.config);
 	}
 	
 	public HBaseClient(Configuration config) throws MasterNotRunningException, ZooKeeperConnectionException {
 		
 		this.config = config;
 		this.admin = new HBaseAdmin(config);
+		this.connection = HConnectionManager.createConnection(config);
 	}
 	
 	public void createTable(String table, String... colfams) throws IOException {
 		
-		HTableDescriptor desc = new HTableDescriptor(table);
+		if(!existsTable(table)) {
 		
-	    for (String cf : colfams) {
-	      HColumnDescriptor coldef = new HColumnDescriptor(cf);
-	      desc.addFamily(coldef);
+			HTableDescriptor desc = new HTableDescriptor(table);
+			
+		    for (String cf : colfams) {
+		      HColumnDescriptor coldef = new HColumnDescriptor(cf);
+		      desc.addFamily(coldef);
+		    }
+		    
+		    admin.createTable(desc);
 	    }
-	    
-	    admin.createTable(desc);
 	}
 	
 	public boolean existsTable(String table) throws IOException {
@@ -66,9 +77,10 @@ public class HBaseClient {
 	
 	public HTable getTable(String table) throws IOException {
 	
-		HConnection connection = HConnectionManager.createConnection(this.config);
-		HTable htable = (HTable) connection.getTable(table);
-		return htable;
+		if (existsTable(table)) {
+			return (HTable) this.connection.getTable(table);
+		}
+		return null;
 	}
 
 }
