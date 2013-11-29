@@ -32,8 +32,10 @@ public class HBaseClientTest {
 
     	if(this.client.existsTable("test"))
     		this.client.deleteTable("test");
+    	
     	this.client.createTable("test", "prova", "try");
     	this.testTable = this.client.getTable("test");
+    	this.testTable.setWriteBufferSize(20971520L); // It doesn't get the default value from config otherwise
     }
     
     @Test
@@ -114,6 +116,11 @@ public class HBaseClientTest {
     	Result result = this.client.get(this.testTable, "row4");
     	LOGGER.info(result.toString());
     	assertEquals(result.size(),2);
+    }
+    
+    @Test
+    public void checkWriteBufferSize() throws IOException {
+    	assertEquals(this.testTable.getWriteBufferSize(),20971520L);
     }
     
 }
