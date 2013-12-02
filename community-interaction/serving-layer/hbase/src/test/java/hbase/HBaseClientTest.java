@@ -2,6 +2,7 @@ package hbase;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import org.apache.hadoop.hbase.KeyValue;
@@ -18,7 +19,6 @@ import static org.testng.Assert.assertFalse;
 import static org.testng.Assert.assertNull;
 import static org.testng.Assert.assertNotNull;
 import static org.testng.Assert.assertEquals;
-import static org.testng.Assert.assertNotEquals;
 
 /**
  * Test class for HBaseClient
@@ -38,9 +38,17 @@ public class HBaseClientTest {
     	if(this.client.existsTable("casa"))
     		this.client.deleteTable("casa");
     	
-    	this.client.createTable("casa", "salone", "soggiorno");
+    	this.client.createTable("casa", "salone", "soggiorno", "cupola");
     	this.testTable = this.client.getTable("casa");
     	this.testTable.setWriteBufferSize(20971520L); // Otherwise it doesn't get the default value from config
+    
+    	String row = "row6";
+    	String[] rows = {row, row, row};
+    	String[] colfams = {"salone", "soggiorno", "salone"};
+    	String[] cols = {"mq", "mq", "mq"};
+    	long[] tss = {1L, 2L, 3L};
+    	byte[][] values = {Bytes.toBytes(10), Bytes.toBytes(12), Bytes.toBytes(11)};
+    	this.client.put(this.testTable, rows, colfams, cols, tss, values);
     }
     
     @Test
@@ -131,41 +139,120 @@ public class HBaseClientTest {
     @Test
     public void getAllVersions() throws IOException {
     	
-    	String[] rows = {"row6", "row6", "row6"};
+    	String row = "row6";
+    	String[] columnFamilies = {"salone"};
+    	Result result = this.client.getHistory(this.testTable, row, columnFamilies);
+    	
+    	List<Integer> expected = new ArrayList<Integer>(Arrays.asList(11, 10));
+    	List<Integer> resultMq = new ArrayList<Integer>();
+    	for(KeyValue kv : result.raw())
+    		resultMq.add(Bytes.toInt(kv.getValue()));
+    	
+    	assertEquals(result.size(), 2);
+    	assertEquals(expected, resultMq);
+    }
+    
+    @Test
+    public void getAllVersionsAllColumnFamilies() throws IOException {
+    	
+    	String row = "row6";
+    	List<Integer> expected = new ArrayList<Integer>(Arrays.asList(11, 10, 12));
+    	List<Integer> resultMq = new ArrayList<Integer>();
+    	Result result = this.client.getHistory(this.testTable, row, null);
+    	for(KeyValue kv : result.raw())
+    		resultMq.add(Bytes.toInt(kv.getValue()));
+    	
+    	assertEquals(result.size(), 3);
+    	assertEquals(expected, resultMq);	
+    }
+ 	
+    @Test
+    public void getAllVersionsColumnFamilyWithDifferentQualifier() throws IOException {
+    	
+    	String row = "row6";
+    	List<Integer> expectedArray = new ArrayList<Integer>(Arrays.asList(5, 11, 10, 12));
+    	List<Integer> resultMq = new ArrayList<Integer>();
+    	this.client.put(this.testTable, row, "cupola", "raggio", 5L, Bytes.toBytes(5));
+    	Result result = this.client.getHistory(this.testTable, row, null);
+    	for(KeyValue kv : result.raw()) {
+    		resultMq.add(Bytes.toInt(kv.getValue()));
+    		LOGGER.info(Bytes.toString(kv.getFamily()) + ":" + Bytes.toString(kv.getQualifier()) + " = "
+    				+ Bytes.toInt(kv.getValue()));
+    	}
+    	
+    	assertEquals(result.size(), 4);
+    	assertEquals(resultMq, expectedArray);
+    }
+    	
+    @Test
+    public void getAllVersionsInTimeRange() throws IOException {
+    	
+    	String row = "row6";
+    	long[] timeRange = {1L,5L};
+    	Result result = this.client.getHistory(this.testTable, row, null, timeRange);
+    	assertEquals(result.size(), 3);
+    }
+    
+    @Test
+    public void getLastVersion() throws IOException {
+    	
+    	String row = "row7";
+    	String[] rows = {row, row, row};
     	String[] colfams = {"salone", "soggiorno", "salone"};
     	String[] cols = {"mq", "mq", "mq"};
     	long[] tss = {1L, 2L, 3L};
     	byte[][] values = {Bytes.toBytes(10), Bytes.toBytes(12), Bytes.toBytes(11)};
     	this.client.put(this.testTable, rows, colfams, cols, tss, values);
     	
-    	String[] columnFamilies = {"salone"};
-    	Result result = this.client.getHistory(this.testTable, "row6", columnFamilies);
+    	Result result = this.client.get(this.testTable, row);
     	
-    	List<Integer> expected = new ArrayList<Integer>();
-    	expected.add(11);
-    	expected.add(10);
-
+    	List<Integer> expected = new ArrayList<Integer>(Arrays.asList(11, 12));
     	List<Integer> resultMq = new ArrayList<Integer>();
     	for(KeyValue kv : result.raw())
     		resultMq.add(Bytes.toInt(kv.getValue()));
     	
+    	assertEquals(result.size(), 2);
     	assertEquals(expected, resultMq);
+    }
+    
+    @Test
+    public void getTimeRange() throws IOException {
     	
-    	expected.add(12);
-    	resultMq = new ArrayList<Integer>();
-    	result = this.client.getHistory(this.testTable, "row6", null);
-    	for(KeyValue kv : result.raw())
-    		resultMq.add(Bytes.toInt(kv.getValue()));
+    	String row = "row8";
+    	String[] rows = {row, row, row};
+    	String[] colfams = {"salone", "soggiorno", "salone"};
+    	String[] cols = {"mq", "mq", "mq"};
+    	long[] tss = {1L, 4L, 8L};
+    	byte[][] values = {Bytes.toBytes(10), Bytes.toBytes(12), Bytes.toBytes(11)};
+    	this.client.put(this.testTable, rows, colfams, cols, tss, values);
     	
-    	assertEquals(expected, resultMq); // since we had all qualifiers with the same name
+    	String[] columnFamilies = {"salone"};
+    	long[] timeRange = {1L,4L};
+    	Result result = this.client.get(this.testTable, row, columnFamilies, timeRange);
     	
-    	this.client.put(this.testTable, "row6", "soggiorno", "valore", 4L, Bytes.toBytes(40));
-    	resultMq = new ArrayList<Integer>();
-    	result = this.client.getHistory(this.testTable, "row6", null);
-    	for(KeyValue kv : result.raw())
-    		resultMq.add(Bytes.toInt(kv.getValue()));
+    	assertEquals(result.size(), 1);
     	
-    	assertNotEquals(expected, resultMq); // since it adds up 40 to the list
+    	long[] timeRange2 = {1L,10L};
+    	result = this.client.get(this.testTable, row, columnFamilies, timeRange2, 2);
+    	
+    	assertEquals(result.size(), 2);
+    }
+    
+    @Test
+    public void getTimeStamp() throws IOException {
+    	
+    	String row = "row9";
+    	String[] rows = {row, row};
+    	String[] colfams = {"salone", "salone"};
+    	String[] cols = {"mq", "mq"};
+    	long[] tss = {1L, 4L};
+    	byte[][] values = {Bytes.toBytes(10), Bytes.toBytes(12)};
+    	this.client.put(this.testTable, rows, colfams, cols, tss, values);
+    	
+    	String[] columnFamilies = {"salone"};
+    	Result result = this.client.get(this.testTable, row, columnFamilies, 4L);
+    	
+    	assertEquals(Bytes.toInt(result.getValue(Bytes.toBytes("salone"), Bytes.toBytes("mq"))), 12);
     }
     
 }
