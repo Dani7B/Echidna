@@ -161,6 +161,17 @@ public class HBaseClient {
 	
 	
 	/**
+	 * @return a flag to indicate if the row exists in the table
+	 * @param table the HTable to query 
+	 * @param row the id of the row */
+	public boolean exists(HTable table, String row) throws IOException {
+		
+		Get tableRow = new Get(Bytes.toBytes(row));
+		return table.exists(tableRow);
+	}
+
+
+	/**
 	 * @return the result of the get query
 	 * @param table the HTable to query 
 	 * @param row the id of the row */

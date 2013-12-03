@@ -339,5 +339,12 @@ public class HBaseClientTest {
     	assertEquals(Bytes.toInt(cucinaMq),cucina.getMq());
     }
     
+    @Test
+    public void existsTest() throws IOException {
+    	
+    	String row = "row5";
+    	boolean exists = this.client.exists(testTable, row);
+    	assertTrue(exists);
+    }
 
 }
