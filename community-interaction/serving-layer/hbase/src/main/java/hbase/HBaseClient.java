@@ -10,6 +10,7 @@ import org.apache.hadoop.hbase.HColumnDescriptor;
 import org.apache.hadoop.hbase.HTableDescriptor;
 import org.apache.hadoop.hbase.MasterNotRunningException;
 import org.apache.hadoop.hbase.ZooKeeperConnectionException;
+import org.apache.hadoop.hbase.client.Delete;
 import org.apache.hadoop.hbase.client.Get;
 import org.apache.hadoop.hbase.client.HBaseAdmin;
 import org.apache.hadoop.hbase.client.HConnection;
@@ -119,7 +120,7 @@ public class HBaseClient {
 	
 	/**
 	 * Single put to insert a row into the specified table.
-	 * @param table the Htable to insert the row in
+	 * @param table the HTable to insert the row in
 	 * @param row the id of the row
 	 * @param colfam the name of the column family
 	 * @param col the column name
@@ -138,7 +139,7 @@ public class HBaseClient {
 	/**
 	 * Batch put to insert rows into the specified table.
 	 * All the arrays have the same length. At the i-th index the values belong to the same row.
-	 * @param table the Htable to insert the rows in
+	 * @param table the HTable to insert the rows in
 	 * @param rows the ids of the rows
 	 * @param colfams the names of the column families
 	 * @param cols the column names
@@ -149,13 +150,10 @@ public class HBaseClient {
 		
 		List<Put> tableRows = new ArrayList<Put>();
 		for(int i=0; i<rows.length; i++) {
-			
 			Put tableRow = new Put(Bytes.toBytes(rows[i]));
 			tableRow.add(Bytes.toBytes(colfams[i]), Bytes.toBytes(cols[i]), tss[i], values[i]);
-			
 			tableRows.add(tableRow);
 		}
-		
 		table.put(tableRows);
 	}
 	
@@ -211,7 +209,6 @@ public class HBaseClient {
 		
 		Get tableRow = prepareGet(row, columnFamilies, timeStamp, null);
 		tableRow.setMaxVersions(maxVersions);
-		
 		return table.get(tableRow);
 	}
 	
@@ -237,8 +234,7 @@ public class HBaseClient {
 	 * @param timeStamp the timeStamp identifying the version to retrieve */
 	public Result get(HTable table, String row, String[] columnFamilies, long timeStamp) throws IOException {
 		
-		Get tableRow = prepareGet(row, columnFamilies, timeStamp, null);
-		
+		Get tableRow = prepareGet(row, columnFamilies, timeStamp, null);		
 		return table.get(tableRow);
 	}
 	
@@ -253,7 +249,6 @@ public class HBaseClient {
 		
 		Get tableRow = prepareGet(row, columnFamilies, 0, timeRange);
 		tableRow.setMaxVersions();
-		
 		return table.get(tableRow);
 	}
 	
@@ -268,7 +263,6 @@ public class HBaseClient {
 		
 		Get tableRow = prepareGet(row, columnFamilies, timeStamp, null);
 		tableRow.setMaxVersions();
-		
 		return table.get(tableRow);
 	}
 	
@@ -281,7 +275,6 @@ public class HBaseClient {
 	public Result getHistory(HTable table, String row, String[] columnFamilies) throws IOException {
 		
 		Get tableRow = prepareGetHistory(row, columnFamilies);
-		
 		return table.get(tableRow);
 	}
 	
@@ -358,7 +351,52 @@ public class HBaseClient {
 				get.addFamily(Bytes.toBytes(cf));
 		
 		get.setMaxVersions();
-		
 		return get;
+	}
+	
+	
+	/**
+	 * Single delete to erase a row from the specified table.
+	 * @param table the HTable to delete the row from
+	 * @param row the id of the row
+	 * @param colfam the name of the column family
+	 * @param col the column name
+	 * @param ts the timestamp */
+	public void delete(HTable table, String row, String colfam, String col,	long ts) throws IOException {
+		
+		Delete tableRow = new Delete(Bytes.toBytes(row));
+		tableRow.deleteColumns(Bytes.toBytes(colfam), Bytes.toBytes(col), ts);
+		table.delete(tableRow);		
+	}
+	
+	/**
+	 * Delete all columns, all versions of the row
+	 * @param table the HTable to delete the row from
+	 * @param row the id of the row */
+	public void delete(HTable table, String row) throws IOException {
+
+		Delete tableRow = new Delete(Bytes.toBytes(row));
+		table.delete(tableRow);		
+	}
+	
+	
+	/**
+	 * Batch delete to erase rows from the specified table.
+	 * All the arrays have the same length. At the i-th index the values belong to the same row.
+	 * @param table the HTable to delete the rows from
+	 * @param rows the ids of the rows
+	 * @param colfams the names of the column families
+	 * @param cols the column names
+	 * @param tss the timestamps */
+	public void delete(HTable table, String[] rows, String[] colfams, String[] cols, long[] tss) throws IOException {
+		
+		List<Delete> tableRows = new ArrayList<Delete>();
+		
+		for(int i=0; i<rows.length; i++) {
+			Delete tableRow = new Delete(Bytes.toBytes(rows[i]));
+			tableRow.deleteColumns(Bytes.toBytes(colfams[i]), Bytes.toBytes(cols[i]), tss[i]);
+			tableRows.add(tableRow);
+		}
+		table.delete(tableRows);
 	}
 }

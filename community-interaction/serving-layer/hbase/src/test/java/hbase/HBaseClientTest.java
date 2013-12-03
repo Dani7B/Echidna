@@ -53,6 +53,14 @@ public class HBaseClientTest {
     	long[] tss = {1L, 2L, 3L};
     	byte[][] values = {Bytes.toBytes(10), Bytes.toBytes(12), Bytes.toBytes(11)};
     	this.client.put(this.testTable, rows, colfams, cols, tss, values);
+    	
+    	String[] rowsDel = {"row13", "row14", "row13", "row15", "row15", "row16", "row16"};
+    	String[] colfamsDel = {"salone", "soggiorno", "salone", "salone", "salone", "salone", "soggiorno"};
+    	String[] colsDel = {"mq", "mq", "mq", "bright", "bright", "mq", "mq"};
+    	long[] tssDel = {1L, 2L, 3L, 1L, 3L, 1L, 3L};
+    	byte[][] valuesDel = {Bytes.toBytes(10), Bytes.toBytes(12), Bytes.toBytes(11),
+    			Bytes.toBytes(true), Bytes.toBytes(false), Bytes.toBytes(20), Bytes.toBytes(23)};
+    	this.client.put(this.testTable, rowsDel, colfamsDel, colsDel, tssDel, valuesDel);
     }
     
     
@@ -347,4 +355,34 @@ public class HBaseClientTest {
     	assertTrue(exists);
     }
 
+    @Test
+    public void singleDeleteAllColumnsAllVersions() throws IOException {
+    	
+    	String row = "row16";
+    	this.client.delete(testTable, row);
+    	assertFalse(this.client.exists(testTable, row));
+    }
+    
+    @Test
+    public void singleDelete() throws IOException {
+    	
+    	String row = "row13";
+    	long ts = 2L;
+    	this.client.delete(testTable, row, "salone", "mq", ts);
+    	assertTrue(this.client.exists(testTable, row));
+    }
+    
+    @Test
+    public void batchDelete() throws IOException {
+    	
+    	String[] rows = {"row15", "row14"};
+    	String[] colfams = {"salone","soggiorno"};
+    	String[] cols = {"bright", "mq"};
+    	long[] tss = {5L, 5L};
+    	this.client.delete(this.testTable, rows, colfams, cols, tss);
+    	
+    	for(String row : rows)
+    		assertFalse(this.client.exists(testTable, row));
+    }
+    
 }
