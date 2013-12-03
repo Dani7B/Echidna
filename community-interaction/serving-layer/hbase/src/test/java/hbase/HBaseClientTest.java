@@ -34,6 +34,7 @@ public class HBaseClientTest {
     
     private HTable testTable;
     
+    
     @BeforeClass
     public void setUp() throws IOException {
 		this.client = new HBaseClient();
@@ -54,6 +55,7 @@ public class HBaseClientTest {
     	this.client.put(this.testTable, rows, colfams, cols, tss, values);
     }
     
+    
     @Test
     public void hasCreatedTable() throws IOException {
     	
@@ -64,6 +66,7 @@ public class HBaseClientTest {
     	HTable table = this.client.getTable("testing");
     	assertNotNull(table);
     }
+    
     
     @Test
     public void hasDeletedTable() throws IOException {
@@ -76,27 +79,32 @@ public class HBaseClientTest {
         assertNull(table);
     }
     
+    
     @Test
     public void hasInsertedRow() throws IOException {
     	
     	LOGGER.info("Auto flush: " + this.testTable.isAutoFlush());
     	
-    	this.client.put(this.testTable, "row1", "salone", "mq", System.currentTimeMillis(), Bytes.toBytes(25));
+    	String row1 = "row1";
+    	this.client.put(this.testTable, row1, "salone", "mq", System.currentTimeMillis(), Bytes.toBytes(25));
     	
-    	Result result = this.client.get(this.testTable, "row1");    	
+    	Result result = this.client.get(this.testTable, row1);    	
     	LOGGER.info(result.toString());
     	assertEquals(result.size(),1);
     	
-    	this.client.put(this.testTable, "row1", "soggiorno", "luminoso", System.currentTimeMillis(), Bytes.toBytes(true));
-    	result = this.client.get(this.testTable, "row1");    	
+    	this.client.put(this.testTable, row1, "soggiorno", "luminoso", System.currentTimeMillis(), Bytes.toBytes(true));
+    	result = this.client.get(this.testTable, row1);    	
     	LOGGER.info(result.toString());
     	assertEquals(result.size(),2); //it's the size of the cell
     	
-    	this.client.put(this.testTable, "row2", "soggiorno", "mq", System.currentTimeMillis(), Bytes.toBytes(16));
-    	result = this.client.get(this.testTable, "row2");    	
+    	
+    	String row2 = "row2";
+    	this.client.put(this.testTable, row2, "soggiorno", "mq", System.currentTimeMillis(), Bytes.toBytes(16));
+    	result = this.client.get(this.testTable, row2);    	
     	LOGGER.info(result.toString());
     	assertEquals(result.size(),1);
     }
+    
     
     @Test
     public void hasInsertedRowWithoutAutoflush() throws IOException {
@@ -104,40 +112,45 @@ public class HBaseClientTest {
     	this.testTable.setAutoFlush(false);
     	LOGGER.info("Auto flush: " + this.testTable.isAutoFlush());
     	
-    	this.client.put(this.testTable, "row3", "soggiorno", "mq", System.currentTimeMillis(), Bytes.toBytes(15));
+    	String row = "row3";
+    	this.client.put(this.testTable, row, "soggiorno", "mq", System.currentTimeMillis(), Bytes.toBytes(15));
     	
-    	Result result = this.client.get(this.testTable, "row3");    	
+    	Result result = this.client.get(this.testTable, row);    	
     	LOGGER.info(result.toString());
     	assertEquals(result.size(),0);
     	
-    	this.client.put(this.testTable, "row3", "soggiorno", "luminoso", System.currentTimeMillis(), Bytes.toBytes(false));
+    	this.client.put(this.testTable, row, "soggiorno", "luminoso", System.currentTimeMillis(), Bytes.toBytes(false));
     	this.testTable.flushCommits();
 
-    	result = this.client.get(this.testTable, "row3");    	
+    	result = this.client.get(this.testTable, row);    	
     	assertEquals(result.size(),2);
     	
     	this.testTable.setAutoFlush(true);
     }
     
+    
     @Test
     public void hasInsertedRows() throws IOException {
     	
-    	String[] rows = {"row4", "row4"};
+    	String row = "row4";
+    	String[] rows = {row, row};
     	String[] colfams = {"salone", "soggiorno"};
     	String[] cols = {"mq", "mq"};
     	long[] tss = {1L, 2L};
     	byte[][] values = {Bytes.toBytes(10), Bytes.toBytes(11)};
     	this.client.put(this.testTable, rows, colfams, cols, tss, values);
     	
-    	Result result = this.client.get(this.testTable, "row4");
+    	Result result = this.client.get(this.testTable, row);
     	LOGGER.info(result.toString());
     	assertEquals(result.size(),2);
     }
+    
     
     @Test
     public void checkWriteBufferSize() throws IOException {
     	assertEquals(this.testTable.getWriteBufferSize(),20971520L);
     }
+    
     
     @Test
     public void getAllVersions() throws IOException {
@@ -155,6 +168,7 @@ public class HBaseClientTest {
     	assertEquals(expected, resultMq);
     }
     
+    
     @Test
     public void getAllVersionsAllColumnFamilies() throws IOException {
     	
@@ -169,6 +183,7 @@ public class HBaseClientTest {
     	assertEquals(expected, resultMq);	
     }
  	
+    
     @Test
     public void getAllVersionsColumnFamilyWithDifferentQualifier() throws IOException {
     	
@@ -186,7 +201,8 @@ public class HBaseClientTest {
     	assertEquals(result.size(), 4);
     	assertEquals(resultMq, expectedArray);
     }
-    	
+    
+    
     @Test
     public void getAllVersionsInTimeRange() throws IOException {
     	
@@ -195,6 +211,7 @@ public class HBaseClientTest {
     	Result result = this.client.getHistory(this.testTable, row, null, timeRange);
     	assertEquals(result.size(), 3);
     }
+    
     
     @Test
     public void getLastVersion() throws IOException {
@@ -217,6 +234,7 @@ public class HBaseClientTest {
     	assertEquals(result.size(), 2);
     	assertEquals(expected, resultMq);
     }
+    
     
     @Test
     public void getTimeRange() throws IOException {
@@ -241,6 +259,7 @@ public class HBaseClientTest {
     	assertEquals(result.size(), 2);
     }
     
+    
     @Test
     public void getTimeStamp() throws IOException {
     	
@@ -258,16 +277,17 @@ public class HBaseClientTest {
     	assertEquals(Bytes.toInt(result.getValue(Bytes.toBytes("salone"), Bytes.toBytes("mq"))), 12);
     }
     
+    
     @Test
     public void multipleGets() throws IOException {
-    	String[] rows = {"rowA", "rowB", "rowA"};
+    	String[] rows = {"row10", "row11", "row10"};
     	String[] colfams = {"salone", "soggiorno", "salone"};
     	String[] cols = {"mq", "mq", "mq"};
     	long[] tss = {1L, 2L, 3L};
     	byte[][] values = {Bytes.toBytes(16), Bytes.toBytes(21), Bytes.toBytes(17)};
     	this.client.put(this.testTable, rows, colfams, cols, tss, values);
     	
-    	String[] rowsToQuery = {"rowA", "rowB"};
+    	String[] rowsToQuery = {"row10", "row11"};
     	long[] timeRange = {1L, 4L};
 
     	List<Integer> mqs = new ArrayList<Integer>();
@@ -282,6 +302,7 @@ public class HBaseClientTest {
     	List<Integer> expected = new ArrayList<Integer>(Arrays.asList(17, 21));
     	assertEquals(mqs, expected);
     }
+    
     
     @Test
     public void putThenGetClass() throws IOException {

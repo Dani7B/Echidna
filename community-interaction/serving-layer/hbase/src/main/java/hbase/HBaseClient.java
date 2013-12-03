@@ -134,6 +134,7 @@ public class HBaseClient {
 		table.put(tableRow);		
 	}
 	
+	
 	/**
 	 * Batch put to insert rows into the specified table.
 	 * All the arrays have the same length. At the i-th index the values belong to the same row.
@@ -158,6 +159,7 @@ public class HBaseClient {
 		table.put(tableRows);
 	}
 	
+	
 	/**
 	 * @return the result of the get query
 	 * @param table the HTable to query 
@@ -168,14 +170,14 @@ public class HBaseClient {
 		return table.get(tableRow);
 	}
 	
+	
 	/**
 	 * @return the result of the get query, filtered with the specified fields and time range
 	 * @param table the HTable to query 
 	 * @param row the id of the row 
 	 * @param columnFamilies the column families names
 	 * @param timeRange the specified timestamp range: [timeRange[0], timeRange[1])
-	 * @param maxVersions the number of versions to retrieve
-	 * */
+	 * @param maxVersions the number of versions to retrieve */
 	public Result get(HTable table, String row, String[] columnFamilies,
 				long[] timeRange, int maxVersions) throws IOException {
 		
@@ -185,14 +187,14 @@ public class HBaseClient {
 		return table.get(tableRow);
 	}
 	
+	
 	/**
 	 * @return the result of the get query, filtered with the specified fields and timestamp
 	 * @param table the HTable to query 
 	 * @param row the id of the row 
 	 * @param columnFamilies the column families names
 	 * @param timeStamp the timeStamp identifying the version to retrieve
-	 * @param maxVersions the number of versions to retrieve
-	 */
+	 * @param maxVersions the number of versions to retrieve */
 	public Result get(HTable table, String row, String[] columnFamilies,
 				long timeStamp, int maxVersions) throws IOException {
 		
@@ -202,26 +204,26 @@ public class HBaseClient {
 		return table.get(tableRow);
 	}
 	
+	
 	/**
 	 * @return a single result of the get query, filtered with the specified fields and time range
 	 * @param table the HTable to query 
 	 * @param row the id of the row 
 	 * @param columnFamilies the column families names
-	 * @param timeRange the specified timestamp range: [timeRange[0], timeRange[1])
-	 **/
+	 * @param timeRange the specified timestamp range: [timeRange[0], timeRange[1]) */
 	public Result get(HTable table, String row, String[] columnFamilies, long[] timeRange) throws IOException {
 		
 		Get tableRow = prepareGet(row, columnFamilies, 0, timeRange);
 		return table.get(tableRow);
 	}
 	
+	
 	/**
 	 * @return a single result of the get query, filtered with the specified fields and timestamp
 	 * @param table the HTable to query 
 	 * @param row the id of the row 
 	 * @param columnFamilies the column families names
-	 * @param timeStamp the timeStamp identifying the version to retrieve
-	 **/
+	 * @param timeStamp the timeStamp identifying the version to retrieve */
 	public Result get(HTable table, String row, String[] columnFamilies, long timeStamp) throws IOException {
 		
 		Get tableRow = prepareGet(row, columnFamilies, timeStamp, null);
@@ -229,13 +231,13 @@ public class HBaseClient {
 		return table.get(tableRow);
 	}
 	
+	
 	/**
 	 * @return all the versions of the query result, filtered with the specified fields and time range
 	 * @param table the HTable to query 
 	 * @param row the id of the row 
 	 * @param columnFamilies the column families names
-	 * @param timeRange the specified timestamp range: [timeRange[0], timeRange[1])
-	 **/
+	 * @param timeRange the specified timestamp range: [timeRange[0], timeRange[1]) */
 	public Result getHistory(HTable table, String row, String[] columnFamilies, long[] timeRange) throws IOException {
 		
 		Get tableRow = prepareGet(row, columnFamilies, 0, timeRange);
@@ -244,13 +246,13 @@ public class HBaseClient {
 		return table.get(tableRow);
 	}
 	
+	
 	/**
 	 * @return all the versions of the query result, filtered with the specified fields and timestamp
 	 * @param table the HTable to query 
 	 * @param row the id of the row 
 	 * @param columnFamilies the column families names
-	 * @param timeStamp the timeStamp identifying the version to retrieve
-	 */
+	 * @param timeStamp the timeStamp identifying the version to retrieve */
 	public Result getHistory(HTable table, String row, String[] columnFamilies, long timeStamp) throws IOException {
 		
 		Get tableRow = prepareGet(row, columnFamilies, timeStamp, null);
@@ -259,12 +261,12 @@ public class HBaseClient {
 		return table.get(tableRow);
 	}
 	
+	
 	/**
 	 * @return all the versions of the query result, filtered with the specified fields
 	 * @param table the HTable to query 
 	 * @param row the id of the row 
-	 * @param columnFamilies the column families names
-	 */
+	 * @param columnFamilies the column families names */
 	public Result getHistory(HTable table, String row, String[] columnFamilies) throws IOException {
 		
 		Get tableRow = prepareGetHistory(row, columnFamilies);
@@ -278,8 +280,7 @@ public class HBaseClient {
 	 * @param table the HTable to query 
 	 * @param rows the ids of the rows
 	 * @param columnFamilies the column families names
-	 * @param timeRange the specified timestamp range: [timeRange[0], timeRange[1])
-	 **/
+	 * @param timeRange the specified timestamp range: [timeRange[0], timeRange[1]) */
 	public Result[] get(HTable table, String[] rows, String[] columnFamilies, long[] timeRange) throws IOException {
 		
 		List<Get> gets = new ArrayList<Get>();
@@ -291,13 +292,13 @@ public class HBaseClient {
 		return table.get(gets);
 	}
 	
+	
 	/**
 	 * @return multiple results for the get queries, filtered with the specified fields and timestamp
 	 * @param table the HTable to query 
 	 * @param rows the ids of the rows
 	 * @param columnFamilies the column families names
-	 * @param timeStamp the timeStamp identifying the version to retrieve
-	 **/
+	 * @param timeStamp the timeStamp identifying the version to retrieve */
 	public Result[] get(HTable table, String[] rows, String[] columnFamilies, long timeStamp) throws IOException {
 		
 		List<Get> gets = new ArrayList<Get>();
@@ -309,12 +310,12 @@ public class HBaseClient {
 		return table.get(gets);
 	}
 	
+	
 	/**
 	 * @return the get query to be executed
 	 * @param row the id of the row
 	 * @param columnFamilies the column families names
-	 * @param timeRange the specified timestamp range: [timeRange[0], timeRange[1])
-	 */
+	 * @param timeRange the specified timestamp range: [timeRange[0], timeRange[1]) */
 	private Get prepareGet(String row, String[] columnFamilies,	long timeStamp, long[] timeRange) throws IOException {
 		
 		Get get = new Get(Bytes.toBytes(row));
@@ -331,12 +332,12 @@ public class HBaseClient {
 		return get;
 	}
 	
+	
 	/**
 	 * @return the get query to be executed
 	 * @param row the id of the row
 	 * @param columnFamilies the column families names
-	 * @param timeRange the specified timestamp range: [timeRange[0], timeRange[1])
-	 */
+	 * @param timeRange the specified timestamp range: [timeRange[0], timeRange[1]) */
 	private Get prepareGetHistory(String row, String[] columnFamilies) throws IOException {
 		
 		Get get = new Get(Bytes.toBytes(row));
