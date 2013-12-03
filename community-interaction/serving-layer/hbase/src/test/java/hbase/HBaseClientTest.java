@@ -6,6 +6,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.NavigableMap;
 
 import org.apache.hadoop.hbase.KeyValue;
 import org.apache.hadoop.hbase.client.HTable;
@@ -275,6 +276,7 @@ public class HBaseClientTest {
     	Result result = this.client.get(houseTable, row);
     	    	
     	List<Room> house = new ArrayList<Room>();
+    	
     	for(KeyValue kv : result.raw()) {
     		Room room = new Room(Bytes.toString(kv.getQualifier()), Bytes.toInt(kv.getValue()));
     		house.add(room);
@@ -282,7 +284,13 @@ public class HBaseClientTest {
     	}
     	
     	assertEquals(house.size(), 2);
-    		
+    	
+    	/* Alternative way to get to a specific cell.
+    	 * Map&family,Map<qualifier,value>> */
+    	NavigableMap<byte[],NavigableMap<byte[],byte[]>> resultMap = result.getNoVersionMap();
+    	byte[] cucinaMq = resultMap.get(Bytes.toBytes("rooms")).get(Bytes.toBytes("cucina"));
+    	
+    	assertEquals(Bytes.toInt(cucinaMq),cucina.getMq());
     }
     
 
