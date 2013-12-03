@@ -1,5 +1,7 @@
 package hbase;
 
+import hbase.entities.Room;
+
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -42,7 +44,7 @@ public class HBaseClientTest {
     	this.testTable = this.client.getTable("casa");
     	this.testTable.setWriteBufferSize(20971520L); // Otherwise it doesn't get the default value from config
     
-    	String row = "row6";
+    	String row = "row5";
     	String[] rows = {row, row, row};
     	String[] colfams = {"salone", "soggiorno", "salone"};
     	String[] cols = {"mq", "mq", "mq"};
@@ -65,12 +67,12 @@ public class HBaseClientTest {
     @Test
     public void hasDeletedTable() throws IOException {
             
-            this.client.deleteTable("testing");
-            boolean value = this.client.existsTable("testing");
-            assertFalse(value);
-            
-            HTable table = this.client.getTable("testing");
-            assertNull(table);
+        this.client.deleteTable("testing");
+        boolean value = this.client.existsTable("testing");
+        assertFalse(value);
+        
+        HTable table = this.client.getTable("testing");
+        assertNull(table);
     }
     
     @Test
@@ -139,7 +141,7 @@ public class HBaseClientTest {
     @Test
     public void getAllVersions() throws IOException {
     	
-    	String row = "row6";
+    	String row = "row5";
     	String[] columnFamilies = {"salone"};
     	Result result = this.client.getHistory(this.testTable, row, columnFamilies);
     	
@@ -155,7 +157,7 @@ public class HBaseClientTest {
     @Test
     public void getAllVersionsAllColumnFamilies() throws IOException {
     	
-    	String row = "row6";
+    	String row = "row5";
     	List<Integer> expected = new ArrayList<Integer>(Arrays.asList(11, 10, 12));
     	List<Integer> resultMq = new ArrayList<Integer>();
     	Result result = this.client.getHistory(this.testTable, row, null);
@@ -169,7 +171,7 @@ public class HBaseClientTest {
     @Test
     public void getAllVersionsColumnFamilyWithDifferentQualifier() throws IOException {
     	
-    	String row = "row6";
+    	String row = "row5";
     	List<Integer> expectedArray = new ArrayList<Integer>(Arrays.asList(5, 11, 10, 12));
     	List<Integer> resultMq = new ArrayList<Integer>();
     	this.client.put(this.testTable, row, "cupola", "raggio", 5L, Bytes.toBytes(5));
@@ -187,7 +189,7 @@ public class HBaseClientTest {
     @Test
     public void getAllVersionsInTimeRange() throws IOException {
     	
-    	String row = "row6";
+    	String row = "row5";
     	long[] timeRange = {1L,5L};
     	Result result = this.client.getHistory(this.testTable, row, null, timeRange);
     	assertEquals(result.size(), 3);
@@ -196,7 +198,7 @@ public class HBaseClientTest {
     @Test
     public void getLastVersion() throws IOException {
     	
-    	String row = "row7";
+    	String row = "row6";
     	String[] rows = {row, row, row};
     	String[] colfams = {"salone", "soggiorno", "salone"};
     	String[] cols = {"mq", "mq", "mq"};
@@ -218,7 +220,7 @@ public class HBaseClientTest {
     @Test
     public void getTimeRange() throws IOException {
     	
-    	String row = "row8";
+    	String row = "row7";
     	String[] rows = {row, row, row};
     	String[] colfams = {"salone", "soggiorno", "salone"};
     	String[] cols = {"mq", "mq", "mq"};
@@ -241,7 +243,7 @@ public class HBaseClientTest {
     @Test
     public void getTimeStamp() throws IOException {
     	
-    	String row = "row9";
+    	String row = "row8";
     	String[] rows = {row, row};
     	String[] colfams = {"salone", "salone"};
     	String[] cols = {"mq", "mq"};
@@ -255,4 +257,33 @@ public class HBaseClientTest {
     	assertEquals(Bytes.toInt(result.getValue(Bytes.toBytes("salone"), Bytes.toBytes("mq"))), 12);
     }
     
+    @Test
+    public void putThenGetClass() throws IOException {
+    	
+    	String row = "row9";
+    	Room dependance = new Room("dependance",35);
+    	Room cucina = new Room("cucina",14);
+    	
+    	this.client.createTable("house", "rooms");
+    	HTable houseTable = this.client.getTable("house");
+    	
+    	this.client.put(houseTable, row, "rooms", dependance.getName(), System.currentTimeMillis(),
+    			Bytes.toBytes(dependance.getMq()));
+    	this.client.put(houseTable, row, "rooms", cucina.getName(), System.currentTimeMillis(),
+    			Bytes.toBytes(cucina.getMq()));
+    	
+    	Result result = this.client.get(houseTable, row);
+    	    	
+    	List<Room> house = new ArrayList<Room>();
+    	for(KeyValue kv : result.raw()) {
+    		Room room = new Room(Bytes.toString(kv.getQualifier()), Bytes.toInt(kv.getValue()));
+    		house.add(room);
+    		LOGGER.info(room.toString());
+    	}
+    	
+    	assertEquals(house.size(), 2);
+    		
+    }
+    
+
 }
