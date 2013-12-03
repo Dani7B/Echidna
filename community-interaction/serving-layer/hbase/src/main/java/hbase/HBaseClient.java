@@ -272,6 +272,43 @@ public class HBaseClient {
 		return table.get(tableRow);
 	}
 	
+	
+	/**
+	 * @return multiple results for the get queries, filtered with the specified fields and time range
+	 * @param table the HTable to query 
+	 * @param rows the ids of the rows
+	 * @param columnFamilies the column families names
+	 * @param timeRange the specified timestamp range: [timeRange[0], timeRange[1])
+	 **/
+	public Result[] get(HTable table, String[] rows, String[] columnFamilies, long[] timeRange) throws IOException {
+		
+		List<Get> gets = new ArrayList<Get>();
+		Get tableRow = null;
+		for(String row : rows) {
+			tableRow = prepareGet(row, columnFamilies, 0, timeRange);
+			gets.add(tableRow);
+		}
+		return table.get(gets);
+	}
+	
+	/**
+	 * @return multiple results for the get queries, filtered with the specified fields and timestamp
+	 * @param table the HTable to query 
+	 * @param rows the ids of the rows
+	 * @param columnFamilies the column families names
+	 * @param timeStamp the timeStamp identifying the version to retrieve
+	 **/
+	public Result[] get(HTable table, String[] rows, String[] columnFamilies, long timeStamp) throws IOException {
+		
+		List<Get> gets = new ArrayList<Get>();
+		Get tableRow = null;
+		for(String row : rows) {
+			tableRow = prepareGet(row, columnFamilies, timeStamp, null);
+			gets.add(tableRow);
+		}
+		return table.get(gets);
+	}
+	
 	/**
 	 * @return the get query to be executed
 	 * @param row the id of the row

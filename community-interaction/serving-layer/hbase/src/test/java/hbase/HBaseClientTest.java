@@ -259,6 +259,31 @@ public class HBaseClientTest {
     }
     
     @Test
+    public void multipleGets() throws IOException {
+    	String[] rows = {"rowA", "rowB", "rowA"};
+    	String[] colfams = {"salone", "soggiorno", "salone"};
+    	String[] cols = {"mq", "mq", "mq"};
+    	long[] tss = {1L, 2L, 3L};
+    	byte[][] values = {Bytes.toBytes(16), Bytes.toBytes(21), Bytes.toBytes(17)};
+    	this.client.put(this.testTable, rows, colfams, cols, tss, values);
+    	
+    	String[] rowsToQuery = {"rowA", "rowB"};
+    	long[] timeRange = {1L, 4L};
+
+    	List<Integer> mqs = new ArrayList<Integer>();
+    	Result[] results = this.client.get(testTable, rowsToQuery, colfams, timeRange);
+    	for(Result r : results) {
+    		KeyValue[] kvs = r.raw();
+    		for(KeyValue kv : kvs) {
+    			mqs.add(Bytes.toInt(kv.getValue()));
+    		}
+    	}
+    	
+    	List<Integer> expected = new ArrayList<Integer>(Arrays.asList(17, 21));
+    	assertEquals(mqs, expected);
+    }
+    
+    @Test
     public void putThenGetClass() throws IOException {
     	
     	String row = "row9";
