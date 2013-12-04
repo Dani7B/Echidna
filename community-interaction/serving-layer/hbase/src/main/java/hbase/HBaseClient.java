@@ -353,7 +353,7 @@ public class HBaseClient {
 	 * @return the get query to be executed
 	 * @param row the id of the row
 	 * @param columnFamilies the column families names
-	 * @param timeRange the specified timestamp range: [timeRange[0], timeRange[1]) */
+	 */
 	private Get prepareGetHistory(String row, String[] columnFamilies) throws IOException {
 		
 		Get get = new Get(Bytes.toBytes(row));
