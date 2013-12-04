@@ -27,9 +27,7 @@ import org.slf4j.LoggerFactory;
  * @author Daniele Morgantini
  * */
 public class HBaseClient {
-		
-	private Configuration config;
-	
+
 	private HBaseAdmin admin;
 	
 	private HConnection connection;
@@ -50,7 +48,6 @@ public class HBaseClient {
      * @return an instance of the HBaseClient with the specified configuration */
 	public HBaseClient(Configuration config) throws MasterNotRunningException, ZooKeeperConnectionException {
 		
-		this.config = config;
 		this.admin = new HBaseAdmin(config);
 		this.connection = HConnectionManager.createConnection(config);
 	}
