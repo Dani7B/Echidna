@@ -38,6 +38,7 @@ public class HBaseClient {
 		
    
     /**
+     * No argument contructor
      * @return an instance of the HBaseClient with default configuration */
 	public HBaseClient() throws MasterNotRunningException, ZooKeeperConnectionException {
 		
@@ -47,6 +48,7 @@ public class HBaseClient {
 	}
 	
 	/**
+	 * Instantiates the client with the specified configuration
 	 * @param config a specific configuration for HBase
      * @return an instance of the HBaseClient with the specified configuration */
 	public HBaseClient(Configuration config) throws MasterNotRunningException, ZooKeeperConnectionException {
@@ -159,6 +161,7 @@ public class HBaseClient {
 	
 	
 	/**
+	 * Checks the existence of a row in the HTable
 	 * @return a flag to indicate if the row exists in the table
 	 * @param table the HTable to query 
 	 * @param row the id of the row */
@@ -170,6 +173,7 @@ public class HBaseClient {
 
 
 	/**
+	 * Single get to retrieve the latest version of all the columns for a row
 	 * @return the result of the get query
 	 * @param table the HTable to query 
 	 * @param row the id of the row */
@@ -181,6 +185,7 @@ public class HBaseClient {
 	
 	
 	/**
+	 * Single get to retrieve the desired versions of the specified columns for a row, iff in a time range
 	 * @return the result of the get query, filtered with the specified fields and time range
 	 * @param table the HTable to query 
 	 * @param row the id of the row 
@@ -198,6 +203,7 @@ public class HBaseClient {
 	
 	
 	/**
+	 * Single get to retrieve the desired versions of the specified columns for a row, filtered with a timestamp
 	 * @return the result of the get query, filtered with the specified fields and timestamp
 	 * @param table the HTable to query 
 	 * @param row the id of the row 
@@ -214,6 +220,7 @@ public class HBaseClient {
 	
 	
 	/**
+	 * Single get to retrieve the latest version of the specified columns for the desired row, iff in a time range
 	 * @return a single result of the get query, filtered with the specified fields and time range
 	 * @param table the HTable to query 
 	 * @param row the id of the row 
@@ -227,6 +234,7 @@ public class HBaseClient {
 	
 	
 	/**
+	 * Single get to retrieve the latest version of the specified columns for the desired row, filtered with a timestamp
 	 * @return a single result of the get query, filtered with the specified fields and timestamp
 	 * @param table the HTable to query 
 	 * @param row the id of the row 
@@ -240,6 +248,7 @@ public class HBaseClient {
 	
 	
 	/**
+	 * Single get to retrieve specified columns of the desired row, iff in a time range
 	 * @return all the versions of the query result, filtered with the specified fields and time range
 	 * @param table the HTable to query 
 	 * @param row the id of the row 
@@ -254,6 +263,7 @@ public class HBaseClient {
 	
 	
 	/**
+	 * Single get to retrieve specified columns of the desired row, filtered with a timestamp
 	 * @return all the versions of the query result, filtered with the specified fields and timestamp
 	 * @param table the HTable to query 
 	 * @param row the id of the row 
@@ -268,7 +278,8 @@ public class HBaseClient {
 	
 	
 	/**
-	 * @return all the versions of the query result, filtered with the specified fields
+	 * Single get to retrieve all the versions available for specified columns of the desired row
+	 * @return all the versions of the specified columns of the query result
 	 * @param table the HTable to query 
 	 * @param row the id of the row 
 	 * @param columnFamilies the column families names */
@@ -280,6 +291,7 @@ public class HBaseClient {
 	
 	
 	/**
+	 * Batch get to retrieve specified columns in a precise time range for the desired rows
 	 * @return multiple results for the get queries, filtered with the specified fields and time range
 	 * @param table the HTable to query 
 	 * @param rows the ids of the rows
@@ -298,6 +310,7 @@ public class HBaseClient {
 	
 	
 	/**
+	 * Batch get to retrieve specified columns at a precise timestamp for the desired rows
 	 * @return multiple results for the get queries, filtered with the specified fields and timestamp
 	 * @param table the HTable to query 
 	 * @param rows the ids of the rows
@@ -315,7 +328,8 @@ public class HBaseClient {
 	}
 	
 	
-	/**
+	/** 
+	 * Prepares the get with all due fields, except for the max number of versions
 	 * @return the get query to be executed
 	 * @param row the id of the row
 	 * @param columnFamilies the column families names
@@ -337,7 +351,8 @@ public class HBaseClient {
 	}
 	
 	
-	/**
+	/** 
+	 * Prepares the get in case you want all the available versions of the row
 	 * @return the get query to be executed
 	 * @param row the id of the row
 	 * @param columnFamilies the column families names
