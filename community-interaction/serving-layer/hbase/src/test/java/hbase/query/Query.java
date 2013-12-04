@@ -23,7 +23,8 @@ public class Query {
                 .thatMentioned(new LastWeek(), new AtLeast(1), new Mention("@nike"))
                 .thatAreAbout(new Topic("a"), new Topic("b"))
                 .writtenBy(new Blogger())
-                .rankedBy(new Engagement()).take(10);
+                .rankedBy(new Engagement())
+                .take(10);
 
         final Object hbaseClient = null;
         final QueryExecutor queryExecutor = new QueryExecutor(hbaseClient);
