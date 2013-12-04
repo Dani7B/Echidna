@@ -125,7 +125,7 @@ public class Query {
 
         public Authors locatedIn(City london) {
 
-            return null;  //To change body of created methods use File | Settings | File Templates.
+            return null;
         }
 
         private class Links {
