@@ -41,10 +41,7 @@ public class HBaseClient {
      * No argument contructor
      * @return an instance of the HBaseClient with default configuration */
 	public HBaseClient() throws MasterNotRunningException, ZooKeeperConnectionException {
-		
-		this.config = HBaseConfiguration.create();
-		this.admin = new HBaseAdmin(config);
-		this.connection = HConnectionManager.createConnection(this.config);
+        this(HBaseConfiguration.create());
 	}
 	
 	/**
