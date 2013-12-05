@@ -1,7 +1,8 @@
 /* 
 * Considering only the latest snapshot for each users,
 * it computes statistics about the defaultProfile and defaultProfileImage boolean values
-* and stores them into HBase
+* and stores them into HBase. Since method toBytes(Tuple) has not been implemented in HBaseBinaryConverter,
+* we will stick to the default.
 */
 
 snap = LOAD '$INPUTDIR/part*' USING BinStorage() AS (user:map[],timestamp:long,id:long);
@@ -15,4 +16,4 @@ ordered = FOREACH snapshots {
 dfp = GROUP ordered BY couple;
 number = FOREACH dfp GENERATE group, COUNT(ordered);
 STORE number INTO 'hbase://$OUTPUTDIR' USING org.apache.pig.backend.hadoop.hbase.HBaseStorage
-			('users:defaults', '-caster HBaseBinaryConverter');
+			('users:defaults');
