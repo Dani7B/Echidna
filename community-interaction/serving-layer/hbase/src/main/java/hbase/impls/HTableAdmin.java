@@ -20,8 +20,6 @@ import org.apache.hadoop.hbase.client.HTable;
  * @author Daniele Morgantini
  * */
 public class HTableAdmin implements HBaseAdministrator {
-
-	private Configuration config;
 	
 	private HBaseAdmin admin;
 	
@@ -35,9 +33,7 @@ public class HTableAdmin implements HBaseAdministrator {
 	 * @throws ZooKeeperConnectionException */
 	public HTableAdmin() throws MasterNotRunningException, ZooKeeperConnectionException {
 		
-		this.config = HBaseConfiguration.create();
-		this.admin = new HBaseAdmin(this.config);
-		this.connection = HConnectionManager.createConnection(this.config);
+		this(HBaseConfiguration.create());
 	}
 	
 	
@@ -49,7 +45,6 @@ public class HTableAdmin implements HBaseAdministrator {
 	 * @throws ZooKeeperConnectionException */
 	public HTableAdmin(Configuration config) throws MasterNotRunningException, ZooKeeperConnectionException {
 		
-		this.config = config;
 		this.admin = new HBaseAdmin(config);
 		this.connection = HConnectionManager.createConnection(config);
 	}
