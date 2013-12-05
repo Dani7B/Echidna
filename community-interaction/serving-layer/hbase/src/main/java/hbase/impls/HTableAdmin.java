@@ -16,10 +16,10 @@ import org.apache.hadoop.hbase.client.HConnectionManager;
 import org.apache.hadoop.hbase.client.HTable;
 
 /**
- * Administrator to communicate with HBase for performing operations on HTables.
+ * Implementation of HBaseAdministrator to communicate with HBase for performing operations on HTables.
  * @author Daniele Morgantini
  * */
-public class HBaseAdministratorImpl implements HBaseAdministrator {
+public class HTableAdmin implements HBaseAdministrator {
 
 	private Configuration config;
 	
@@ -33,7 +33,7 @@ public class HBaseAdministratorImpl implements HBaseAdministrator {
      * @return an instance of the HBaseAdministrator with default configuration
      * @throws MasterNotRunningException 
 	 * @throws ZooKeeperConnectionException */
-	public HBaseAdministratorImpl() throws MasterNotRunningException, ZooKeeperConnectionException {
+	public HTableAdmin() throws MasterNotRunningException, ZooKeeperConnectionException {
 		
 		this.config = HBaseConfiguration.create();
 		this.admin = new HBaseAdmin(this.config);
@@ -47,7 +47,7 @@ public class HBaseAdministratorImpl implements HBaseAdministrator {
      * @return an instance of the HBaseAdministrator with the specified configuration 
 	 * @throws MasterNotRunningException 
 	 * @throws ZooKeeperConnectionException */
-	public HBaseAdministratorImpl(Configuration config) throws MasterNotRunningException, ZooKeeperConnectionException {
+	public HTableAdmin(Configuration config) throws MasterNotRunningException, ZooKeeperConnectionException {
 		
 		this.config = config;
 		this.admin = new HBaseAdmin(config);
@@ -60,6 +60,7 @@ public class HBaseAdministratorImpl implements HBaseAdministrator {
 	}
 	
 	
+	@Override
 	public void createTable(String table, String... colfams) throws IOException {
 		
 		if(!existsTable(table)) {
@@ -76,17 +77,20 @@ public class HBaseAdministratorImpl implements HBaseAdministrator {
 	}
 	
 	
+	@Override
 	public boolean existsTable(String table) throws IOException {
 		
 		return admin.tableExists(table);
 	}
 	
 	
+	@Override
 	public void disableTable(String table) throws IOException {
 	    admin.disableTable(table);
 	}
 	
 	
+	@Override
 	public HTable getTable(String table) throws IOException {
 	
 		if (existsTable(table)) {
@@ -96,6 +100,7 @@ public class HBaseAdministratorImpl implements HBaseAdministrator {
 	}
 	
 	
+	@Override
 	public void deleteTable(String table) throws IOException {
 	    
 		if (existsTable(table)) {

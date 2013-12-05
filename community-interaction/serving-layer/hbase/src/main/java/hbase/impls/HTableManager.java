@@ -14,31 +14,34 @@ import org.apache.hadoop.hbase.client.Result;
 import org.apache.hadoop.hbase.util.Bytes;
 
 /**
- * Client to communicate with HBase for perfoming CRUD operations.
+ * Implementation of HBaseClient to communicate with HBase for perfoming CRUD operations on HTable rows.
  * @author Daniele Morgantini
  * */
-public class HBaseClientImpl implements HBaseClient {
+public class HTableManager implements HBaseClient {
 				   
+	private HTable table;
+	
     /**
      * No argument contructor
      * @return an instance of the HBaseClient */
-	public HBaseClientImpl(){
-		
+	public HTableManager(HTable table){
+		this.table = table;
 	}
 	
 	
-	public void put(HTable table, String row, String colfam, String col,
-					long ts, byte[] value) throws IOException {
+	@Override
+	public void put(String row, String colfam, String col, long ts, byte[] value) throws IOException {
 		
 		Put tableRow = new Put(Bytes.toBytes(row));
 		
 		tableRow.add(Bytes.toBytes(colfam), Bytes.toBytes(col), ts, value);
-		table.put(tableRow);		
+		this.table.put(tableRow);		
 	}
 	
 	
-	public void put(HTable table, String[] rows, String[] colfams, String[] cols,
-            long[] tss, byte[][] values) throws IOException {
+	@Override
+	public void put(String[] rows, String[] colfams, String[] cols, long[] tss, byte[][] values) 
+			throws IOException {
 		
 		List<Put> tableRows = new ArrayList<Put>();
 		for(int i=0; i<rows.length; i++) {
@@ -46,81 +49,91 @@ public class HBaseClientImpl implements HBaseClient {
 			tableRow.add(Bytes.toBytes(colfams[i]), Bytes.toBytes(cols[i]), tss[i], values[i]);
 			tableRows.add(tableRow);
 		}
-		table.put(tableRows);
+		this.table.put(tableRows);
 	}
 	
 	
-	public boolean exists(HTable table, String row) throws IOException {
+	@Override
+	public boolean exists(String row) throws IOException {
 		
 		Get tableRow = new Get(Bytes.toBytes(row));
-		return table.exists(tableRow);
+		return this.table.exists(tableRow);
 	}
 
 	
-	public Result get(HTable table, String row) throws IOException {
+	@Override
+	public Result get(String row) throws IOException {
 		
 		Get tableRow = new Get(Bytes.toBytes(row));
-		return table.get(tableRow);
+		return this.table.get(tableRow);
 	}
 	
 	
-	public Result get(HTable table, String row, String[] columnFamilies,
-				long[] timeRange, int maxVersions) throws IOException {
+	@Override
+	public Result get(String row, String[] columnFamilies, long[] timeRange, int maxVersions) 
+			throws IOException {
 		
 		Get tableRow = prepareGet(row, columnFamilies, 0, timeRange);
 		tableRow.setMaxVersions(maxVersions);
 		
-		return table.get(tableRow);
+		return this.table.get(tableRow);
 	}
 	
 	
-	public Result get(HTable table, String row, String[] columnFamilies,
-				long timeStamp, int maxVersions) throws IOException {
+	@Override
+	public Result get(String row, String[] columnFamilies, long timeStamp, int maxVersions) 
+			throws IOException {
 		
 		Get tableRow = prepareGet(row, columnFamilies, timeStamp, null);
 		tableRow.setMaxVersions(maxVersions);
-		return table.get(tableRow);
+		return this.table.get(tableRow);
 	}
 	
 	
-	public Result get(HTable table, String row, String[] columnFamilies, long[] timeRange) throws IOException {
+	@Override
+	public Result get(String row, String[] columnFamilies, long[] timeRange) throws IOException {
 		
 		Get tableRow = prepareGet(row, columnFamilies, 0, timeRange);
-		return table.get(tableRow);
+		return this.table.get(tableRow);
 	}	
 	
 	
-	public Result get(HTable table, String row, String[] columnFamilies, long timeStamp) throws IOException {
+	@Override
+	public Result get(String row, String[] columnFamilies, long timeStamp) throws IOException {
 		
 		Get tableRow = prepareGet(row, columnFamilies, timeStamp, null);		
-		return table.get(tableRow);
+		return this.table.get(tableRow);
 	}
 	
 	
-	public Result getHistory(HTable table, String row, String[] columnFamilies, long[] timeRange) throws IOException {
+	@Override
+	public Result getHistory(String row, String[] columnFamilies, long[] timeRange) throws IOException {
 		
 		Get tableRow = prepareGet(row, columnFamilies, 0, timeRange);
 		tableRow.setMaxVersions();
-		return table.get(tableRow);
+		return this.table.get(tableRow);
 	}
 	
 	
-	public Result getHistory(HTable table, String row, String[] columnFamilies, long timeStamp) throws IOException {
+	@Override
+	public Result getHistory(String row, String[] columnFamilies, long timeStamp) throws IOException {
 		
 		Get tableRow = prepareGet(row, columnFamilies, timeStamp, null);
 		tableRow.setMaxVersions();
-		return table.get(tableRow);
+		return this.table.get(tableRow);
 	}
 	
 	
-	public Result getHistory(HTable table, String row, String[] columnFamilies) throws IOException {
+	@Override
+	public Result getHistory(String row, String[] columnFamilies) throws IOException {
 		
 		Get tableRow = prepareGetHistory(row, columnFamilies);
-		return table.get(tableRow);
+		return this.table.get(tableRow);
 	}
 	
 	
-	public Result[] get(HTable table, String[] rows, String[] columnFamilies, long[] timeRange) throws IOException {
+	@Override
+	public Result[] get(String[] rows, String[] columnFamilies, long[] timeRange) throws IOException {
 		
 		List<Get> gets = new ArrayList<Get>();
 		Get tableRow = null;
@@ -128,11 +141,12 @@ public class HBaseClientImpl implements HBaseClient {
 			tableRow = prepareGet(row, columnFamilies, 0, timeRange);
 			gets.add(tableRow);
 		}
-		return table.get(gets);
+		return this.table.get(gets);
 	}
 	
 	
-	public Result[] get(HTable table, String[] rows, String[] columnFamilies, long timeStamp) throws IOException {
+	@Override
+	public Result[] get(String[] rows, String[] columnFamilies, long timeStamp) throws IOException {
 		
 		List<Get> gets = new ArrayList<Get>();
 		Get tableRow = null;
@@ -140,7 +154,7 @@ public class HBaseClientImpl implements HBaseClient {
 			tableRow = prepareGet(row, columnFamilies, timeStamp, null);
 			gets.add(tableRow);
 		}
-		return table.get(gets);
+		return this.table.get(gets);
 	}
 	
 	
@@ -186,22 +200,25 @@ public class HBaseClientImpl implements HBaseClient {
 	}
 	
 	
-	public void delete(HTable table, String row, String colfam, String col,	long ts) throws IOException {
+	@Override
+	public void delete(String row, String colfam, String col,	long ts) throws IOException {
 		
 		Delete tableRow = new Delete(Bytes.toBytes(row));
 		tableRow.deleteColumns(Bytes.toBytes(colfam), Bytes.toBytes(col), ts);
-		table.delete(tableRow);		
+		this.table.delete(tableRow);		
 	}
 	
 	
-	public void delete(HTable table, String row) throws IOException {
+	@Override
+	public void delete(String row) throws IOException {
 
 		Delete tableRow = new Delete(Bytes.toBytes(row));
-		table.delete(tableRow);		
+		this.table.delete(tableRow);		
 	}
 	
 	
-	public void delete(HTable table, String[] rows, String[] colfams, String[] cols, long[] tss) throws IOException {
+	@Override
+	public void delete(String[] rows, String[] colfams, String[] cols, long[] tss) throws IOException {
 		
 		List<Delete> tableRows = new ArrayList<Delete>();
 		
@@ -210,6 +227,6 @@ public class HBaseClientImpl implements HBaseClient {
 			tableRow.deleteColumns(Bytes.toBytes(colfams[i]), Bytes.toBytes(cols[i]), tss[i]);
 			tableRows.add(tableRow);
 		}
-		table.delete(tableRows);
+		this.table.delete(tableRows);
 	}
 }

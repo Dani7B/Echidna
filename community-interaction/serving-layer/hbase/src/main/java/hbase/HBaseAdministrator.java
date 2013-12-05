@@ -5,6 +5,10 @@ import java.io.IOException;
 import org.apache.hadoop.hbase.client.HConnection;
 import org.apache.hadoop.hbase.client.HTable;
 
+/**
+ * Administrator to communicate with HBase for performing operations on HTables.
+ * @author Daniele Morgantini
+ * */
 public interface HBaseAdministrator {
 
 	public abstract HConnection getConnection();
