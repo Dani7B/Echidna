@@ -59,7 +59,6 @@ public class HBaseClientTest {
     	long[] tss = {1L, 2L, 3L};
     	byte[][] values = {Bytes.toBytes(10), Bytes.toBytes(12), Bytes.toBytes(11)};
     	this.client.put(this.testTable, rows, colfams, cols, tss, values);
-    	
     	String[] rowsDel = {"row13", "row14", "row13", "row15", "row15", "row16", "row16"};
     	String[] colfamsDel = {"salone", "soggiorno", "salone", "salone", "salone", "salone", "soggiorno"};
     	String[] colsDel = {"mq", "mq", "mq", "bright", "bright", "mq", "mq"};

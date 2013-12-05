@@ -148,7 +148,6 @@ public interface HBaseClient {
 	 * @param timeStamp the timeStamp identifying the version to retrieve */
 	public abstract Result[] get(HTable table, String[] rows,
 			String[] columnFamilies, long timeStamp) throws IOException;
-
 	
 	/**
 	 * Single delete to erase a row from the specified table.
