@@ -1,6 +1,8 @@
 package hbase;
 
 import hbase.entities.Room;
+import hbase.impls.HBaseAdministratorImpl;
+import hbase.impls.HBaseClientImpl;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -30,20 +32,24 @@ public class HBaseClientTest {
     
     private static final Logger LOGGER = LoggerFactory.getLogger(HBaseClientTest.class);
     
-    private HBaseClient client;
+    private HBaseAdministrator admin;
     
+    private HBaseClient client;
+        
     private HTable testTable;
     
     
     @BeforeClass
     public void setUp() throws IOException {
-		this.client = new HBaseClient();
-
-    	if(this.client.existsTable("casa"))
-    		this.client.deleteTable("casa");
     	
-    	this.client.createTable("casa", "salone", "soggiorno", "cupola");
-    	this.testTable = this.client.getTable("casa");
+    	this.admin = new HBaseAdministratorImpl();
+		this.client = new HBaseClientImpl();
+
+    	if(this.admin.existsTable("casa"))
+    		this.admin.deleteTable("casa");
+    	
+    	this.admin.createTable("casa", "salone", "soggiorno", "cupola");
+    	this.testTable = this.admin.getTable("casa");
     	this.testTable.setWriteBufferSize(20971520L); // Otherwise it doesn't get the default value from config
     
     	String row = "row5";
@@ -67,11 +73,11 @@ public class HBaseClientTest {
     @Test
     public void hasCreatedTable() throws IOException {
     	
-    	this.client.createTable("testing", "prova");
-    	boolean value = this.client.existsTable("testing");
+    	this.admin.createTable("testing", "prova");
+    	boolean value = this.admin.existsTable("testing");
     	assertTrue(value);
     	
-    	HTable table = this.client.getTable("testing");
+    	HTable table = this.admin.getTable("testing");
     	assertNotNull(table);
     }
     
@@ -79,11 +85,11 @@ public class HBaseClientTest {
     @Test
     public void hasDeletedTable() throws IOException {
             
-        this.client.deleteTable("testing");
-        boolean value = this.client.existsTable("testing");
+        this.admin.deleteTable("testing");
+        boolean value = this.admin.existsTable("testing");
         assertFalse(value);
         
-        HTable table = this.client.getTable("testing");
+        HTable table = this.admin.getTable("testing");
         assertNull(table);
     }
     
@@ -319,8 +325,8 @@ public class HBaseClientTest {
     	Room dependance = new Room("dependance",35);
     	Room cucina = new Room("cucina",14);
     	
-    	this.client.createTable("house", "rooms");
-    	HTable houseTable = this.client.getTable("house");
+    	this.admin.createTable("house", "rooms");
+    	HTable houseTable = this.admin.getTable("house");
     	
     	this.client.put(houseTable, row, "rooms", dependance.getName(), System.currentTimeMillis(),
     			Bytes.toBytes(dependance.getMq()));
