@@ -9,4 +9,4 @@ grouped = GROUP ff BY LOWER(lang);
 number = FOREACH grouped GENERATE group, SUM(ff.friends), SUM(ff.followers);
 sorted = ORDER number BY $2 desc, $1 desc;
 STORE sorted INTO 'hbase://$OUTPUTDIR' USING org.apache.pig.backend.hadoop.hbase.HBaseStorage
-			('languages:friends, languages:followers');
+			('languages:friends, languages:followers', '-caster HBaseBinaryConverter');

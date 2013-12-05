@@ -16,4 +16,4 @@ grouped = GROUP ordered BY favourites;
 result = FOREACH grouped GENERATE group AS favouritesCount:int, COUNT(ordered), ordered.userId;
 sorted = ORDER result BY favouritesCount desc; -- favouritesCount MUST be int, if long Hadoop will expect an int anyway
 STORE sorted INTO 'hbase://$OUTPUTDIR' USING org.apache.pig.backend.hadoop.hbase.HBaseStorage
-			('users:count, users:userId');
+			('users:count, users:userId', '-caster HBaseBinaryConverter');

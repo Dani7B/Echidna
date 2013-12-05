@@ -7,4 +7,4 @@ snapshot = LOAD '$INPUTDIR/part*' USING BinStorage() AS (user:map[],timestamp:lo
 snapshots = GROUP snapshot BY id;
 result = FOREACH snapshots GENERATE group, COUNT(snapshot) AS counter;
 STORE result INTO 'hbase://$OUTPUTDIR' USING org.apache.pig.backend.hadoop.hbase.HBaseStorage
-			('snapshots:counter');
+			('snapshots:counter', '-caster HBaseBinaryConverter');

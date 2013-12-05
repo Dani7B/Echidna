@@ -8,4 +8,4 @@ ff = FOREACH snap GENERATE id, user#'friendsCount' AS (friends:long), user#'foll
 grouped = GROUP ff BY (id%2);
 result = FOREACH grouped GENERATE group, SUM(ff.friends), SUM(ff.followers);
 STORE result INTO 'hbase://$OUTPUTDIR' USING org.apache.pig.backend.hadoop.hbase.HBaseStorage
-			('snapshots:friends, snapshots:followers');
+			('snapshots:friends, snapshots:followers', '-caster HBaseBinaryConverter');
