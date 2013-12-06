@@ -1,6 +1,5 @@
 /*
-* Simple code to read mentioned-by relationships from file and store them into HBase
-* For the time being, the input is a text file
+* Simple code to read mentioned-by relationships from binary file and store them into HBase
 */
 
 mention = LOAD '$INPUTDIR/part*' USING BinStorage() AS (id:chararray, mentioned:chararray, ts:long);

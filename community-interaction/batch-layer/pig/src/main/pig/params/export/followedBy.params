@@ -1,0 +1,2 @@
+INPUTDIR=import/follows
+OUTPUTDIR=followedBy
