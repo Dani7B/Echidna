@@ -4,8 +4,6 @@
 
 REGISTER '/home/daniele/Pig/pig-0.12.0/contrib/piggybank/java/piggybank.jar';
 DEFINE UnixToISO org.apache.pig.piggybank.evaluation.datetime.convert.UnixToISO();
-DEFINE ISOToDay org.apache.pig.piggybank.evaluation.datetime.truncate.ISOToDay();
-
 
 mention = LOAD '$INPUTDIR/part*' USING BinStorage() AS (id:chararray, mentioned:chararray, ts:long);
 mentionedBy = GROUP mention BY mentioned;
