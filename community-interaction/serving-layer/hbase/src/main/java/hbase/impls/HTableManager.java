@@ -6,11 +6,19 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.hadoop.hbase.HColumnDescriptor;
 import org.apache.hadoop.hbase.client.Delete;
 import org.apache.hadoop.hbase.client.Get;
 import org.apache.hadoop.hbase.client.HTable;
 import org.apache.hadoop.hbase.client.Put;
 import org.apache.hadoop.hbase.client.Result;
+import org.apache.hadoop.hbase.client.ResultScanner;
+import org.apache.hadoop.hbase.client.Scan;
+import org.apache.hadoop.hbase.filter.CompareFilter;
+import org.apache.hadoop.hbase.filter.BinaryComparator;
+import org.apache.hadoop.hbase.filter.Filter;
+import org.apache.hadoop.hbase.filter.FilterList;
+import org.apache.hadoop.hbase.filter.QualifierFilter;
 import org.apache.hadoop.hbase.util.Bytes;
 
 /**
@@ -228,5 +236,69 @@ public class HTableManager implements HBaseClient {
 			tableRows.add(tableRow);
 		}
 		this.table.delete(tableRows);
+	}
+
+
+	@Override
+	public Result[] scan(byte[] lowerRow, byte[] upperRow, byte[] lowerValue, byte[] upperValue) 
+			throws IOException {
+				
+		Scan scan = new Scan(lowerRow,upperRow);
+		
+		FilterList fList = new FilterList(FilterList.Operator.MUST_PASS_ALL);
+		
+		Filter qualifierFilter1 = new QualifierFilter(CompareFilter.CompareOp.GREATER_OR_EQUAL,
+				new BinaryComparator(lowerValue));
+		fList.addFilter(qualifierFilter1);
+		
+		Filter qualifierFilter2 = new QualifierFilter(CompareFilter.CompareOp.LESS_OR_EQUAL,
+				new BinaryComparator(upperValue));
+		fList.addFilter(qualifierFilter2);
+		
+		scan.setFilter(fList);
+		
+		ResultScanner scanner = this.table.getScanner(scan);
+		List<Result> results = new ArrayList<Result>();
+		for (Result res : scanner) {
+			results.add(res);
+		}
+		scanner.close();
+		
+		Result[] finalResult = new Result[results.size()];
+		return results.toArray(finalResult);
+	}
+	
+	
+	@Override
+	public Result get(byte[] row, byte[] lowerValue, byte[] upperValue) throws IOException {
+				
+		Get tableRow = new Get(row);
+				
+		FilterList fList = new FilterList(FilterList.Operator.MUST_PASS_ALL);
+		
+		Filter filter1 = new QualifierFilter(CompareFilter.CompareOp.GREATER_OR_EQUAL,
+				new BinaryComparator(lowerValue));
+		fList.addFilter(filter1);
+		
+		Filter filter2 = new QualifierFilter(CompareFilter.CompareOp.LESS_OR_EQUAL,
+				new BinaryComparator(upperValue));
+		fList.addFilter(filter2);
+		
+		tableRow.setFilter(fList);
+		
+		return this.table.get(tableRow);
+	}
+	
+	@Override
+	public Result get(byte[] row, byte[][] qualifiers) throws IOException {
+				
+		Get tableRow = new Get(row);
+		for(HColumnDescriptor cf: this.table.getTableDescriptor().getColumnFamilies()) {
+			for(byte[] q : qualifiers) {
+				tableRow.addColumn(cf.getName(), q);
+			}
+		}
+				
+		return this.table.get(tableRow);
 	}
 }
