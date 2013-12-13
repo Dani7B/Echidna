@@ -2,7 +2,7 @@
 * Simple code to read followed-by relationships from binary file and store them into HBase
 */
 
-follow = LOAD '$INPUTDIR/part*' USING BinStorage() AS (id:chararray, followed:chararray, ts:long);
+follow = LOAD '$INPUTDIR/part*' AS (id:chararray, followed:chararray, ts:long);
 followedBy = GROUP follow BY followed;
 refined = FOREACH followedBy {
 			reversed = FOREACH follow 
