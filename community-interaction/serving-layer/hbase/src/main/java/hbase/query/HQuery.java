@@ -1,30 +1,45 @@
 package hbase.query;
 
-public class HQuery {
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
+
+import hbase.query.subquery.HSubQuery;
+
+public abstract class HQuery {
 	
 	private Authors users;
 	
-	private int amount;
 	
+	private List<HSubQuery> subqueries;
+		
 	public HQuery() {
 		this.users = new Authors(this);
-	}
-	
-	public HQuery(HQuery q, int amount){
-		this.amount = amount;
+		this.subqueries = new ArrayList<HSubQuery>();
 	}
 	
 	public Authors users() {
 		return this.users;
 	}
 	
-	public HQuery take(int amount) {
-		this.amount = amount;
-		return this;
+	public List<HSubQuery> getSubqueries() {
+		return this.subqueries;
 	}
 	
-	public int getAmount() {
-		return this.amount;
+	public void addSubquery(HSubQuery subquery) {
+		this.subqueries.add(subquery);
+	}
+	
+	
+	public Authors answer() {
+		
+		for(HSubQuery s : this.subqueries)
+			try {
+				s.execute(this.users);
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+		return this.users;
 	}
 
 }

@@ -1,5 +1,12 @@
 package hbase.query;
 
+import hbase.HBaseClient;
+import hbase.impls.HBaseClientFactory;
+import hbase.query.subquery.AuthorsRankedById;
+import hbase.query.subquery.AuthorsTake;
+import hbase.query.subquery.AuthorsThatMentioned;
+import hbase.query.subquery.AuthorsWhoFollow;
+import hbase.query.subquery.HSubQuery;
 import hbase.query.time.TimeRange;
 
 import java.util.ArrayList;
@@ -9,79 +16,39 @@ public class Authors {
 	
 	private HQuery query;
 	
-	private TimeRange range;
-	
-	private AtLeast mentionAtLeast;
-	
-	private AtLeast followAtLeast;
-	
-	private List<Mention> mentions;
-	
-	private List<Author> followed;
-
-	private boolean idRanked;
-	
 	private List<Author> authors;
 
 	
 	public Authors(HQuery q) {
 		this.query = q;
+		this.authors = new ArrayList<Author>();
 	}
-	
-	public Authors(List<Author> authors) {
-		this.authors = authors;
-	}
-	
 	
 	public Authors thatMentioned(TimeRange range, AtLeast atLeast, Mention... mentions) {
-		this.range = range;
-		this.mentionAtLeast = atLeast;
-		this.mentions = new ArrayList<Mention>();
-		for(Mention m : mentions)
-			this.mentions.add(m);
+		HBaseClient client = HBaseClientFactory.getInstance().getHBaseClient("mentiondBy");
+    	HSubQuery sub = new AuthorsThatMentioned(this.query, client, range, atLeast, mentions);
         return this;
     }
 	
 	
-	public Authors whoFollow(AtLeast atLeast, Author... authors) {
-		this.followAtLeast = atLeast;
-		this.followed = new ArrayList<Author>();
-		for(Author a : authors)
-			this.followed.add(a);
+	public Authors whoFollow(AtLeast atLeast, Author... followed) {
+		HBaseClient client = HBaseClientFactory.getInstance().getHBaseClient("followedBy");
+    	HSubQuery sub = new AuthorsWhoFollow(this.query, client, atLeast, followed);
 		return this;
     }
 	
-	public Authors rankedById() {
-		this.idRanked = true;
+	public Authors rankedById(boolean ascOrDesc) {
+		
+    	HSubQuery sub = new AuthorsRankedById(this.query, ascOrDesc);
         return this;
     }
 
 	
 	public HQuery take(int amount) {
-        return this.query.take(amount);
+		HSubQuery sub = new AuthorsTake(this.query, amount);
+        return this.query;
     }
 
-
-	public TimeRange getTimeRange() {
-		return this.range;
-	}
-
-
-	public AtLeast getMentionAtLeast() {
-		return this.mentionAtLeast;
-	}
-
-	public AtLeast getFollowAtLeast() {
-		return this.followAtLeast;
-	}
-
-	public List<Mention> getMentions() {
-		return this.mentions;
-	}
-	
-	public List<Author> getFollowed() {
-		return this.followed;
-	}
 
 	public List<Author> getAuthors() {
 		return authors;
@@ -89,14 +56,6 @@ public class Authors {
 
 	public void setAuthors(List<Author> authors) {
 		this.authors = authors;
-	}
-
-	public boolean isIdRanked() {
-		return idRanked;
-	}
-
-	public void setIdRanked(boolean idRanked) {
-		this.idRanked = idRanked;
 	}
 
 }
