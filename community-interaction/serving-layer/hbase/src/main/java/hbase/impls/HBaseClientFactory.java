@@ -5,6 +5,11 @@ import java.io.IOException;
 import hbase.HBaseAdministrator;
 import hbase.HBaseClient;
 
+/**
+ * Simple factory to create single instances of HBaseClients.
+ * It acts as support for the HSubQueries
+ * @author Daniele Morgantini
+ */
 public class HBaseClientFactory {
 	
 	private static HBaseClientFactory instance;
@@ -20,9 +25,6 @@ public class HBaseClientFactory {
 	private HBaseClientFactory() {
 		try {
 			this.admin = new HTableAdmin();
-			this.mentionedBy = new HTableManager(admin.getTable("mentionedBy"));
-			this.followedBy = new HTableManager(admin.getTable("followedBy"));
-
 		} catch (IOException e) {
 			e.printStackTrace();
 		}

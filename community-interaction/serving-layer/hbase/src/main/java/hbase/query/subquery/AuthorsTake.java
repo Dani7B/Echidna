@@ -7,10 +7,21 @@ import hbase.query.Author;
 import hbase.query.Authors;
 import hbase.query.HQuery;
 
+/**
+ * Subquery to represent the authors-take request
+ * @author Daniele Morgantini
+ */
 public class AuthorsTake extends HSubQuery {
 	
 	private int amount;
-		
+	
+	
+	/**
+	 * Creates an instance of AuthorsTake subquery
+	 * @return an instance of AuthorsTake subquery
+	 * @param query the belonging query
+	 * @param amount the number of authors to retrieve
+	 */
 	public AuthorsTake(HQuery query, int amount) {
 		super(query);
 		this.amount = amount;

@@ -16,6 +16,10 @@ import hbase.query.Author;
 import hbase.query.Authors;
 import hbase.query.HQuery;
 
+/**
+ * Subquery to represent the authors-who-follow request
+ * @author Daniele Morgantini
+ */
 public class AuthorsWhoFollow extends HSubQuery {
 
 	private HBaseClient client;
@@ -24,6 +28,15 @@ public class AuthorsWhoFollow extends HSubQuery {
 	
 	private List<Author> followed;
 	
+	
+	/**
+	 * Creates an instance of AuthorsWhoFollow subquery
+	 * @return an instance of AuthorsWhoFollow subquery
+	 * @param query the belonging query
+	 * @param client the HBaseClient to query HBase
+	 * @param atLeast the minimum number of authors to follow
+	 * @param authors the followed authors
+	 */
 	public AuthorsWhoFollow(HQuery query, HBaseClient client, AtLeast atLeast, Author... authors) {
 		super(query);
 		this.client = client;

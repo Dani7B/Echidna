@@ -22,6 +22,10 @@ import hbase.query.HQuery;
 import hbase.query.Mention;
 import hbase.query.time.TimeRange;
 
+/**
+ * Subquery to represent the authors-that-mentioned request
+ * @author Daniele Morgantini
+ */
 public class AuthorsThatMentioned extends HSubQuery {
 	
 	private HBaseClient client;
@@ -35,6 +39,15 @@ public class AuthorsThatMentioned extends HSubQuery {
 	private static final SimpleDateFormat dateFormatter = new SimpleDateFormat("yyyy-MM-dd");
 	
 	
+	/**
+	 * Creates an instance of AuthorsThatMentioned subquery
+	 * @return an instance of AuthorsThatMentioned subquery
+	 * @param query the belonging query
+	 * @param client the HBaseClient to query HBase
+	 * @param timeRange the time window to take into account
+	 * @param atLeast the minimum number of authors to mention
+	 * @param mentions the mentions of authors
+	 */
 	public AuthorsThatMentioned(HQuery query, HBaseClient client, TimeRange timeRange,
 									AtLeast atLeast, Mention...mentions) {
 		super(query);

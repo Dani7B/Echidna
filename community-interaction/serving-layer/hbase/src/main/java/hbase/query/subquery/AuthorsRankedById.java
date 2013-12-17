@@ -11,6 +11,12 @@ public class AuthorsRankedById extends HSubQuery {
 
 	boolean asc;
 	
+	/** 
+	 * Creates an instance of AuthorsRankedById subquery
+	 * @return an instance of AuthorsRankedById subquery
+	 * @param query the belonging query
+	 * @param ascOrDesc the desired order (ascendent=true, descendent=false)
+	 */
 	public AuthorsRankedById(HQuery query, boolean ascOrDesc) {
 		super(query);
 		this.asc = ascOrDesc;
@@ -29,6 +35,11 @@ public class AuthorsRankedById extends HSubQuery {
 
 	}
 
+	
+	/**
+	 * Private class to perform the sort by ascending order
+	 * @author Daniele Morgantini
+	 */
 	private static class AuthorComparerAsc implements Comparator<Author> {
 		  
 		@Override
@@ -43,6 +54,10 @@ public class AuthorsRankedById extends HSubQuery {
 		  }
 	}
 	
+	/**
+	 * Private class to perform the sort by descending order
+	 * @author Daniele Morgantini
+	 */
 	private static class AuthorComparerDesc implements Comparator<Author> {
 		  
 		@Override
