@@ -25,14 +25,14 @@ public class Authors {
 	}
 	
 	public Authors thatMentioned(TimeRange range, AtLeast atLeast, Mention... mentions) {
-		HBaseClient client = HBaseClientFactory.getInstance().getHBaseClient("mentiondBy");
+		HBaseClient client = HBaseClientFactory.getInstance().getMentionedBy();
     	HSubQuery sub = new AuthorsThatMentioned(this.query, client, range, atLeast, mentions);
         return this;
     }
 	
 	
 	public Authors whoFollow(AtLeast atLeast, Author... followed) {
-		HBaseClient client = HBaseClientFactory.getInstance().getHBaseClient("followedBy");
+		HBaseClient client = HBaseClientFactory.getInstance().getFollowedBy();
     	HSubQuery sub = new AuthorsWhoFollow(this.query, client, atLeast, followed);
 		return this;
     }

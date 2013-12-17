@@ -28,20 +28,32 @@ public class HBaseClientFactory {
 		}
 	}
 	
+	private HBaseClient createHBaseClient(String tableName) {
+		HBaseClient client = null;
+		try {
+			client = new HTableManager(this.admin.getTable(tableName));
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		return client;
+	}
+	
 	public static synchronized HBaseClientFactory getInstance() {
 		if(instance == null)
 			instance = new HBaseClientFactory();
 		return instance;
 	}
 
+	public HBaseClient getMentionedBy() {
+		if(this.mentionedBy == null)
+			this.mentionedBy = createHBaseClient("mentionedBy");
+		return this.mentionedBy;
+	}
 	
-	public HBaseClient getHBaseClient(String tableName) {
-		
-		if(tableName.equalsIgnoreCase("mentionedBy"))
-			return this.mentionedBy;
-		if(tableName.equalsIgnoreCase("followedBy"))
-			return this.followedBy;
-		return null;
+	public HBaseClient getFollowedBy() {
+		if(this.followedBy == null)
+			this.followedBy = createHBaseClient("followedBy");
+		return this.followedBy;
 	}
 
 }
