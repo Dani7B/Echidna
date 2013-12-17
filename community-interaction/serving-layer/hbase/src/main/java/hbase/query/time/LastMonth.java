@@ -9,7 +9,7 @@ public class LastMonth extends TimeRange {
 	}
 	
 	public LastMonth(long now) {
-		super(now, getLastMonthMills(now));
+		super(getLastMonthMills(now),now);
 	}
 	
 	private static long getLastMonthMills(long now) {

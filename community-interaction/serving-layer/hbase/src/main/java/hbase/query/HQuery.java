@@ -6,10 +6,9 @@ import java.util.List;
 
 import hbase.query.subquery.HSubQuery;
 
-public abstract class HQuery {
+public class HQuery {
 	
 	private Authors users;
-	
 	
 	private List<HSubQuery> subqueries;
 		
@@ -20,6 +19,10 @@ public abstract class HQuery {
 	
 	public Authors users() {
 		return this.users;
+	}
+	
+	public void updateUsers(List<Author> authors) {
+		this.users.setAuthors(authors);;
 	}
 	
 	public List<HSubQuery> getSubqueries() {

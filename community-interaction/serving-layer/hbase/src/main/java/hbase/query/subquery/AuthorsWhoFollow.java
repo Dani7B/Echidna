@@ -40,7 +40,7 @@ public class AuthorsWhoFollow extends HSubQuery {
 		
 		int i = 0;
 		for(Author a : authors.getAuthors()) {
-			columns[i] = Bytes.toBytes(a.getId());
+			columns[i] = Bytes.toBytes(String.valueOf(a.getId()));
 			i++;
 		}
 		
@@ -64,10 +64,10 @@ public class AuthorsWhoFollow extends HSubQuery {
 		
 		for(Map.Entry<byte[], Integer> e : map.entrySet()) {
 			if(e.getValue() >= followMin)
-				result.add(new Author(Bytes.toLong(e.getKey())));
+				result.add(new Author(Long.parseLong(Bytes.toString(e.getKey()))));
 		}
 		
-		authors.setAuthors(result);
+		this.getQuery().updateUsers(result);
 	}
 
 }

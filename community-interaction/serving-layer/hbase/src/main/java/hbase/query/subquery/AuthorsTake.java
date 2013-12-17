@@ -22,13 +22,14 @@ public class AuthorsTake extends HSubQuery {
 		List<Author> result = new ArrayList<Author>();
 		int i = 0;
 		for(Author a : authors.getAuthors()){
-			if(i <= this.amount) {
+			if(i < this.amount) {
 				result.add(a);
+				i++;
 			}
 			else
 				break;
 		}
-		authors.setAuthors(result);
+		this.getQuery().updateUsers(result);
 	}
 
 }

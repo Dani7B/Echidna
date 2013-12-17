@@ -25,6 +25,8 @@ public class AuthorsRankedById extends HSubQuery {
 		else {
 			Collections.sort(authors.getAuthors(), new AuthorComparerDesc());
 		}
+		this.getQuery().updateUsers(authors.getAuthors());
+
 	}
 
 	private static class AuthorComparerAsc implements Comparator<Author> {

@@ -54,13 +54,15 @@ public class AuthorsThatMentioned extends HSubQuery {
 		long upperBound = this.timeRange.getEnd();
 		int mentionMin = this.atLeast.getLowerBound();
 		
+				
 		for(Mention m : this.mentions){
 			
 			String lowerRow = generateRowKey(m.getMentioned().getId(), lowerBound);
 			String upperRow = generateRowKey(m.getMentioned().getId(), upperBound);
-			
+						
 			Result[] results = this.client.scan(Bytes.toBytes(lowerRow),Bytes.toBytes(upperRow),
-												Bytes.toBytes(lowerBound),Bytes.toBytes(upperBound));
+												Bytes.toBytes(String.valueOf(lowerBound)),
+												Bytes.toBytes(String.valueOf(upperBound)));
 			
 			Set<byte[]> singleIDs = new HashSet<byte[]>();
 			for(Result res : results){
@@ -85,7 +87,7 @@ public class AuthorsThatMentioned extends HSubQuery {
 				result.add(new Author(Bytes.toLong(e.getKey())));
 		}
 		
-		authors.setAuthors(result);
+		this.getQuery().updateUsers(result);
 	}
 
 	private static String generateRowKey(long id, long timestamp) {

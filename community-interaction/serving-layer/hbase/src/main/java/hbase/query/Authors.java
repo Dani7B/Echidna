@@ -57,5 +57,14 @@ public class Authors {
 	public void setAuthors(List<Author> authors) {
 		this.authors = authors;
 	}
+	
+	public String toString() {
+		String result = "[ ";
+		for(Author a : this.authors){
+			result += a.getId() + " ";
+		}
+		result += "]";
+		return result;
+	}
 
 }

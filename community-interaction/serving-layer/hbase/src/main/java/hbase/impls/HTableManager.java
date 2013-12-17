@@ -244,7 +244,7 @@ public class HTableManager implements HBaseClient {
 			throws IOException {
 				
 		Scan scan = new Scan(lowerRow,upperRow);
-		
+				
 		FilterList fList = new FilterList(FilterList.Operator.MUST_PASS_ALL);
 		
 		Filter qualifierFilter1 = new QualifierFilter(CompareFilter.CompareOp.GREATER_OR_EQUAL,
@@ -256,7 +256,7 @@ public class HTableManager implements HBaseClient {
 		fList.addFilter(qualifierFilter2);
 		
 		scan.setFilter(fList);
-		
+				
 		ResultScanner scanner = this.table.getScanner(scan);
 		List<Result> results = new ArrayList<Result>();
 		for (Result res : scanner) {
