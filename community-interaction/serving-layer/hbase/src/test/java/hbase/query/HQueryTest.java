@@ -26,7 +26,7 @@ public class HQueryTest {
 								.users()
 								.thatMentioned(new LastMonth(), new AtLeast(1), new Mention(11),
 											new Mention(14), new Mention(12))
-								.whoFollow(new AtLeast(1), new Author(22), new Author(25))
+								.whoFollow(new AtLeast(2), new Author(22), new Author(21), new Author(25))
 								.rankedById(true)
 								.take(2);
 

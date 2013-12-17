@@ -44,14 +44,14 @@ public class AuthorsWhoFollow extends HSubQuery {
 			i++;
 		}
 		
-		Map<byte[],Integer> map = new HashMap<byte[],Integer>();
+		Map<Long,Integer> map = new HashMap<Long,Integer>();
 		
 		for(Author a : this.followed) {
 			byte[] aID = Bytes.toBytes(a.getId());
 			Result result = this.client.get(aID, columns);
 			
 			for(KeyValue kv : result.raw()) {
-				byte[] id = kv.getQualifier();
+				long id = Long.valueOf(Bytes.toString(kv.getQualifier()));
 				int value = 1;
 				if(map.containsKey(id))
 					value = map.get(id) + 1;
@@ -62,9 +62,9 @@ public class AuthorsWhoFollow extends HSubQuery {
 		List<Author> result = new ArrayList<Author>();
 		int followMin = this.atLeast.getLowerBound();
 		
-		for(Map.Entry<byte[], Integer> e : map.entrySet()) {
+		for(Map.Entry<Long, Integer> e : map.entrySet()) {
 			if(e.getValue() >= followMin)
-				result.add(new Author(Long.parseLong(Bytes.toString(e.getKey()))));
+				result.add(new Author(e.getKey()));
 		}
 		
 		this.getQuery().updateUsers(result);
