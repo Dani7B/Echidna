@@ -22,7 +22,7 @@ public class TimeRange {
 	 * @param start the lower extreme of the time window
 	 * @param end the upper extreme of the time window
 	 * */
-	public TimeRange(long start, long end) {
+	public TimeRange(final long start, final long end) {
 		this.start = start;
 		this.end = end;
 	}
@@ -40,7 +40,7 @@ public class TimeRange {
 	 * Sets the lower extreme of the time window
 	 * @param start the lower extreme of the time window
 	 */
-	public void setStart(long start) {
+	public void setStart(final long start) {
 		this.start = start;
 	}
 
@@ -56,7 +56,7 @@ public class TimeRange {
 	 * Sets the upper extreme of the time window
 	 * @param end the upper extreme of the time window
 	 */
-	public void setEnd(long end) {
+	public void setEnd(final long end) {
 		this.end = end;
 	}
 

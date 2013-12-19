@@ -30,7 +30,7 @@ public class HBaseClientFactory {
 		}
 	}
 	
-	private HBaseClient createHBaseClient(String tableName) {
+	private HBaseClient createHBaseClient(final String tableName) {
 		HBaseClient client = null;
 		try {
 			client = new HTableManager(this.admin.getTable(tableName));

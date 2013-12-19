@@ -48,8 +48,8 @@ public class AuthorsThatMentioned extends HSubQuery {
 	 * @param atLeast the minimum number of authors to mention
 	 * @param mentions the mentions of authors
 	 */
-	public AuthorsThatMentioned(HQuery query, HBaseClient client, TimeRange timeRange,
-									AtLeast atLeast, Mention...mentions) {
+	public AuthorsThatMentioned(final HQuery query, final HBaseClient client, final TimeRange timeRange,
+									final AtLeast atLeast, final Mention...mentions) {
 		super(query);
 		this.client = client;
 		this.timeRange = timeRange;
@@ -60,7 +60,7 @@ public class AuthorsThatMentioned extends HSubQuery {
 	}
 	
 	@Override
-	public void execute(Authors authors) throws IOException {
+	public void execute(final Authors authors) throws IOException {
 		
 		Map<byte[],Integer> map = new HashMap<byte[],Integer>();
 		long lowerBound = this.timeRange.getStart();
@@ -103,7 +103,7 @@ public class AuthorsThatMentioned extends HSubQuery {
 		this.getQuery().updateUsers(result);
 	}
 
-	private static String generateRowKey(long id, long timestamp) {
+	private static String generateRowKey(final long id, final long timestamp) {
 		
 		return id + "_" + dateFormatter.format(new Date(timestamp));
 	}

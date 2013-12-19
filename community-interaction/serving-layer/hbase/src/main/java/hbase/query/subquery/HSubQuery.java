@@ -18,7 +18,7 @@ public abstract class HSubQuery {
 	 * @return a HSubQuery instance
 	 * @param query the query the subquery belongs to
 	 */
-	public HSubQuery(HQuery query) {
+	public HSubQuery(final HQuery query) {
 		this.query = query;
 		this.query.addSubquery(this);
 	}
@@ -35,7 +35,7 @@ public abstract class HSubQuery {
 	 * Sets the belonging query
 	 * @param query the belonging query
 	 */
-	public void setQuery(HQuery query) {
+	public void setQuery(final HQuery query) {
 		this.query = query;
 	}
 	
@@ -43,6 +43,6 @@ public abstract class HSubQuery {
 	 * Execute the subquery
 	 * @param authors the authors against who execute the query
 	 */
-	public abstract void execute(Authors authors) throws IOException;
+	public abstract void execute(final Authors authors) throws IOException;
 
 }

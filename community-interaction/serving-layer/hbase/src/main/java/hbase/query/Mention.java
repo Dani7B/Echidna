@@ -14,7 +14,7 @@ public class Mention {
 	 * Creates an instance of Mention
 	 * @param author the author being mentioned
 	 */
-	public Mention(Author author) {
+	public Mention(final Author author) {
 		this.mentioned = author;
 	}
 	
@@ -22,7 +22,7 @@ public class Mention {
 	 * Creates an instance of Mention by key (author id)
 	 * @param id the id of the author being mentioned
 	 */
-	public Mention(long id) {
+	public Mention(final long id) {
 		this.mentioned = new Author(id);
 	}
 	
@@ -38,7 +38,7 @@ public class Mention {
 	 * Sets the mentioned in the mention
 	 * @param mentioned the author being mentioned
 	 */
-	public void setMentioned(Author mentioned) {
+	public void setMentioned(final Author mentioned) {
 		this.mentioned = mentioned;
 	}
 

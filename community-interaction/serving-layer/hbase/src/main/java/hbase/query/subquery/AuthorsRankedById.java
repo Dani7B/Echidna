@@ -17,13 +17,13 @@ public class AuthorsRankedById extends HSubQuery {
 	 * @param query the belonging query
 	 * @param ascOrDesc the desired order (ascendent=true, descendent=false)
 	 */
-	public AuthorsRankedById(HQuery query, boolean ascOrDesc) {
+	public AuthorsRankedById(final HQuery query, final boolean ascOrDesc) {
 		super(query);
 		this.asc = ascOrDesc;
 	}
 
 	@Override
-	public void execute(Authors authors) {
+	public void execute(final Authors authors) {
 		
 		if(asc) {
 			Collections.sort(authors.getAuthors(), new AuthorComparerAsc());
@@ -43,11 +43,11 @@ public class AuthorsRankedById extends HSubQuery {
 	private static class AuthorComparerAsc implements Comparator<Author> {
 		  
 		@Override
-		  public int compare(Author x, Author y) {
+		  public int compare(final Author x, final Author y) {
 			return compare(x.getId(), y.getId());
 		  }
 
-		  private static int compare(long a, long b) {
+		  private static int compare(final long a, final long b) {
 		    return a < b ? -1
 		         : a > b ? 1
 		         : 0;
@@ -61,11 +61,11 @@ public class AuthorsRankedById extends HSubQuery {
 	private static class AuthorComparerDesc implements Comparator<Author> {
 		  
 		@Override
-		  public int compare(Author x, Author y) {
+		  public int compare(final Author x, final Author y) {
 			return compare(x.getId(), y.getId());
 		  }
 
-		  private static int compare(long a, long b) {
+		  private static int compare(final long a, final long b) {
 		    return a < b ? 1
 		         : a > b ? -1
 		         : 0;

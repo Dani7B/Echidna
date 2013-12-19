@@ -22,13 +22,13 @@ public class AuthorsTake extends HSubQuery {
 	 * @param query the belonging query
 	 * @param amount the number of authors to retrieve
 	 */
-	public AuthorsTake(HQuery query, int amount) {
+	public AuthorsTake(final HQuery query, final int amount) {
 		super(query);
 		this.amount = amount;
 	}
 
 	@Override
-	public void execute(Authors authors) {
+	public void execute(final Authors authors) {
 		
 		List<Author> result = new ArrayList<Author>();
 		int i = 0;

@@ -21,7 +21,7 @@ public class HQuery {
 		return this.users;
 	}
 	
-	public void updateUsers(List<Author> authors) {
+	public void updateUsers(final List<Author> authors) {
 		this.users.setAuthors(authors);;
 	}
 	
@@ -29,7 +29,7 @@ public class HQuery {
 		return this.subqueries;
 	}
 	
-	public void addSubquery(HSubQuery subquery) {
+	public void addSubquery(final HSubQuery subquery) {
 		this.subqueries.add(subquery);
 	}
 	

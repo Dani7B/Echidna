@@ -21,7 +21,7 @@ public class LastMonth extends TimeRange {
 	 * @return a LastMonth instance
 	 * @param now the upper extreme of the time window
 	 */
-	public LastMonth(long now) {
+	public LastMonth(final long now) {
 		super(getLastMonthMills(now),now);
 	}
 	
@@ -31,7 +31,7 @@ public class LastMonth extends TimeRange {
 	 * @return the millisecond of the lower extreme of the time window, taking into account the upper extreme
 	 * @param now the upper extreme of the time window
 	 */
-	private static long getLastMonthMills(long now) {
+	private static long getLastMonthMills(final long now) {
 		Calendar c = Calendar.getInstance();
 		c.setTimeInMillis(now);
 		c.add(Calendar.MONTH, -1);// one month ago

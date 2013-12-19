@@ -12,7 +12,7 @@ public class Author {
 	 * Creates an instance of Author
 	 * @param id the author id
 	 */
-	public Author(long id) {
+	public Author(final long id) {
 		this.id = id;
 	}
 
@@ -30,7 +30,7 @@ public class Author {
 	 * Sets the author id
 	 * @param id the author id
 	 */
-	public void setId(long id) {
+	public void setId(final long id) {
 		this.id = id;
 	}
 	

@@ -43,7 +43,7 @@ public class HTableAdmin implements HBaseAdministrator {
      * @return an instance of the HBaseAdministrator with the specified configuration 
 	 * @throws MasterNotRunningException 
 	 * @throws ZooKeeperConnectionException */
-	public HTableAdmin(Configuration config) throws MasterNotRunningException, ZooKeeperConnectionException {
+	public HTableAdmin(final Configuration config) throws MasterNotRunningException, ZooKeeperConnectionException {
 		
 		this.admin = new HBaseAdmin(config);
 		this.connection = HConnectionManager.createConnection(config);
@@ -56,7 +56,7 @@ public class HTableAdmin implements HBaseAdministrator {
 	
 	
 	@Override
-	public void createTable(String table, String... colfams) throws IOException {
+	public void createTable(final String table, final String... colfams) throws IOException {
 		
 		if(!existsTable(table)) {
 		
@@ -73,20 +73,20 @@ public class HTableAdmin implements HBaseAdministrator {
 	
 	
 	@Override
-	public boolean existsTable(String table) throws IOException {
+	public boolean existsTable(final String table) throws IOException {
 		
 		return admin.tableExists(table);
 	}
 	
 	
 	@Override
-	public void disableTable(String table) throws IOException {
+	public void disableTable(final String table) throws IOException {
 	    admin.disableTable(table);
 	}
 	
 	
 	@Override
-	public HTable getTable(String table) throws IOException {
+	public HTable getTable(final String table) throws IOException {
 	
 		if (existsTable(table)) {
 			return (HTable) this.connection.getTable(table);
@@ -96,7 +96,7 @@ public class HTableAdmin implements HBaseAdministrator {
 	
 	
 	@Override
-	public void deleteTable(String table) throws IOException {
+	public void deleteTable(final String table) throws IOException {
 	    
 		if (existsTable(table)) {
 			disableTable(table);

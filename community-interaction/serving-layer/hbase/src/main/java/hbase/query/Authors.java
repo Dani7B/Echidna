@@ -28,7 +28,7 @@ public class Authors {
 	 * Create an instance of Authors
 	 * @param query the query the author collection is associated to
 	 */
-	public Authors(HQuery query) {
+	public Authors(final HQuery query) {
 		this.query = query;
 		this.authors = new ArrayList<Author>();
 	}
@@ -40,7 +40,7 @@ public class Authors {
 	 * @param atLeast the minimum number of mentions per author
 	 * @param mentions the mentions
 	 */
-	public Authors thatMentioned(TimeRange timeRange, AtLeast atLeast, Mention... mentions) {
+	public Authors thatMentioned(final TimeRange timeRange, final AtLeast atLeast, final Mention... mentions) {
 		HBaseClient client = HBaseClientFactory.getInstance().getMentionedBy();
     	HSubQuery sub = new AuthorsThatMentioned(this.query, client, timeRange, atLeast, mentions);
         return this;
@@ -52,7 +52,7 @@ public class Authors {
 	 * @param atLeast the minimum number of mentions per author
 	 * @param followed the followed authors
 	 */
-	public Authors whoFollow(AtLeast atLeast, Author... followed) {
+	public Authors whoFollow(final AtLeast atLeast, final Author... followed) {
 		HBaseClient client = HBaseClientFactory.getInstance().getFollowedBy();
     	HSubQuery sub = new AuthorsWhoFollow(this.query, client, atLeast, followed);
 		return this;
@@ -64,7 +64,7 @@ public class Authors {
 	 * @return this
 	 * @param ascOrDesc the kind of order desired (true=ascendent, false=descendent)
 	 */
-	public Authors rankedById(boolean ascOrDesc) {
+	public Authors rankedById(final boolean ascOrDesc) {
     	HSubQuery sub = new AuthorsRankedById(this.query, ascOrDesc);
         return this;
     }
@@ -74,7 +74,7 @@ public class Authors {
 	 * @return the query
 	 * @param amount the number of authors to return
 	 */
-	public HQuery take(int amount) {
+	public HQuery take(final int amount) {
 		HSubQuery sub = new AuthorsTake(this.query, amount);
         return this.query;
     }
@@ -91,7 +91,7 @@ public class Authors {
 	 * Sets the authors list
 	 * @param the authors list
 	 */
-	public void setAuthors(List<Author> authors) {
+	public void setAuthors(final List<Author> authors) {
 		this.authors = authors;
 	}
 	

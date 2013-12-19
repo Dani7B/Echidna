@@ -15,7 +15,7 @@ public class HQueryManager {
 	public HQueryManager() {
 	}
 	
-	public Authors answer(HQuery q) throws IOException {
+	public Authors answer(final HQuery q) throws IOException {
 		return q.answer();
 	}
 

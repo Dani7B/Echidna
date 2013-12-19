@@ -37,7 +37,8 @@ public class AuthorsWhoFollow extends HSubQuery {
 	 * @param atLeast the minimum number of authors to follow
 	 * @param authors the followed authors
 	 */
-	public AuthorsWhoFollow(HQuery query, HBaseClient client, AtLeast atLeast, Author... authors) {
+	public AuthorsWhoFollow(final HQuery query, final HBaseClient client,
+								final AtLeast atLeast, final Author... authors) {
 		super(query);
 		this.client = client;
 		this.atLeast = atLeast;
@@ -47,7 +48,7 @@ public class AuthorsWhoFollow extends HSubQuery {
 	}
 
 	@Override
-	public void execute(Authors authors) throws IOException {
+	public void execute(final Authors authors) throws IOException {
 		
 		byte[][] columns = new byte[authors.getAuthors().size()][];
 		

@@ -13,7 +13,7 @@ public class AtLeast {
 	 * Creates an AtLeast instance
 	 * @param lowerBound the minimum to allow for a given property
 	 */
-	public AtLeast(int lowerBound) {
+	public AtLeast(final int lowerBound) {
 		this.lowerBound = lowerBound;
 	}
 
@@ -31,7 +31,7 @@ public class AtLeast {
 	 * Sets the minimum allowed value
 	 * @param lowerBound the minimum allowed
 	 */
-	public void setLowerBound(int lowerBound) {
+	public void setLowerBound(final int lowerBound) {
 		this.lowerBound = lowerBound;
 	}
 	

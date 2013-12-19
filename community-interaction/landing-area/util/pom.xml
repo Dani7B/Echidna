@@ -17,11 +17,32 @@
                           <url>http://conjars.org/repo</url>
                 </repository>
         </repositories>
+  
+  <properties>
+        <elasticsearch-test.version>0.90.6</elasticsearch-test.version>
+        <es.version>0.90.7</es.version>
+        <joda-time.version>2.3</joda-time.version>
+    </properties>
         
   <dependencies>
           <dependency>
             <groupId>org.apache.hadoop</groupId>
             <artifactId>hadoop-core</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.elasticsearch</groupId>
+            <artifactId>elasticsearch</artifactId>
+            <version>${es.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>joda-time</groupId>
+            <artifactId>joda-time</artifactId>
+            <version>${joda-time.version}</version>
+        </dependency>
+        <dependency>
+        	<groupId>it.cybion.commons</groupId>
+        	<artifactId>utils</artifactId>
+        	<version>1.0-SNAPSHOT</version>
         </dependency>
   </dependencies>
 </project>

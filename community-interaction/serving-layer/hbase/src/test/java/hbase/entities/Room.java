@@ -16,7 +16,7 @@ public class Room {
 		return name;
 	}
 
-	public void setName(String name) {
+	public void setName(final String name) {
 		this.name = name;
 	}
 
@@ -24,7 +24,7 @@ public class Room {
 		return mq;
 	}
 
-	public void setMq(int mq) {
+	public void setMq(final int mq) {
 		this.mq = mq;
 	}
 
