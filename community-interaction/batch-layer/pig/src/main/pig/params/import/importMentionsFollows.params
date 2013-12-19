@@ -1,0 +1,2 @@
+MENTIONS=hdfs://localhost:54310/user/daniele/mentions
+FOLLOWS=hdfs://localhost:54310/user/daniele/follows
