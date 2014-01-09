@@ -19,10 +19,8 @@
         </repositories>
   
   <properties>
-        <elasticsearch-test.version>0.90.6</elasticsearch-test.version>
-        <es.version>0.90.7</es.version>
-        <joda-time.version>2.3</joda-time.version>
-    </properties>
+        <es.version>0.90.9</es.version>
+  </properties>
         
   <dependencies>
           <dependency>
@@ -33,11 +31,6 @@
             <groupId>org.elasticsearch</groupId>
             <artifactId>elasticsearch</artifactId>
             <version>${es.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>joda-time</groupId>
-            <artifactId>joda-time</artifactId>
-            <version>${joda-time.version}</version>
         </dependency>
         <dependency>
         	<groupId>it.cybion.commons</groupId>
