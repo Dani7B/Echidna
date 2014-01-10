@@ -1,2 +1,4 @@
 MENTIONS=hdfs://localhost:54310/user/daniele/mentions
 FOLLOWS=hdfs://localhost:54310/user/daniele/follows
+FROM=1386640237611
+TO=1389261085000
