@@ -1,2 +1,4 @@
 INPUTDIR=hdfs://localhost:54310/user/daniele/mentions
-OUTPUTDIR=mentionedBy
+GLOBAL=mentionedBy
+MONTHLY=mentionedByMonth
+DAILY=mentionedByDay
