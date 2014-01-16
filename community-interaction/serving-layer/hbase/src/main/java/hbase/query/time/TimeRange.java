@@ -1,10 +1,12 @@
 package hbase.query.time;
 
+import hbase.HBaseClient;
+
 /**
  * Simple class to represent a time range
  * @author Daniele Morgantini
  */
-public class TimeRange {
+public abstract class TimeRange {
 
 	private long start;
 	private long end;
@@ -59,5 +61,10 @@ public class TimeRange {
 	public void setEnd(final long end) {
 		this.end = end;
 	}
-
+	
+	public abstract HBaseClient chooseHBaseClient();
+	
+	public abstract String generateFirstRowKey(final long id);
+	
+	public abstract String generateLastRowKey(final long id);
 }

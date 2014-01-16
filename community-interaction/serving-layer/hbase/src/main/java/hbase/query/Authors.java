@@ -4,9 +4,11 @@ import hbase.HBaseClient;
 import hbase.impls.HBaseClientFactory;
 import hbase.query.subquery.AuthorsRankedById;
 import hbase.query.subquery.AuthorsTake;
-import hbase.query.subquery.AuthorsThatMentioned;
+import hbase.query.subquery.AuthorsThatMentionedBackwards;
+import hbase.query.subquery.AuthorsThatMentionedFixedTime;
 import hbase.query.subquery.AuthorsWhoFollow;
 import hbase.query.subquery.HSubQuery;
+import hbase.query.time.FixedTime;
 import hbase.query.time.TimeRange;
 
 import java.util.ArrayList;
@@ -41,8 +43,19 @@ public class Authors {
 	 * @param mentions the mentions
 	 */
 	public Authors thatMentioned(final TimeRange timeRange, final AtLeast atLeast, final Mention... mentions) {
-		HBaseClient client = HBaseClientFactory.getInstance().getMentionedBy();
-    	HSubQuery sub = new AuthorsThatMentioned(this.query, client, timeRange, atLeast, mentions);
+    	HSubQuery sub = new AuthorsThatMentionedBackwards(this.query, timeRange, atLeast, mentions);
+        return this;
+    }
+	
+	/**
+	 * Adds the authors-that-mentioned subquery to the query
+	 * @return this
+	 * @param range the time range to take into account
+	 * @param atLeast the minimum number of mentions per author
+	 * @param mentions the mentions
+	 */
+	public Authors thatMentioned(final FixedTime timeRange, final AtLeast atLeast, final Mention... mentions) {
+    	HSubQuery sub = new AuthorsThatMentionedFixedTime(this.query, timeRange, atLeast, mentions);
         return this;
     }
 	

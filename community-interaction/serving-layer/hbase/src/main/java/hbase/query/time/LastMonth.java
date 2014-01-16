@@ -1,41 +1,59 @@
 package hbase.query.time;
 
+import hbase.HBaseClient;
+import hbase.impls.HBaseClientFactory;
+
+import java.text.SimpleDateFormat;
 import java.util.Calendar;
+import java.util.Date;
 
 /**
  * Simple class to represent last month's time window
  * @author Daniele Morgantini
  */
-public class LastMonth extends TimeRange {
+public class LastMonth implements FixedTime {
 
+	private String date;
+	
 	/** 
 	 * No arguments constructor
 	 * @return a LastMonth instance
 	 */
 	public LastMonth() {
-		this(System.currentTimeMillis());
-	}
-	
-	/**
-	 * Creates a LastMonth instance with a desired upper extreme for the time window
-	 * @return a LastMonth instance
-	 * @param now the upper extreme of the time window
-	 */
-	public LastMonth(final long now) {
-		super(getLastMonthMills(now),now);
+		super();
+		final SimpleDateFormat dateFormatter = new SimpleDateFormat("yyyy-MM");
+		final long oneMonthAgo = getLastMonthMills();
+		date = dateFormatter.format(new Date(oneMonthAgo));
 	}
 	
 	
+	public String getDate() {
+		return date;
+	}
+
+	public void setDate(String date) {
+		this.date = date;
+	}
+
+
 	/**
-	 * Computes the lower extreme of the time window
-	 * @return the millisecond of the lower extreme of the time window, taking into account the upper extreme
-	 * @param now the upper extreme of the time window
+	 * Computes the milliseconds of a day in last month
+	 * @return the milliseconds of now, one month ago
 	 */
-	private static long getLastMonthMills(final long now) {
+	private static long getLastMonthMills() {
 		Calendar c = Calendar.getInstance();
-		c.setTimeInMillis(now);
+		c.setTimeInMillis(System.currentTimeMillis());
 		c.add(Calendar.MONTH, -1);// one month ago
 		return c.getTimeInMillis();
+	}
+	
+	
+	public HBaseClient chooseHBaseClient() {
+		return HBaseClientFactory.getInstance().getMentionedByMonth();
+	}
+	
+	public String generateRowKey(final long id) {
+		return id + "_" + date;
 	}
 
 }

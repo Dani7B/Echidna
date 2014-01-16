@@ -28,7 +28,7 @@ public class HQueryTest {
 											new Mention(14), new Mention(12))
 								.whoFollow(new AtLeast(1), new Author(22), new Author(21), new Author(25))
 								.rankedById(false)
-								.take(2);
+								.take(3);
 
         final HQueryManager queryManager = new HQueryManager();
         Authors answer = null;

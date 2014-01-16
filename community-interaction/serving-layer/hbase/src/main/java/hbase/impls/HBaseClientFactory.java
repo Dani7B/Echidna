@@ -18,6 +18,10 @@ public class HBaseClientFactory {
 	
 	private HBaseClient mentionedBy;
 	
+	private HBaseClient mentionedByMonth;
+	
+	private HBaseClient mentionedByDay;
+	
 	private HBaseClient followedBy;
 
 
@@ -47,15 +51,29 @@ public class HBaseClientFactory {
 	}
 
 	public HBaseClient getMentionedBy() {
-		if(this.mentionedBy == null)
-			this.mentionedBy = createHBaseClient("mentionedBy");
-		return this.mentionedBy;
+		this.mentionedBy = this.instantiateClient(this.mentionedBy, "mentionedBy");
+		return this.mentionedBy ;
+	}
+	
+	public HBaseClient getMentionedByMonth() {
+		this.mentionedByMonth = this.instantiateClient(this.mentionedByMonth, "mentionedByMonth");
+		return this.mentionedByMonth;
+	}
+	
+	public HBaseClient getMentionedByDay() {
+		this.mentionedByDay = this.instantiateClient(this.mentionedByDay, "mentionedByDay");
+		return this.mentionedByDay;
 	}
 	
 	public HBaseClient getFollowedBy() {
-		if(this.followedBy == null)
-			this.followedBy = createHBaseClient("followedBy");
+		this.followedBy = this.instantiateClient(this.followedBy, "followedBy");
 		return this.followedBy;
 	}
 
+	private HBaseClient instantiateClient(final HBaseClient table, final String name) {
+		HBaseClient client = table;
+		if(client == null)
+			client = createHBaseClient(name);
+		return client;
+	}
 }
