@@ -1,14 +1,32 @@
 /*
-* Simple code to read followed-by relationships from binary file and store them into HBase
+* Simple code to read "X follows Y" relationships from binary file and store them appropriately into HBase tables
 */
 
-follow = LOAD '$INPUTDIR/part*' USING BinStorage() AS (id:long, followed:long, ts:long);
+DEFINE HBaseStorage org.apache.pig.backend.hadoop.hbase.HBaseStorage('t:*', '-caster HBaseBinaryConverter');
+
+follow = LOAD '$INPUTDIR/part*' USING BinStorage() AS (follower:long, followed:long, ts:long);
+
+
+/* Work to compute followedBy view */
+
 followedBy = GROUP follow BY followed;
-refined = FOREACH followedBy {
+upsideDown = FOREACH followedBy {
 			reversed = FOREACH follow 
-				GENERATE followed, TOMAP((chararray)id,ts);
+				GENERATE followed, TOMAP((chararray)follower,ts);
 			GENERATE FLATTEN(reversed);
 		};
+		
+STORE upsideDown INTO 'hbase://$FOLLOWEDBY' USING HBaseStorage;
 
-STORE refined INTO 'hbase://$OUTPUTDIR' USING org.apache.pig.backend.hadoop.hbase.HBaseStorage
-			('t:*', '-caster HBaseBinaryConverter');
+
+
+/* Work to compute follow view */
+
+follows = GROUP follow BY follower;
+downsideUp = FOREACH follows {
+			straight = FOREACH follow 
+				GENERATE follower, TOMAP((chararray)followed,ts);
+			GENERATE FLATTEN(straight);
+			};
+
+STORE downsideUp INTO 'hbase://$FOLLOW' USING HBaseStorage;

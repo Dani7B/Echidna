@@ -1,2 +1,3 @@
 INPUTDIR=hdfs://localhost:54310/user/daniele/follows
-OUTPUTDIR=followedBy
+FOLLOWEDBY=followedBy
+FOLLOW=follow
