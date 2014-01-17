@@ -33,8 +33,7 @@ public class AuthorsThatMentionedFixedTime extends AuthorsThatMentioned {
 	 * Creates an instance of AuthorsThatMentionedFixedTime subquery
 	 * @return an instance of AuthorsThatMentionedFixedTime subquery
 	 * @param query the belonging query
-	 * @param client the HBaseClient to query HBase
-	 * @param timeRange the time window to take into account
+	 * @param timeRange the fixed time window to take into account
 	 * @param atLeast the minimum number of authors to mention
 	 * @param mentions the mentions of authors
 	 */
@@ -48,19 +47,25 @@ public class AuthorsThatMentionedFixedTime extends AuthorsThatMentioned {
 	@Override
 	public void execute(final Authors authors) throws IOException {
 		
-		Map<byte[],Integer> map = new HashMap<byte[],Integer>();
+		Map<String,Integer> map = new HashMap<String,Integer>();
 		int mentionMin = this.getAtLeast().getLowerBound();
 		
+		byte[][] auths = new byte[authors.size()][];
+		int i = 0;
+		for(Author a : authors.getAuthors()) {
+			auths[i] = Bytes.toBytes(String.valueOf(a.getId()));
+			i++;
+		}
 				
 		for(Mention m : this.getMentions()){
 			
 			String row = this.timeRange.generateRowKey(m.getMentioned().getId());
 						
-			Result result = this.client.get(row);
+			Result result = this.client.get(Bytes.toBytes(row), auths);
 			
 			for(KeyValue kv : result.raw()) {
 				int value = 1;
-				byte[] mentioner = kv.getQualifier();
+				String mentioner = Bytes.toString(kv.getQualifier());
 				if(map.containsKey(mentioner)) {
 					value = map.get(mentioner) + 1;
 				}
@@ -69,10 +74,10 @@ public class AuthorsThatMentionedFixedTime extends AuthorsThatMentioned {
 		}
 		
 		List<Author> result = new ArrayList<Author>();
-		for(Map.Entry<byte[], Integer> e : map.entrySet()) {
+		for(Map.Entry<String, Integer> e : map.entrySet()) {
 			int value = e.getValue();
 			if(value >= mentionMin)
-				result.add(new Author(Long.parseLong(Bytes.toString(e.getKey()))));
+				result.add(new Author(Long.parseLong(e.getKey())));
 		}
 		
 		this.getQuery().updateUsers(result);

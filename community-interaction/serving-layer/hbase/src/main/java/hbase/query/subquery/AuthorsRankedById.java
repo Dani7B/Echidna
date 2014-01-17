@@ -7,6 +7,10 @@ import hbase.query.Author;
 import hbase.query.Authors;
 import hbase.query.HQuery;
 
+/**
+ * Subquery to represent the ordering of authors by id
+ * @author Daniele Morgantini
+ */
 public class AuthorsRankedById extends HSubQuery {
 
 	boolean asc;

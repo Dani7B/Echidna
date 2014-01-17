@@ -27,8 +27,6 @@ public abstract class AuthorsThatMentioned extends HSubQuery {
 	 */
 	public AuthorsThatMentioned(final HQuery query, final AtLeast atLeast, final Mention...mentions) {
 		super(query);
-		//this.timeRange = timeRange;
-		//this.client = this.timeRange.chooseHBaseClient();
 		this.atLeast = atLeast;
 		this.mentions = new ArrayList<Mention>();
 		for(Mention m : mentions)

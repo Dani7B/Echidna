@@ -2,6 +2,7 @@ package hbase.query;
 
 import hbase.HBaseClient;
 import hbase.impls.HBaseClientFactory;
+import hbase.query.result.PartialResult;
 import hbase.query.subquery.AuthorsRankedById;
 import hbase.query.subquery.AuthorsTake;
 import hbase.query.subquery.AuthorsThatMentionedBackwards;
@@ -36,9 +37,26 @@ public class Authors {
 	}
 	
 	/**
+	 * Checks if the authors list is empty
+	 * @return true if the authors list is empty, false otherwise
+	 * */
+	public boolean isEmpty() {
+		return this.authors.isEmpty();
+	}
+	
+	
+	/**
+	 * Retrieves the number of authors
+	 * @return the number of authors
+	 * */
+	public int size() {
+		return this.authors.size();
+	}
+	
+	/**
 	 * Adds the authors-that-mentioned subquery to the query
 	 * @return this
-	 * @param range the time range to take into account
+	 * @param timeRange the specific time range to take into account
 	 * @param atLeast the minimum number of mentions per author
 	 * @param mentions the mentions
 	 */
@@ -50,7 +68,7 @@ public class Authors {
 	/**
 	 * Adds the authors-that-mentioned subquery to the query
 	 * @return this
-	 * @param range the time range to take into account
+	 * @param timeRange the fixed time range to take into account
 	 * @param atLeast the minimum number of mentions per author
 	 * @param mentions the mentions
 	 */
@@ -92,6 +110,19 @@ public class Authors {
         return this.query;
     }
 
+	
+	/**
+	 * Adds the authors-who-follow subquery to the query
+	 * @return this
+	 * @param atLeast the minimum number of mentions per author
+	 * @param followed the followed authors
+	 */
+	public PartialResult whoseFollowers() {
+		PartialResult partial = null;
+		return partial;
+    }
+	
+	
 	/**
 	 * Retrieves the authors list
 	 * @return the authors list

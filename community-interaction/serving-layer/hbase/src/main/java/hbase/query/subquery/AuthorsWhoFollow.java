@@ -62,7 +62,13 @@ public class AuthorsWhoFollow extends HSubQuery {
 		
 		for(Author a : this.followed) {
 			byte[] aID = Bytes.toBytes(a.getId());
-			Result result = this.client.get(aID, columns);
+			Result result = null;
+			if(authors.isEmpty()) {
+				result = this.client.get(aID);
+			}
+			else {
+				result = this.client.get(aID, columns);
+			}
 			
 			for(KeyValue kv : result.raw()) {
 				long id = Long.valueOf(Bytes.toString(kv.getQualifier()));

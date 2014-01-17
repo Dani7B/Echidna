@@ -21,7 +21,7 @@ import hbase.query.Mention;
 import hbase.query.time.TimeRange;
 
 /**
- * Subquery to represent the authors-that-mentioned request
+ * Subquery to represent the very specific and precise authors-that-mentioned request
  * @author Daniele Morgantini
  */
 public class AuthorsThatMentionedBackwards extends AuthorsThatMentioned {
@@ -35,8 +35,7 @@ public class AuthorsThatMentionedBackwards extends AuthorsThatMentioned {
 	 * Creates an instance of AuthorsThatMentionedBackwards subquery
 	 * @return an instance of AuthorsThatMentionedBackwards subquery
 	 * @param query the belonging query
-	 * @param client the HBaseClient to query HBase
-	 * @param timeRange the time window to take into account
+	 * @param timeRange the specific time window to take into account
 	 * @param atLeast the minimum number of authors to mention
 	 * @param mentions the mentions of authors
 	 */
@@ -51,9 +50,16 @@ public class AuthorsThatMentionedBackwards extends AuthorsThatMentioned {
 	public void execute(final Authors authors) throws IOException {
 		
 		Map<byte[],Integer> map = new HashMap<byte[],Integer>();
-		long lowerBound = this.timeRange.getStart();
-		long upperBound = this.timeRange.getEnd();
-		int mentionMin = this.getAtLeast().getLowerBound();
+		final long lowerBound = this.timeRange.getStart();
+		final long upperBound = this.timeRange.getEnd();
+		final int mentionMin = this.getAtLeast().getLowerBound();
+		
+		byte[][] auths = new byte[authors.size()][];
+		int i = 0;
+		for(Author a : authors.getAuthors()) {
+			auths[i] = Bytes.toBytes(a.getId());
+			i++;
+		}
 		
 				
 		for(Mention m : this.getMentions()){
@@ -63,7 +69,8 @@ public class AuthorsThatMentionedBackwards extends AuthorsThatMentioned {
 						
 			Result[] results = this.client.scan(Bytes.toBytes(lowerRow),Bytes.toBytes(upperRow),
 												Bytes.toBytes(String.valueOf(lowerBound)),
-												Bytes.toBytes(String.valueOf(upperBound)));
+												Bytes.toBytes(String.valueOf(upperBound)),
+												auths);
 			
 			Set<byte[]> singleIDs = new HashSet<byte[]>();
 			for(Result res : results){

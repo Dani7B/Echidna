@@ -19,6 +19,7 @@ import org.apache.hadoop.hbase.filter.BinaryComparator;
 import org.apache.hadoop.hbase.filter.Filter;
 import org.apache.hadoop.hbase.filter.FilterList;
 import org.apache.hadoop.hbase.filter.QualifierFilter;
+import org.apache.hadoop.hbase.filter.ValueFilter;
 import org.apache.hadoop.hbase.util.Bytes;
 
 /**
@@ -74,8 +75,15 @@ public class HTableManager implements HBaseClient {
 	@Override
 	public Result get(final String row) throws IOException {
 		
-		Get tableRow = new Get(Bytes.toBytes(row));
-		return this.table.get(tableRow);
+		return this.get(Bytes.toBytes(row));
+	}
+	
+	
+	@Override
+	public Result get(final byte[] row) throws IOException {
+		
+		byte[][] allowedValues = new byte[0][];
+		return this.get(row, allowedValues);
 	}
 	
 	
@@ -246,6 +254,38 @@ public class HTableManager implements HBaseClient {
 	@Override
 	public Result[] scan(final byte[] lowerRow, final byte[] upperRow, final byte[] lowerValue,
 							final byte[] upperValue) throws IOException {
+		/*		
+		Scan scan = new Scan(lowerRow,upperRow);
+				
+		FilterList fList = new FilterList(FilterList.Operator.MUST_PASS_ALL);
+		
+		Filter qualifierFilter1 = new QualifierFilter(CompareFilter.CompareOp.GREATER_OR_EQUAL,
+				new BinaryComparator(lowerValue));
+		fList.addFilter(qualifierFilter1);
+		
+		Filter qualifierFilter2 = new QualifierFilter(CompareFilter.CompareOp.LESS_OR_EQUAL,
+				new BinaryComparator(upperValue));
+		fList.addFilter(qualifierFilter2);
+		
+		scan.setFilter(fList);
+				
+		ResultScanner scanner = this.table.getScanner(scan);
+		List<Result> results = new ArrayList<Result>();
+		for (Result res : scanner) {
+			results.add(res);
+		}
+		scanner.close();
+		
+		Result[] finalResult = new Result[results.size()];
+		return results.toArray(finalResult);*/
+		byte[][] allowedValues = new byte[0][];
+		return this.scan(lowerRow, upperRow, lowerValue, upperValue, allowedValues);
+	}
+	
+	
+	@Override
+	public Result[] scan(final byte[] lowerRow, final byte[] upperRow, final byte[] lowerValue,
+							final byte[] upperValue, final byte[][] allowedValues) throws IOException {
 				
 		Scan scan = new Scan(lowerRow,upperRow);
 				
@@ -258,6 +298,14 @@ public class HTableManager implements HBaseClient {
 		Filter qualifierFilter2 = new QualifierFilter(CompareFilter.CompareOp.LESS_OR_EQUAL,
 				new BinaryComparator(upperValue));
 		fList.addFilter(qualifierFilter2);
+		
+		FilterList valueList = new FilterList(FilterList.Operator.MUST_PASS_ONE);
+
+		for(byte[] value : allowedValues) {
+			Filter valueFilter = new ValueFilter(CompareFilter.CompareOp.EQUAL,
+					new BinaryComparator(value));
+			valueList.addFilter(valueFilter);
+		}
 		
 		scan.setFilter(fList);
 				

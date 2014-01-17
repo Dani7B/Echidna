@@ -45,6 +45,13 @@ public interface HBaseClient {
 	 * @return the result of the get query
 	 * @param row the row key */
 	public abstract Result get(final String row) throws IOException;
+	
+	
+	/**
+	 * Single get to retrieve the latest version of all the columns for a row
+	 * @return the result of the get query
+	 * @param row the row key */
+	public abstract Result get(final byte[] row) throws IOException;
 
 	
 	/**
@@ -167,6 +174,17 @@ public interface HBaseClient {
 	public abstract Result[] scan(final byte[] lowerRow, final byte[] upperRow,
 									final byte[] lowerValue, final byte[] upperValue) throws IOException;
 	
+	
+	/**
+	 * Scan to return the results in the row range and column range
+	 * @return multiple results satisfying the query
+	 * @param lowerRow the smallest row key to look for (included)
+	 * @param upperRow the biggest row key to look for (excluded)
+	 * @param lowerValue the smallest qualifier (column) value in the range (included)
+	 * @param upperValue the biggest qualifier (column) value in the range (excluded) 
+	 * @param allowedValues the list of allowed values to consider */
+	public abstract Result[] scan(final byte[] lowerRow, final byte[] upperRow, final byte[] lowerValue,
+									final byte[] upperValue, final byte[][] allowedValues) throws IOException;
 	
 	/**
 	 * Single get to return the results in the column range

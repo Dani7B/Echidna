@@ -9,6 +9,7 @@ import java.util.Date;
 
 /**
  * Simple class to represent last month's time window
+ * (i.e. if today is 02/02/2014 last month is 01/2014)
  * @author Daniele Morgantini
  */
 public class LastMonth implements FixedTime {
