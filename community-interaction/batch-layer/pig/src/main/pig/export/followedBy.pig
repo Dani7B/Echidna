@@ -30,3 +30,33 @@ downsideUp = FOREACH follows {
 			};
 
 STORE downsideUp INTO 'hbase://$FOLLOW' USING HBaseStorage;
+
+
+/* Work to compute "whose follower follow" view */
+
+DEFINE DUPLICATE(in) RETURNS out {
+        $out = FOREACH $in GENERATE *;
+};
+	
+duplic = DUPLICATE(follow);
+
+joined = JOIN follow BY follower, duplic BY follower;
+
+jGrouped = GROUP joined BY follow::followed;
+couples = FOREACH jGrouped {
+			coupled = FOREACH joined
+					GENERATE (follow::followed,duplic::followed) AS couple;
+				GENERATE FLATTEN(coupled);
+		};
+
+tuples = GROUP couples by couple;
+counted = FOREACH tuples GENERATE group AS tup, COUNT(couples) AS counter;
+
+cGrouped = GROUP counted BY tup;
+wff = FOREACH cGrouped {
+			row = FOREACH counted 
+				GENERATE tup.$0, TOMAP((chararray)tup.$1,counter);
+			GENERATE FLATTEN(row);
+			};
+
+whoseFollowersFollow = STORE wff INTO 'hbase://$WHOSEFOLLOWERSFOLLOW' USING HBaseStorage;	
