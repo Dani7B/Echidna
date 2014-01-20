@@ -38,14 +38,14 @@ DEFINE DUPLICATE(in) RETURNS out {
         $out = FOREACH $in GENERATE *;
 };
 	
-duplic = DUPLICATE(follow);
+duplicated = DUPLICATE(follow);
 
-joined = JOIN follow BY follower, duplic BY follower;
+joined = JOIN follow BY follower, duplicated BY follower;
 
 jGrouped = GROUP joined BY follow::followed;
 couples = FOREACH jGrouped {
 			coupled = FOREACH joined
-					GENERATE (follow::followed,duplic::followed) AS couple;
+					GENERATE (follow::followed,duplicated::followed) AS couple;
 				GENERATE FLATTEN(coupled);
 		};
 
