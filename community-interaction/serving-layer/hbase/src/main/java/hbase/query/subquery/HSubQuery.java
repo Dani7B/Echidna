@@ -13,6 +13,7 @@ public abstract class HSubQuery {
 	
 	private HQuery query;
 	
+	
 	/**
 	 * Creates an instance of HSubQuery and attaches it to the belonging HQuery
 	 * @return a HSubQuery instance

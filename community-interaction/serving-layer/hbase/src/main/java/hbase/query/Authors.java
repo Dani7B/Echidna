@@ -2,13 +2,15 @@ package hbase.query;
 
 import hbase.HBaseClient;
 import hbase.impls.HBaseClientFactory;
-import hbase.query.result.PartialResult;
+import hbase.query.subquery.AuthorsRankedByHits;
 import hbase.query.subquery.AuthorsRankedById;
 import hbase.query.subquery.AuthorsTake;
 import hbase.query.subquery.AuthorsThatMentionedBackwards;
 import hbase.query.subquery.AuthorsThatMentionedFixedTime;
 import hbase.query.subquery.AuthorsWhoFollow;
 import hbase.query.subquery.HSubQuery;
+import hbase.query.subquery.HSubQueryComposed;
+import hbase.query.subquery.part.WhoseFollowers;
 import hbase.query.time.FixedTime;
 import hbase.query.time.TimeRange;
 
@@ -114,14 +116,18 @@ public class Authors {
 	/**
 	 * Adds the authors-who-follow subquery to the query
 	 * @return this
-	 * @param atLeast the minimum number of mentions per author
-	 * @param followed the followed authors
 	 */
-	public PartialResult whoseFollowers() {
-		PartialResult partial = null;
-		return partial;
+	public WhoseFollowers whoseFollowers() {
+		final HSubQueryComposed sub = new HSubQueryComposed(this.query);
+		final WhoseFollowers part = new WhoseFollowers(sub, this);
+		return part;
     }
 	
+	
+	public Authors rankedByHits(final boolean ascOrDesc) {
+    	HSubQuery sub = new AuthorsRankedByHits(this.query, ascOrDesc);
+        return this;
+    } 
 	
 	/**
 	 * Retrieves the authors list
@@ -130,7 +136,7 @@ public class Authors {
 	public List<Author> getAuthors() {
 		return authors;
 	}
-
+	
 	/**
 	 * Sets the authors list
 	 * @param the authors list
@@ -138,6 +144,7 @@ public class Authors {
 	public void setAuthors(final List<Author> authors) {
 		this.authors = authors;
 	}
+
 	
 	/**
 	 * Retrieve the string representation of the authors list

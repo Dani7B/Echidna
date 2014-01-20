@@ -42,10 +42,6 @@ public class HQueryTest {
         
         System.out.println(answer.toString());
         
-        /*final HQuery query2 = new HQuery()
-								.users()
-								.whoseFollowers().follow(new Author(25)).rankedByHits(true)
-								.take(10);*/
         
         final HQuery reversedQuery = new HQuery()
 										.users()
@@ -63,6 +59,14 @@ public class HQueryTest {
 		}
         
         System.out.println(answer.toString());
+        
+        
+        final HQuery query2 = new HQuery()
+								.users()
+								.whoseFollowers().follow(new Author(25))
+								.rankedByHits(true)
+								.take(10);
+        
     }
 
 }

@@ -24,7 +24,7 @@ public class HBaseClientFactory {
 	
 	private HBaseClient followedBy;
 
-
+	private HBaseClient follow;
 	
 	private HBaseClientFactory() {
 		try {
@@ -70,6 +70,11 @@ public class HBaseClientFactory {
 		return this.followedBy;
 	}
 
+	public HBaseClient getFollow() {
+		this.follow = this.instantiateClient(this.follow, "follow");
+		return this.follow;
+	}
+	
 	private HBaseClient instantiateClient(final HBaseClient table, final String name) {
 		HBaseClient client = table;
 		if(client == null)

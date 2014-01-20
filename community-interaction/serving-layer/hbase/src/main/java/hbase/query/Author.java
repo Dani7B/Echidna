@@ -8,18 +8,21 @@ public class Author {
 
 	private long id;
 	
+	private int hits;
+		
 	/**
 	 * Creates an instance of Author
-	 * @param id the author id
+	 * @param id the author's id
 	 */
 	public Author(final long id) {
 		this.id = id;
+		this.hits = 1;
 	}
 
 	
 	/**
-	 * Retrieves the author id
-	 * @return the author id
+	 * Retrieves the author's id
+	 * @return the author's id
 	 */
 	public long getId() {
 		return id;
@@ -27,11 +30,35 @@ public class Author {
 
 	
 	/**
-	 * Sets the author id
-	 * @param id the author id
+	 * Sets the author's id
+	 * @param id the author's id
 	 */
 	public void setId(final long id) {
 		this.id = id;
+	}
+	
+	
+	/**
+	 * Retrieves the number of hits for the author
+	 * @return the number of hits for the author
+	 */
+	public int getHits() {
+		return hits;
+	}
+
+	/**
+	 * Sets the number of hits for the author
+	 * @param id the number of hits for the author
+	 */
+	public void setHits(int hits) {
+		this.hits = hits;
+	}
+
+	/**
+	 * Increments by one the number of hits for the author
+	 */
+	public void incrementHits() {
+		this.hits++;
 	}
 	
 	/**
