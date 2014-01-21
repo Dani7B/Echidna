@@ -32,7 +32,7 @@ downsideUp = FOREACH follows {
 STORE downsideUp INTO 'hbase://$FOLLOW' USING HBaseStorage;
 
 
-/* Work to compute "whose follower follow" view */
+/* Work to compute "whose followers follow" view */
 
 DEFINE DUPLICATE(in) RETURNS out {
         $out = FOREACH $in GENERATE *;
@@ -59,4 +59,29 @@ wff = FOREACH cGrouped {
 			GENERATE FLATTEN(row);
 			};
 
-whoseFollowersFollow = STORE wff INTO 'hbase://$WHOSEFOLLOWERSFOLLOW' USING HBaseStorage;	
+whoseFollowersFollow = STORE wff INTO 'hbase://$WHOSEFOLLOWERSFOLLOW' USING HBaseStorage;
+
+
+
+/* Work to compute "whose followers are followed by" view */
+
+joinedF = JOIN follow BY followed, duplicated BY follower;
+
+jGroupedF = GROUP joinedF BY follow::follower;
+couplesF = FOREACH jGroupedF {
+			coupledF = FOREACH joinedF
+					GENERATE (follow::follower,duplicated::followed) AS coupleF;
+				GENERATE FLATTEN(coupledF);
+		};
+
+tuplesF = GROUP couplesF by coupleF;
+countedF = FOREACH tuplesF GENERATE group AS tupF, COUNT(couplesF) AS counterF;
+
+cGroupedF = GROUP countedF BY tupF;
+wfafb = FOREACH cGroupedF {
+			rowF = FOREACH countedF
+				GENERATE tupF.$0, TOMAP((chararray)tupF.$1,(int)counterF);
+			GENERATE FLATTEN(rowF);
+			};
+
+whoseFollowersAreFollowedBy = STORE wfafb INTO 'hbase://$WHOSEFOLLOWERSAREFOLLOWEDBY' USING HBaseStorage;	
