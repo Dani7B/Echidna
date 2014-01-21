@@ -55,7 +55,7 @@ counted = FOREACH tuples GENERATE group AS tup, COUNT(couples) AS counter;
 cGrouped = GROUP counted BY tup;
 wff = FOREACH cGrouped {
 			row = FOREACH counted 
-				GENERATE tup.$0, TOMAP((chararray)tup.$1,counter);
+				GENERATE tup.$0, TOMAP((chararray)tup.$1,(int)counter);
 			GENERATE FLATTEN(row);
 			};
 
