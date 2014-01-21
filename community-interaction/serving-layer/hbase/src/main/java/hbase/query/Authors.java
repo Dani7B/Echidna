@@ -112,9 +112,8 @@ public class Authors {
 
 	
 	/**
-	 * Adds the authors-who-follow subquery to the query
+	 * Adds the authors-whose-followers-follow subquery to the query
 	 * @return this
-	 * @param atLeast the minimum number of mentions per author
 	 * @param followed the followed authors
 	 */
 	public Authors whoseFollowersFollow(final Author... followed) {

@@ -34,7 +34,6 @@ public class AuthorsWhoFollow extends HSubQuery {
 	 * Creates an instance of AuthorsWhoFollow subquery
 	 * @return an instance of AuthorsWhoFollow subquery
 	 * @param query the belonging query
-	 * @param client the HBaseClient to query HBase
 	 * @param atLeast the minimum number of authors to follow
 	 * @param authors the followed authors
 	 */
