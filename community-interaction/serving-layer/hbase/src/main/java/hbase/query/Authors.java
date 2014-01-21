@@ -1,13 +1,12 @@
 package hbase.query;
 
-import hbase.HBaseClient;
-import hbase.impls.HBaseClientFactory;
 import hbase.query.subquery.AuthorsRankedByHits;
 import hbase.query.subquery.AuthorsRankedById;
 import hbase.query.subquery.AuthorsTake;
 import hbase.query.subquery.AuthorsThatMentionedBackwards;
 import hbase.query.subquery.AuthorsThatMentionedFixedTime;
 import hbase.query.subquery.AuthorsWhoFollow;
+import hbase.query.subquery.AuthorsWhoseFollowersFollow;
 import hbase.query.subquery.HSubQuery;
 import hbase.query.subquery.HSubQueryComposed;
 import hbase.query.subquery.part.WhoseFollowers;
@@ -86,8 +85,7 @@ public class Authors {
 	 * @param followed the followed authors
 	 */
 	public Authors whoFollow(final AtLeast atLeast, final Author... followed) {
-		HBaseClient client = HBaseClientFactory.getInstance().getFollowedBy();
-    	HSubQuery sub = new AuthorsWhoFollow(this.query, client, atLeast, followed);
+    	HSubQuery sub = new AuthorsWhoFollow(this.query, atLeast, followed);
 		return this;
     }
 	
@@ -112,6 +110,18 @@ public class Authors {
         return this.query;
     }
 
+	
+	/**
+	 * Adds the authors-who-follow subquery to the query
+	 * @return this
+	 * @param atLeast the minimum number of mentions per author
+	 * @param followed the followed authors
+	 */
+	public Authors whoseFollowersFollow(final Author... followed) {
+    	HSubQuery sub = new AuthorsWhoseFollowersFollow(this.query, followed);
+		return this;
+    }
+	
 	
 	/**
 	 * Adds the authors-who-follow subquery to the query

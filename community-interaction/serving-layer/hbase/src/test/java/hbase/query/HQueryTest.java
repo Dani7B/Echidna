@@ -4,7 +4,6 @@ import java.io.IOException;
 
 import hbase.impls.HQueryManager;
 import hbase.query.time.LastMonth;
-import hbase.query.time.LastMonthFromNow;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -63,9 +62,24 @@ public class HQueryTest {
         
         final HQuery query2 = new HQuery()
 								.users()
+								.whoseFollowersFollow(new Author(21),new Author(22))
+								.rankedByHits(true)
+								.take(5);
+        
+        try {
+			answer = queryManager.answer(query2);
+			
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+        
+        System.out.println(answer.toString());
+        
+        /*final HQuery query2 = new HQuery()
+								.users()
 								.whoseFollowers().follow(new Author(25))
 								.rankedByHits(true)
-								.take(10);
+								.take(10);*/
         
     }
 

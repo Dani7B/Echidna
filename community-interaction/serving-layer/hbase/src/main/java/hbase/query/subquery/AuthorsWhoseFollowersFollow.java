@@ -12,7 +12,6 @@ import org.apache.hadoop.hbase.util.Bytes;
 
 import hbase.HBaseClient;
 import hbase.impls.HBaseClientFactory;
-import hbase.query.AtLeast;
 import hbase.query.Author;
 import hbase.query.Authors;
 import hbase.query.HQuery;
@@ -21,12 +20,10 @@ import hbase.query.HQuery;
  * Subquery to represent the authors-who-follow request
  * @author Daniele Morgantini
  */
-public class AuthorsWhoFollow extends HSubQuery {
+public class AuthorsWhoseFollowersFollow extends HSubQuery {
 
 	private HBaseClient client;
-	
-	private AtLeast atLeast;
-	
+		
 	private List<Author> followed;
 	
 	
@@ -38,10 +35,9 @@ public class AuthorsWhoFollow extends HSubQuery {
 	 * @param atLeast the minimum number of authors to follow
 	 * @param authors the followed authors
 	 */
-	public AuthorsWhoFollow(final HQuery query,	final AtLeast atLeast, final Author... authors) {
+	public AuthorsWhoseFollowersFollow(final HQuery query, final Author... authors) {
 		super(query);
-		this.client = HBaseClientFactory.getInstance().getFollowedBy();
-		this.atLeast = atLeast;
+		this.client = HBaseClientFactory.getInstance().getWhoseFollowersFollow();
 		this.followed = new ArrayList<Author>();
 		for(Author a : authors)
 			this.followed.add(a);
@@ -72,22 +68,21 @@ public class AuthorsWhoFollow extends HSubQuery {
 			
 			for(KeyValue kv : result.raw()) {
 				long id = Long.valueOf(Bytes.toString(kv.getQualifier()));
-				int value = 1;
+				int value = Bytes.toInt(kv.getValue());
 				if(map.containsKey(id))
-					value = map.get(id) + 1;
+					value += map.get(id);
 				map.put(id, value);
 			}
 		}
 		
-		List<Author> result = new ArrayList<Author>();
-		int followMin = this.atLeast.getLowerBound();
-		
+		List<Author> list = new ArrayList<Author>();
 		for(Map.Entry<Long, Integer> e : map.entrySet()) {
-			if(e.getValue() >= followMin)
-				result.add(new Author(e.getKey()));
+			Author a = new Author(e.getKey());
+			a.setHits(e.getValue());
+			list.add(a);
 		}
 		
-		this.getQuery().updateUsers(result);
+		this.getQuery().updateUsers(list);
 	}
 
 }

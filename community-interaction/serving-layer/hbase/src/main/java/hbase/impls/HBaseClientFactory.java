@@ -26,6 +26,8 @@ public class HBaseClientFactory {
 
 	private HBaseClient follow;
 	
+	private HBaseClient whoseFollowersFollow;
+	
 	private HBaseClientFactory() {
 		try {
 			this.admin = new HTableAdmin();
@@ -73,6 +75,11 @@ public class HBaseClientFactory {
 	public HBaseClient getFollow() {
 		this.follow = this.instantiateClient(this.follow, "follow");
 		return this.follow;
+	}
+	
+	public HBaseClient getWhoseFollowersFollow() {
+		this.whoseFollowersFollow = this.instantiateClient(this.whoseFollowersFollow, "wff");
+		return this.whoseFollowersFollow;
 	}
 	
 	private HBaseClient instantiateClient(final HBaseClient table, final String name) {
