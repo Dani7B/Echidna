@@ -6,6 +6,7 @@ import hbase.query.subquery.AuthorsTake;
 import hbase.query.subquery.AuthorsThatMentionedBackwards;
 import hbase.query.subquery.AuthorsThatMentionedFixedTime;
 import hbase.query.subquery.AuthorsWhoFollow;
+import hbase.query.subquery.AuthorsWhoseFollowersAreFollowedBy;
 import hbase.query.subquery.AuthorsWhoseFollowersFollow;
 import hbase.query.subquery.HSubQuery;
 import hbase.query.subquery.HSubQueryComposed;
@@ -121,6 +122,15 @@ public class Authors {
 		return this;
     }
 	
+	/**
+	 * Adds the authors-whose-followers-are-followed-by subquery to the query
+	 * @return this
+	 * @param followed the followed authors
+	 */
+	public Authors whoseFollowersAreFollowedBy(final Author... followers) {
+    	HSubQuery sub = new AuthorsWhoseFollowersAreFollowedBy(this.query, followers);
+		return this;
+    }
 	
 	/**
 	 * Adds the authors-who-follow subquery to the query

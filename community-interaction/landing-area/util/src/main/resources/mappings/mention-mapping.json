@@ -1,0 +1,9 @@
+{
+	"mention":	{
+		"properties": {
+			"mentioner":{"type":"long", "index":"not_analyzed"},
+			"mentioned":{"type":"long", "index":"not_analyzed"},
+			"timestamp":{"type":"long", "index":"not_analyzed"}
+		}
+	}
+}

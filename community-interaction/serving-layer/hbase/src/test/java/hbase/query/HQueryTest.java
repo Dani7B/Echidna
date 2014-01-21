@@ -75,6 +75,22 @@ public class HQueryTest {
         
         System.out.println(answer.toString());
         
+        
+        final HQuery query3 = new HQuery()
+								.users()
+								.whoseFollowersAreFollowedBy(new Author(3),new Author(5))
+								.rankedByHits(true)
+								.take(5);
+		
+		try {
+		answer = queryManager.answer(query3);
+		
+		} catch (IOException e) {
+		e.printStackTrace();
+		}
+		
+		System.out.println(answer.toString());
+        
         /*final HQuery query2 = new HQuery()
 								.users()
 								.whoseFollowers().follow(new Author(25))

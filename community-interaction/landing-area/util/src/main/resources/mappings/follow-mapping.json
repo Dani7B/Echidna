@@ -1,0 +1,9 @@
+{
+	"follow":	{
+		"properties": {
+			"follower":{"type":"long", "index":"not_analyzed"},
+			"followed":{"type":"long", "index":"not_analyzed"},
+			"timestamp":{"type":"long", "index":"not_analyzed"}
+		}
+	}
+}
