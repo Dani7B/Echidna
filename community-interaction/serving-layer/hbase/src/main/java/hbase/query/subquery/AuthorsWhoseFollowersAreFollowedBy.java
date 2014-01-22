@@ -17,7 +17,8 @@ import hbase.query.Authors;
 import hbase.query.HQuery;
 
 /**
- * Subquery to represent the authors-whose-followers-follow request
+ * Subquery to represent the authors-whose-followers-follow request.
+ * The result is computed considering the followers in OR.
  * @author Daniele Morgantini
  */
 public class AuthorsWhoseFollowersAreFollowedBy extends HSubQuery {

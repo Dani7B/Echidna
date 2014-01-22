@@ -50,14 +50,7 @@ couples = FOREACH jGrouped {
 		};
 
 tuples = GROUP couples by couple;
-counted = FOREACH tuples GENERATE group AS tup, COUNT(couples) AS counter;
-
-cGrouped = GROUP counted BY tup;
-wff = FOREACH cGrouped {
-			row = FOREACH counted 
-				GENERATE tup.$0, TOMAP((chararray)tup.$1,(int)counter);
-			GENERATE FLATTEN(row);
-			};
+wff = FOREACH tuples GENERATE group.$0, TOMAP((chararray)group.$1,(int)COUNT(couples));
 
 whoseFollowersFollow = STORE wff INTO 'hbase://$WHOSEFOLLOWERSFOLLOW' USING HBaseStorage;
 
@@ -75,13 +68,6 @@ couplesF = FOREACH jGroupedF {
 		};
 
 tuplesF = GROUP couplesF by coupleF;
-countedF = FOREACH tuplesF GENERATE group AS tupF, COUNT(couplesF) AS counterF;
-
-cGroupedF = GROUP countedF BY tupF;
-wfafb = FOREACH cGroupedF {
-			rowF = FOREACH countedF
-				GENERATE tupF.$0, TOMAP((chararray)tupF.$1,(int)counterF);
-			GENERATE FLATTEN(rowF);
-			};
+wfafb = FOREACH tuplesF GENERATE group.$0, TOMAP((chararray)group.$1,(int)COUNT(couplesF));
 
 whoseFollowersAreFollowedBy = STORE wfafb INTO 'hbase://$WHOSEFOLLOWERSAREFOLLOWEDBY' USING HBaseStorage;	

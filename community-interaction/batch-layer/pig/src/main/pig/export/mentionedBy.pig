@@ -30,15 +30,8 @@ month = FOREACH mentioned_group {
 		};
 		
 monthLine = GROUP month BY couple;
-newMonthLine = FOREACH monthLine
-			GENERATE group.$0 AS key:chararray, group.$1 AS mentioner:long, COUNT(month) AS counter:long;
-
-groupedMonthLine = GROUP newMonthLine BY key;
-montly = FOREACH groupedMonthLine {
-			part = FOREACH newMonthLine
-					GENERATE key, TOMAP((chararray)mentioner,counter);
-				GENERATE FLATTEN(part);
-		};
+montly = FOREACH monthLine
+				GENERATE group.$0, TOMAP((chararray) group.$1, (int)COUNT(month));
 		
 STORE montly INTO 'hbase://$MONTHLY' USING HBaseStorage;
 
@@ -48,21 +41,13 @@ STORE montly INTO 'hbase://$MONTHLY' USING HBaseStorage;
 
 day = FOREACH mentioned_group {
 		  mentioned_day = FOREACH simple
-					GENERATE (CONCAT(CONCAT((chararray)mentioned,'_'), SUBSTRING(UnixToISO(ts),0,10)) , mentioner) AS couple,
-					CONCAT(CONCAT((chararray)mentioned,'_'), SUBSTRING(UnixToISO(ts),0,10)) AS key:chararray, mentioner, ts;
+				GENERATE (CONCAT(CONCAT((chararray)mentioned,'_'), SUBSTRING(UnixToISO(ts),0,10)) , mentioner) AS couple, ts;
 			GENERATE FLATTEN(mentioned_day);
 		};
 		
 dayLine = GROUP day BY couple;
-newDayLine = FOREACH dayLine
-			GENERATE group.$0 AS key:chararray, group.$1 AS mentioner:long, COUNT(day) AS counter:long;
-
-groupedDayLine = GROUP newDayLine BY key;
-daily = FOREACH groupedDayLine {
-			part = FOREACH newDayLine
-					GENERATE key, TOMAP((chararray)mentioner,counter);
-				GENERATE FLATTEN(part);
-		};
+daily = FOREACH dayLine
+				GENERATE group.$0, TOMAP((chararray) group.$1, (int)COUNT(day));
 
 STORE daily INTO 'hbase://$DAILY' USING HBaseStorage;		
 
@@ -70,10 +55,10 @@ STORE daily INTO 'hbase://$DAILY' USING HBaseStorage;
 
 /* Work to compute mentionedBy */
 
-mentionedByGroup = GROUP day BY key;
+mentionedByGroup = GROUP day BY couple;
 global = FOREACH mentionedByGroup {
 				part = FOREACH day
-					GENERATE key, TOMAP((chararray)ts,mentioner);
+					GENERATE couple.$0, TOMAP((chararray)ts,couple.$1);
 				GENERATE FLATTEN(part);
 			};
 
