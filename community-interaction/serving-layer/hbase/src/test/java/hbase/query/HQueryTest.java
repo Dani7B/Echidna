@@ -22,6 +22,8 @@ public class HQueryTest {
 
     private static void usersQuery() {
 
+        final HQueryManager queryManager = new HQueryManager();
+    	
     	final HQuery query = new HQuery()
 								.users()
 								.thatMentioned(new LastMonth(), new AtLeast(1), new Mention(11),
@@ -30,16 +32,7 @@ public class HQueryTest {
 								.rankedById(false)
 								.take(4);
 
-        final HQueryManager queryManager = new HQueryManager();
-        Authors answer = null;
-        try {
-			answer = queryManager.answer(query);
-			
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-        
-        System.out.println(answer.toString());
+        printResult(queryManager, query);
         
         
         final HQuery reversedQuery = new HQuery()
@@ -50,15 +43,8 @@ public class HQueryTest {
 										.rankedById(false)
 										.take(4);
         
-        try {
-			answer = queryManager.answer(reversedQuery);
-			
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-        
-        System.out.println(answer.toString());
-        
+        printResult(queryManager, reversedQuery);
+
         
         final HQuery query2 = new HQuery()
 								.users()
@@ -66,14 +52,7 @@ public class HQueryTest {
 								.rankedByHits(true)
 								.take(5);
         
-        try {
-			answer = queryManager.answer(query2);
-			
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-        
-        System.out.println(answer.toString());
+        printResult(queryManager, query2);
         
         
         final HQuery query3 = new HQuery()
@@ -82,14 +61,19 @@ public class HQueryTest {
 								.rankedByHits(true)
 								.take(5);
 		
-		try {
-		answer = queryManager.answer(query3);
-		
-		} catch (IOException e) {
-		e.printStackTrace();
-		}
-		
-		System.out.println(answer.toString());
+        printResult(queryManager, query3);
+
+        
+        final HQuery complexQuery = new HQuery()
+								.users()
+								.thatMentioned(new LastMonth(), new AtLeast(1), new Mention(11),
+											new Mention(14), new Mention(12))
+								.whoFollow(new AtLeast(1), new Author(22), new Author(21), new Author(25))
+								.whoseFollowersFollow(new Author(32),new Author(22))
+								.rankedByHits(true)
+								.take(5);
+
+        printResult(queryManager, complexQuery);
         
         /*final HQuery query2 = new HQuery()
 								.users()
@@ -99,4 +83,18 @@ public class HQueryTest {
         
     }
 
+    
+    private static void printResult(HQueryManager queryManager, HQuery query) {
+    	
+    	Authors answer = null;
+    	long start = System.currentTimeMillis();
+    	try {
+    		answer = queryManager.answer(query);
+    	} catch (IOException e) {
+    		e.printStackTrace();
+    	}
+    	long end = System.currentTimeMillis();
+    	System.out.println(answer.toString() + " computed in: " + (end - start)+ " msec.");
+            
+    }
 }
