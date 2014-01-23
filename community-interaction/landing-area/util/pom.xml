@@ -19,7 +19,7 @@
         </repositories>
   
   <properties>
-        <es.version>0.90.9</es.version>
+        <es.version>0.90.10</es.version>
   </properties>
         
   <dependencies>
