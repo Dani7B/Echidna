@@ -15,5 +15,4 @@ ordered = FOREACH snapshots {
 		};
 dfp = GROUP ordered BY couple;
 number = FOREACH dfp GENERATE group, COUNT(ordered);
-STORE number INTO 'hbase://$OUTPUTDIR' USING org.apache.pig.backend.hadoop.hbase.HBaseStorage
-			('users:defaults');
+STORE number INTO 'hbase://$OUTPUTDIR' USING org.apache.pig.backend.hadoop.hbase.HBaseStorage('users:defaults');
