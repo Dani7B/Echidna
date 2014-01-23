@@ -32,7 +32,10 @@ public class HQueryTest {
 								.rankedById(false)
 								.take(4);
 
-        printResult(queryManager, query, "Users that mentioned and follow");
+    	String info = "The top 4 users by id that mentioned at least 1 among 11, 14, 12 in the last month \n"
+    			+ " and follow at least 1 among 22, 21, 25 \n";
+        printResult(queryManager, query, info);
+        System.out.println("");
         
         
         final HQuery reversedQuery = new HQuery()
@@ -43,7 +46,10 @@ public class HQueryTest {
 										.rankedById(false)
 										.take(4);
         
-        printResult(queryManager, reversedQuery, "Users that follow and mentioned");
+    	info = "The top 4 users by id that follow at least 1 among 22, 21, 25 and \n"
+    			+ " mentioned at least 1 among 11, 14, 12 in the last month \n";
+        printResult(queryManager, reversedQuery, info);
+        System.out.println("");
 
         
         final HQuery query2 = new HQuery()
@@ -52,8 +58,10 @@ public class HQueryTest {
 								.rankedByHits(true)
 								.take(5);
         
-        printResult(queryManager, query2, "Users whose followers follow");
-        
+        info = "The top 5 users whose followers follow 21 or 22 \n";
+        printResult(queryManager, query2, info);
+        System.out.println("");
+
         
         final HQuery query3 = new HQuery()
 								.users()
@@ -61,7 +69,9 @@ public class HQueryTest {
 								.rankedByHits(true)
 								.take(5);
 		
-        printResult(queryManager, query3, "Users whose followers are followed by");
+        info = "The top 5 users whose followers are followed by 3 or 5 \n";
+        printResult(queryManager, query3, info);
+        System.out.println("");
 
         
         final HQuery complexQuery = new HQuery()
@@ -73,7 +83,12 @@ public class HQueryTest {
 								.rankedByHits(true)
 								.take(5);
 
-        printResult(queryManager, complexQuery, "Users that mentioned, who follow and whose followers follow");
+        info = "The top 5 users that mentioned at least 1 among 11, 14, 12 in the last month, \n"
+    			+ "follow at least 1 among 22, 21, 25 and \n"
+    			+ "whose followers follow 32 or 22 \n";
+        printResult(queryManager, complexQuery, info);
+        System.out.println("");
+
         
         final HQuery query4 = new HQuery()
 								.users()
@@ -82,7 +97,10 @@ public class HQueryTest {
 								.rankedByHits(true)
 								.take(5);
 
-        printResult(queryManager, query4, "Users whose followers mentioned");
+        info = "The top 5 users whose followers mentioned two or more times \n"
+        		+ " at least one among 11, 14 and 12 in the last month \n";
+        printResult(queryManager, query4, info);
+        System.out.println("");
 
         
         /*final HQuery query2 = new HQuery()
