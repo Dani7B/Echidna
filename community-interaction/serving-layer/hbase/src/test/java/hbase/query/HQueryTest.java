@@ -32,7 +32,7 @@ public class HQueryTest {
 								.rankedById(false)
 								.take(4);
 
-        printResult(queryManager, query);
+        printResult(queryManager, query, "Users that mentioned and follow");
         
         
         final HQuery reversedQuery = new HQuery()
@@ -43,7 +43,7 @@ public class HQueryTest {
 										.rankedById(false)
 										.take(4);
         
-        printResult(queryManager, reversedQuery);
+        printResult(queryManager, reversedQuery, "Users that follow and mentioned");
 
         
         final HQuery query2 = new HQuery()
@@ -52,7 +52,7 @@ public class HQueryTest {
 								.rankedByHits(true)
 								.take(5);
         
-        printResult(queryManager, query2);
+        printResult(queryManager, query2, "Users whose followers follow");
         
         
         final HQuery query3 = new HQuery()
@@ -61,7 +61,7 @@ public class HQueryTest {
 								.rankedByHits(true)
 								.take(5);
 		
-        printResult(queryManager, query3);
+        printResult(queryManager, query3, "Users whose followers are followed by");
 
         
         final HQuery complexQuery = new HQuery()
@@ -73,7 +73,17 @@ public class HQueryTest {
 								.rankedByHits(true)
 								.take(5);
 
-        printResult(queryManager, complexQuery);
+        printResult(queryManager, complexQuery, "Users that mentioned, who follow and whose followers follow");
+        
+        final HQuery query4 = new HQuery()
+								.users()
+								.whoseFollowersMentioned(new LastMonth(), new AtLeast(1), new AtLeastTimes(2),
+										new Mention(11), new Mention(14), new Mention(12))
+								.rankedByHits(true)
+								.take(5);
+
+        printResult(queryManager, query4, "Users whose followers mentioned");
+
         
         /*final HQuery query2 = new HQuery()
 								.users()
@@ -84,7 +94,7 @@ public class HQueryTest {
     }
 
     
-    private static void printResult(HQueryManager queryManager, HQuery query) {
+    private static void printResult(HQueryManager queryManager, HQuery query, String header) {
     	
     	Authors answer = null;
     	long start = System.currentTimeMillis();
@@ -94,7 +104,8 @@ public class HQueryTest {
     		e.printStackTrace();
     	}
     	long end = System.currentTimeMillis();
-    	System.out.println(answer.toString() + " computed in: " + (end - start)+ " msec.");
+    	System.out.println(header + " " + answer.toString() 
+    			+ " computed in: " + (end - start)+ " msec.");
             
     }
 }

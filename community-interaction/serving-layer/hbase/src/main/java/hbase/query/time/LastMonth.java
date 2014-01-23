@@ -1,8 +1,5 @@
 package hbase.query.time;
 
-import hbase.HBaseClient;
-import hbase.impls.HBaseClientFactory;
-
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
@@ -27,11 +24,16 @@ public class LastMonth implements FixedTime {
 		date = dateFormatter.format(new Date(oneMonthAgo));
 	}
 	
-	
+	/** Retrieves the string version of the last month date
+	 * @return the string version of the last month date 
+	 */
 	public String getDate() {
 		return date;
 	}
 
+	/** Sets the string version of the last month date
+	 * @param date the string version of the last month date to set
+	 */
 	public void setDate(String date) {
 		this.date = date;
 	}
@@ -48,11 +50,7 @@ public class LastMonth implements FixedTime {
 		return c.getTimeInMillis();
 	}
 	
-	
-	public HBaseClient chooseHBaseClient() {
-		return HBaseClientFactory.getInstance().getMentionedByMonth();
-	}
-	
+	@Override
 	public String generateRowKey(final long id) {
 		return id + "_" + date;
 	}

@@ -13,6 +13,7 @@ import org.apache.hadoop.hbase.util.Bytes;
 import hbase.HBaseClient;
 import hbase.impls.HBaseClientFactory;
 import hbase.query.AtLeast;
+import hbase.query.AtLeastTimes;
 import hbase.query.Author;
 import hbase.query.Authors;
 import hbase.query.HQuery;
@@ -21,10 +22,10 @@ import hbase.query.time.FixedTime;
 import hbase.query.time.LastMonth;
 
 /**
- * Subquery to represent the authors-that-mentioned request in a fixed time window
+ * Subquery to represent the authors-whose-followers-mentioned request in a fixed time window
  * @author Daniele Morgantini
  */
-public class AuthorsThatMentionedFixedTime extends AuthorsThatMentioned {
+public class AuthorsWhoseFollowersMentionedFixedTime extends AuthorsWhoseFollowersMentioned {
 	
 	private HBaseClient client;
 	
@@ -32,21 +33,23 @@ public class AuthorsThatMentionedFixedTime extends AuthorsThatMentioned {
 				
 	
 	/**
-	 * Creates an instance of AuthorsThatMentionedFixedTime subquery
-	 * @return an instance of AuthorsThatMentionedFixedTime subquery
+	 * Creates an instance of AuthorsWhoseFollowersMentionedFixedTime subquery
+	 * @return an instance of AuthorsWhoseFollowersMentionedFixedTime subquery
 	 * @param query the belonging query
 	 * @param timeRange the fixed time window to take into account
 	 * @param atLeast the minimum number of authors to mention
+	 * @param times the minimum number of mentions per author
 	 * @param mentions the mentions of authors
 	 */
-	public AuthorsThatMentionedFixedTime(final HQuery query, final FixedTime timeRange,
-									final AtLeast atLeast, final Mention...mentions) {
-		super(query, atLeast, mentions);
+	public AuthorsWhoseFollowersMentionedFixedTime(final HQuery query, final FixedTime timeRange,
+							final AtLeast atLeast, final AtLeastTimes times, final Mention...mentions) {
+		super(query, atLeast, times, mentions);
 		this.timeRange = timeRange;
 		if(timeRange instanceof LastMonth)
-			this.client = HBaseClientFactory.getInstance().getMentionedByMonth();
+			this.client = HBaseClientFactory.getInstance().getWhoseFollowersMentionedByMonth();
 		else
-			this.client = HBaseClientFactory.getInstance().getMentionedByDay();
+			this.client = HBaseClientFactory.getInstance().getWhoseFollowersMentionedByDay();
+
 	}
 	
 	@Override
@@ -54,6 +57,7 @@ public class AuthorsThatMentionedFixedTime extends AuthorsThatMentioned {
 		
 		Map<String,Integer> map = new HashMap<String,Integer>();
 		int mentionMin = this.getAtLeast().getLowerBound();
+		int minMentionsPerAuth = this.getAtLeastTimes().getTimes();
 		
 		byte[][] auths = new byte[authors.size()][];
 		int i = 0;
@@ -66,7 +70,7 @@ public class AuthorsThatMentionedFixedTime extends AuthorsThatMentioned {
 			
 			String row = this.timeRange.generateRowKey(m.getMentioned().getId());
 						
-			Result result = this.client.get(Bytes.toBytes(row), auths);
+			Result result = this.client.get(Bytes.toBytes(row), auths, Bytes.toBytes(minMentionsPerAuth));
 			
 			for(KeyValue kv : result.raw()) {
 				int value = 1;

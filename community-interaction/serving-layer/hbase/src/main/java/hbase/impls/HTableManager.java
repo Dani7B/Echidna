@@ -353,4 +353,21 @@ public class HTableManager implements HBaseClient {
 				
 		return this.table.get(tableRow);
 	}
+	
+	@Override
+	public Result get(final byte[] row, final byte[][] qualifiers, final byte[] min) throws IOException {
+		
+		Get tableRow = new Get(row);
+		for(HColumnDescriptor cf: this.table.getTableDescriptor().getColumnFamilies()) {
+			for(byte[] q : qualifiers) {
+				tableRow.addColumn(cf.getName(), q);
+			}
+		}
+		
+		Filter valueFilter = new ValueFilter(CompareFilter.CompareOp.GREATER_OR_EQUAL,
+				new BinaryComparator(min));
+		tableRow.setFilter(valueFilter);
+		
+		return this.table.get(tableRow);
+	}
 }

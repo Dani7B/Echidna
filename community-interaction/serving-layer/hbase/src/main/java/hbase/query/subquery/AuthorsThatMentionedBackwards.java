@@ -13,6 +13,7 @@ import org.apache.hadoop.hbase.client.Result;
 import org.apache.hadoop.hbase.util.Bytes;
 
 import hbase.HBaseClient;
+import hbase.impls.HBaseClientFactory;
 import hbase.query.AtLeast;
 import hbase.query.Author;
 import hbase.query.Authors;
@@ -43,7 +44,8 @@ public class AuthorsThatMentionedBackwards extends AuthorsThatMentioned {
 									final AtLeast atLeast, final Mention...mentions) {
 		super(query, atLeast, mentions);
 		this.timeRange = timeRange;
-		this.client = this.timeRange.chooseHBaseClient();
+		
+		this.client = HBaseClientFactory.getInstance().getMentionedBy();
 	}
 	
 	@Override

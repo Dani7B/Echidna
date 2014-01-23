@@ -201,4 +201,14 @@ public interface HBaseClient {
 	 * @param row the row key
 	 * @param qualifiers the array of the specified columns to look for */
 	public abstract Result get(final byte[] row, final byte[][] qualifiers) throws IOException;
+	
+	
+	/**
+	 * Single get to return the results belonging to specified columns
+	 * @return the results satisfying the query
+	 * @param row the row key
+	 * @param qualifiers the array of the specified columns to look for
+	 * @param min the minimum allowed value */
+	public abstract Result get(final byte[] row, final byte[][] qualifiers, final byte[] min) throws IOException;
+
 }

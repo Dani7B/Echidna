@@ -33,22 +33,34 @@ public abstract class AuthorsThatMentioned extends HSubQuery {
 			this.mentions.add(m);
 	}
 
-
+	/**
+	 * Retrieves the minimum allowed number of mentioned authors
+	 * @return the minimum allowed number of mentioned authors
+	 */
 	public AtLeast getAtLeast() {
 		return atLeast;
 	}
 
-
+	/**
+	 * Sets the minimum allowed number of mentioned authors
+	 * @param the minimum allowed number of mentioned authors to set
+	 */
 	public void setAtLeast(AtLeast atLeast) {
 		this.atLeast = atLeast;
 	}
 
-
+	/**
+	 * Retrieves the mentions
+	 * @return the mentions
+	 */
 	public List<Mention> getMentions() {
 		return mentions;
 	}
 
-
+	/**
+	 * Sets the mentions
+	 * @param the mentions to set
+	 */
 	public void setMentions(List<Mention> mentions) {
 		this.mentions = mentions;
 	}

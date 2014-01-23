@@ -30,6 +30,10 @@ public class HBaseClientFactory {
 	
 	private HBaseClient whoseFollowersAreFollowedBy;
 	
+	private HBaseClient whoseFollowersMentionedByMonth;
+	
+	private HBaseClient whoseFollowersMentionedByDay;
+	
 	private HBaseClientFactory() {
 		try {
 			this.admin = new HTableAdmin();
@@ -88,6 +92,17 @@ public class HBaseClientFactory {
 		this.whoseFollowersAreFollowedBy = this.instantiateClient(this.whoseFollowersAreFollowedBy, "wfafb");
 		return this.whoseFollowersAreFollowedBy;
 	}
+	
+	public HBaseClient getWhoseFollowersMentionedByMonth() {
+		this.whoseFollowersMentionedByMonth = this.instantiateClient(this.whoseFollowersMentionedByMonth, "wfmByMonth");
+		return this.whoseFollowersMentionedByMonth;
+	}
+	
+	public HBaseClient getWhoseFollowersMentionedByDay() {
+		this.whoseFollowersMentionedByDay = this.instantiateClient(this.whoseFollowersMentionedByDay, "wfmByDay");
+		return this.whoseFollowersMentionedByDay;
+	}
+	
 	
 	private HBaseClient instantiateClient(final HBaseClient table, final String name) {
 		HBaseClient client = table;

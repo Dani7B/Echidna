@@ -1,8 +1,5 @@
 package hbase.query.time;
 
-import hbase.HBaseClient;
-import hbase.impls.HBaseClientFactory;
-
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
@@ -45,16 +42,13 @@ public class LastMonthFromNow extends TimeRange{
 		c.add(Calendar.MONTH, -1);// one month ago
 		return c.getTimeInMillis();
 	}
-
-	@Override
-	public HBaseClient chooseHBaseClient() {
-		return HBaseClientFactory.getInstance().getMentionedBy();
-	}
 	
+	@Override
 	public String generateFirstRowKey(final long id) {
 		return LastMonthFromNow.generateRowKey(id, this.getStart());
 	}
 	
+	@Override
 	public String generateLastRowKey(final long id) {
 		return LastMonthFromNow.generateRowKey(id, this.getEnd());
 	}

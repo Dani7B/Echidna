@@ -20,7 +20,7 @@ public class AtLeast {
 	
 	/**
 	 * Retrieves the minimum allowed value
-	 * @return the minimum allowed
+	 * @return the minimum allowed value
 	 */
 	public int getLowerBound() {
 		return lowerBound;
@@ -29,7 +29,7 @@ public class AtLeast {
 	
 	/**
 	 * Sets the minimum allowed value
-	 * @param lowerBound the minimum allowed
+	 * @param lowerBound the minimum allowed value
 	 */
 	public void setLowerBound(final int lowerBound) {
 		this.lowerBound = lowerBound;

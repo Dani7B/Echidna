@@ -8,9 +8,8 @@ import hbase.query.subquery.AuthorsThatMentionedFixedTime;
 import hbase.query.subquery.AuthorsWhoFollow;
 import hbase.query.subquery.AuthorsWhoseFollowersAreFollowedBy;
 import hbase.query.subquery.AuthorsWhoseFollowersFollow;
+import hbase.query.subquery.AuthorsWhoseFollowersMentionedFixedTime;
 import hbase.query.subquery.HSubQuery;
-import hbase.query.subquery.HSubQueryComposed;
-import hbase.query.subquery.part.WhoseFollowers;
 import hbase.query.time.FixedTime;
 import hbase.query.time.TimeRange;
 
@@ -59,7 +58,7 @@ public class Authors {
 	 * Adds the authors-that-mentioned subquery to the query
 	 * @return this
 	 * @param timeRange the specific time range to take into account
-	 * @param atLeast the minimum number of mentions per author
+	 * @param atLeast the minimum number of mentioned authors
 	 * @param mentions the mentions
 	 */
 	public Authors thatMentioned(final TimeRange timeRange, final AtLeast atLeast, final Mention... mentions) {
@@ -71,7 +70,7 @@ public class Authors {
 	 * Adds the authors-that-mentioned subquery to the query
 	 * @return this
 	 * @param timeRange the fixed time range to take into account
-	 * @param atLeast the minimum number of mentions per author
+	 * @param atLeast the minimum number of mentioned authors
 	 * @param mentions the mentions
 	 */
 	public Authors thatMentioned(final FixedTime timeRange, final AtLeast atLeast, final Mention... mentions) {
@@ -132,16 +131,29 @@ public class Authors {
 		return this;
     }
 	
+	
 	/**
-	 * Adds the authors-who-follow subquery to the query
+	 * Adds the authors-whose-followers-mentioned subquery to the query
 	 * @return this
+	 * @param timeRange the specific time range to take into account
+	 * @param atLeast the minimum number of mentioned authors
+	 * @param times the minimum number of mentions per mentioned author
+	 * @param mentions the mentions
 	 */
+	public Authors whoseFollowersMentioned(final FixedTime timeRange, final AtLeast atLeast, 
+									final AtLeastTimes times, final Mention... mentions) {
+    	HSubQuery sub = new AuthorsWhoseFollowersMentionedFixedTime(this.query, timeRange, atLeast, times, mentions);
+        return this;
+    }
+	
+	/*
+	
 	public WhoseFollowers whoseFollowers() {
 		final HSubQueryComposed sub = new HSubQueryComposed(this.query);
 		final WhoseFollowers part = new WhoseFollowers(sub, this);
 		return part;
     }
-	
+	*/
 	
 	public Authors rankedByHits(final boolean ascOrDesc) {
     	HSubQuery sub = new AuthorsRankedByHits(this.query, ascOrDesc);
