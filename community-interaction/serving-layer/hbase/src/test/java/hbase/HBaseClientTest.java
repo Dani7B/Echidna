@@ -51,7 +51,7 @@ public class HBaseClientTest {
     	this.admin.createTable(testTableName, "salone", "soggiorno", "cupola");
     	this.testTable = this.admin.getTable(testTableName);
     	this.testTable.setWriteBufferSize(20971520L); // Otherwise it doesn't get the default value from config
-    	this.casa = new HTableManager(testTable);
+    	this.casa = new HTableManager(testTable,1);
     	
     	String row = "row5";
     	String[] rows = {row, row, row};
@@ -327,7 +327,7 @@ public class HBaseClientTest {
     	
     	this.admin.createTable("house", "rooms");
     	HTable houseTable = this.admin.getTable("house");
-    	HTableManager house = new HTableManager(houseTable);
+    	HTableManager house = new HTableManager(houseTable,1);
     	
     	house.put(row, "rooms", dependance.getName(), System.currentTimeMillis(), 
     			Bytes.toBytes(dependance.getMq()));

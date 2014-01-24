@@ -34,6 +34,11 @@ public class HBaseClientFactory {
 	
 	private HBaseClient whoseFollowersMentionedByDay;
 	
+	private static int LARGEBATCH = 50;
+	private static int MEDIUMBATCH = 25;
+	private static int SMALLBATCH = 15;
+
+	
 	private HBaseClientFactory() {
 		try {
 			this.admin = new HTableAdmin();
@@ -42,10 +47,10 @@ public class HBaseClientFactory {
 		}
 	}
 	
-	private HBaseClient createHBaseClient(final String tableName) {
+	private HBaseClient createHBaseClient(final String tableName, final int batching) {
 		HBaseClient client = null;
 		try {
-			client = new HTableManager(this.admin.getTable(tableName));
+			client = new HTableManager(this.admin.getTable(tableName), batching);
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
@@ -59,55 +64,57 @@ public class HBaseClientFactory {
 	}
 
 	public HBaseClient getMentionedBy() {
-		this.mentionedBy = this.instantiateClient(this.mentionedBy, "mentionedBy");
+		this.mentionedBy = this.instantiateClient(this.mentionedBy, "mentionedBy", SMALLBATCH);
 		return this.mentionedBy ;
 	}
 	
 	public HBaseClient getMentionedByMonth() {
-		this.mentionedByMonth = this.instantiateClient(this.mentionedByMonth, "mentionedByMonth");
+		this.mentionedByMonth = this.instantiateClient(this.mentionedByMonth, "mentionedByMonth", MEDIUMBATCH);
 		return this.mentionedByMonth;
 	}
 	
 	public HBaseClient getMentionedByDay() {
-		this.mentionedByDay = this.instantiateClient(this.mentionedByDay, "mentionedByDay");
+		this.mentionedByDay = this.instantiateClient(this.mentionedByDay, "mentionedByDay", LARGEBATCH);
 		return this.mentionedByDay;
 	}
 	
 	public HBaseClient getFollowedBy() {
-		this.followedBy = this.instantiateClient(this.followedBy, "followedBy");
+		this.followedBy = this.instantiateClient(this.followedBy, "followedBy", MEDIUMBATCH);
 		return this.followedBy;
 	}
 
 	public HBaseClient getFollow() {
-		this.follow = this.instantiateClient(this.follow, "follow");
+		this.follow = this.instantiateClient(this.follow, "follow", MEDIUMBATCH);
 		return this.follow;
 	}
 	
 	public HBaseClient getWhoseFollowersFollow() {
-		this.whoseFollowersFollow = this.instantiateClient(this.whoseFollowersFollow, "wff");
+		this.whoseFollowersFollow = this.instantiateClient(this.whoseFollowersFollow, "wff", LARGEBATCH);
 		return this.whoseFollowersFollow;
 	}
 	
 	public HBaseClient getWhoseFollowersAreFollowedBy() {
-		this.whoseFollowersAreFollowedBy = this.instantiateClient(this.whoseFollowersAreFollowedBy, "wfafb");
+		this.whoseFollowersAreFollowedBy = this.instantiateClient(this.whoseFollowersAreFollowedBy, "wfafb", LARGEBATCH);
 		return this.whoseFollowersAreFollowedBy;
 	}
 	
 	public HBaseClient getWhoseFollowersMentionedByMonth() {
-		this.whoseFollowersMentionedByMonth = this.instantiateClient(this.whoseFollowersMentionedByMonth, "wfmByMonth");
+		this.whoseFollowersMentionedByMonth = this.instantiateClient(this.whoseFollowersMentionedByMonth, 
+												"wfmByMonth", LARGEBATCH);
 		return this.whoseFollowersMentionedByMonth;
 	}
 	
 	public HBaseClient getWhoseFollowersMentionedByDay() {
-		this.whoseFollowersMentionedByDay = this.instantiateClient(this.whoseFollowersMentionedByDay, "wfmByDay");
+		this.whoseFollowersMentionedByDay = this.instantiateClient(this.whoseFollowersMentionedByDay,
+												"wfmByDay", MEDIUMBATCH);
 		return this.whoseFollowersMentionedByDay;
 	}
 	
 	
-	private HBaseClient instantiateClient(final HBaseClient table, final String name) {
+	private HBaseClient instantiateClient(final HBaseClient table, final String name, final int batching) {
 		HBaseClient client = table;
 		if(client == null)
-			client = createHBaseClient(name);
+			client = createHBaseClient(name, batching);
 		return client;
 	}
 }

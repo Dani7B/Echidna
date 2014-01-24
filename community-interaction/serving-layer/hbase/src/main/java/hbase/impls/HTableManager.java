@@ -30,11 +30,14 @@ public class HTableManager implements HBaseClient {
 				   
 	private HTable table;
 	
+	private int batching;
+	
     /**
      * No argument contructor
      * @return an instance of the HBaseClient */
-	public HTableManager(final HTable table){
+	public HTableManager(final HTable table, final int batching){
 		this.table = table;
+		this.batching = batching;
 	}
 	
 	
