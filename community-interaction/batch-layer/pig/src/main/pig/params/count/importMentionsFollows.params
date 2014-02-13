@@ -1,0 +1,5 @@
+REDUCERS=3
+MENTIONS=hdfs://localhost:9000/user/daniele/mentions
+FOLLOWS=hdfs://localhost:9000/user/daniele/follows
+INF=import/follows
+INM=import/mentions

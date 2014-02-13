@@ -4,7 +4,7 @@
 * and stores them into HBase. Since method toBytes(Tuple) has not been implemented in HBaseBinaryConverter,
 * we will stick to the default.
 */
-
+SET default_parallel $REDUCERS;
 snap = LOAD '$INPUTDIR/part*' USING BinStorage() AS (user:map[],timestamp:long,id:long);
 snapshots = GROUP snap BY id;
 ordered = FOREACH snapshots {

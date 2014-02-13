@@ -1,7 +1,7 @@
 /*
 * Simple code to read "X follows Y" relationships from binary file and store them appropriately into HBase tables
 */
-
+SET default_parallel $REDUCERS;
 DEFINE HBaseStorage org.apache.pig.backend.hadoop.hbase.HBaseStorage('t:*', '-caster HBaseBinaryConverter');
 
 follow = LOAD '$INPUTDIR/part*' USING BinStorage() AS (follower:long, followed:long, ts:long);

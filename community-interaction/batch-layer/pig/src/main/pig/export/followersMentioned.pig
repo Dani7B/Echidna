@@ -2,6 +2,7 @@
 * Simple code to read "X follows Y" and "X mentioned Y" relationships from binary file and store them appropriately into HBase tables
 */
 
+SET default_parallel $REDUCERS;
 REGISTER '/home/daniele/Pig/pig-0.12.0/contrib/piggybank/java/piggybank.jar';
 DEFINE UnixToISO org.apache.pig.piggybank.evaluation.datetime.convert.UnixToISO();
 DEFINE HBaseStorage org.apache.pig.backend.hadoop.hbase.HBaseStorage('t:*', '-caster HBaseBinaryConverter');

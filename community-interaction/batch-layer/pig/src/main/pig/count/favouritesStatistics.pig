@@ -3,6 +3,7 @@
 * if more than one user classifies for that position, prints the list.
 */
 
+SET default_parallel $REDUCERS;
 snap = LOAD '$INPUTDIR/part*' USING BinStorage() AS (user:map[],timestamp:long,id:long);
 snapshots = GROUP snap BY id;
 ordered = FOREACH snapshots {

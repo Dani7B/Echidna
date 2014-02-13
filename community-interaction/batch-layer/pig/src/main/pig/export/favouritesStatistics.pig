@@ -4,6 +4,7 @@
 * prints the list. It stores the results into HBase
 */
 
+SET default_parallel $REDUCERS;
 snap = LOAD '$INPUTDIR/part*' USING BinStorage() AS (user:map[],timestamp:long,id:long);
 snapshots = GROUP snap BY id;
 ordered = FOREACH snapshots {

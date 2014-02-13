@@ -4,6 +4,7 @@
 * the number of users with that followersCount in the second column.
 */
 
+SET default_parallel $REDUCERS;
 snap = LOAD '$INPUTDIR/part*' USING BinStorage() AS (user:map[],timestamp:long,id:long);
 snapshots = GROUP snap BY id;
 ordered = FOREACH snapshots {

@@ -1,2 +1,3 @@
+REDUCERS=3
 INPUTDIR=import/snapshots
 OUTPUTDIR=defaultStatistics
