@@ -6,7 +6,7 @@ import hbase.query.Authors;
 import hbase.query.HQuery;
 
 /**
- * Query exector. As far as the system has been developed, it doesn't do much,
+ * Query executor. As far as the system has been developed, it doesn't do much,
  * but it could be improved as new needs arise.
  * @author Daniele Morgantini
  * */

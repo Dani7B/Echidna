@@ -12,7 +12,7 @@
   <url>http://maven.apache.org</url>
   
   <properties>
-    <hbase.version>0.94.13</hbase.version>
+    <hbase.version>0.94.16</hbase.version>
   </properties>
   
   <dependencies>
