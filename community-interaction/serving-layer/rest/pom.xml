@@ -28,6 +28,11 @@
 		<artifactId>jersey-server</artifactId>
 		<version>${jersey.version}</version>
 	</dependency>
+	<dependency>
+      	<groupId>it.cybion</groupId>
+      	<artifactId>hbase</artifactId>
+    	<version>1.0-SNAPSHOT</version>
+    </dependency>
   </dependencies>
   <build>
     <finalName>rest</finalName>
