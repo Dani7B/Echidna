@@ -48,7 +48,8 @@ public class RestManager {
 		String output = "Users that mentioned: " +
 		"at least: " + tm_al +
 		" when: " + tm_when +
-		" amongst: " + result;
+		" amongst: " + tm_users +
+		" ----> " + result;
 		return Response.status(200).entity(output).build();
 	}
  
