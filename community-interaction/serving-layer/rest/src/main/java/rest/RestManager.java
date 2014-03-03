@@ -9,6 +9,7 @@ import hbase.query.Authors;
 import hbase.query.HQuery;
 import hbase.query.Mention;
 import hbase.query.time.LastMonth;
+import hbase.query.time.LastMonthFromNow;
 
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
@@ -32,14 +33,67 @@ public class RestManager {
 	public Response getMsg(
 		@QueryParam("tm_atLeast") int tm_al,
 		@QueryParam("tm_when") String tm_when,
-		@QueryParam("tm_users") String tm_users){
-			
-		List<Mention> users = new ArrayList<Mention>();
-		for(String s : tm_users.split(","))
-			users.add(new Mention(Long.parseLong(s)));
-		Mention[] mentions = new Mention[3];
-		if(tm_when.equalsIgnoreCase("last_month"))
-			this.authors.thatMentioned(new LastMonth(), new AtLeast(tm_al), users.toArray(mentions));
+		@QueryParam("tm_users") String tm_users,
+		@QueryParam("wf_atLeast") int wf_al,
+		@QueryParam("wf_users") String wf_users){
+		
+		if(tm_users!=null && tm_when!=null){
+			String[] splitted = tm_users.split(",");
+			Mention[] users = new Mention[splitted.length];
+			for(int i=0; i<splitted.length; i++) {
+				users[i] = new Mention(Long.parseLong(splitted[i]));
+			}
+			switch(tm_when) {
+				case "last_month":
+					this.authors.thatMentioned(new LastMonth(), new AtLeast(tm_al), users);
+				case "very_last_month":
+					this.authors.thatMentioned(new LastMonthFromNow(), new AtLeast(tm_al), users);
+			}
+		}
+		
+		if(wf_users!=null){
+			String[] splitted = wf_users.split(",");
+			Author[] auths = new Author[splitted.length];
+			for(int i=0; i<splitted.length; i++) {
+				auths[i] = new Author(Long.parseLong(splitted[i]));
+			}
+			this.authors.whoFollow(new AtLeast(wf_al), auths);
+		}
+		
+		this.authors = this.query.answer();
+		
+		List<Long> result = new ArrayList<Long>();
+		for(Author a : this.authors.getAuthors())
+			result.add(a.getId());
+		String output = "Users that mentioned " +
+		"at least: " + tm_al +
+		" when: " + tm_when +
+		" amongst: " + tm_users +
+		" and who follow " +
+		"at least: " + wf_al +
+		" amongst: " + wf_users +
+		" ----> " + result;
+		return Response.status(200).entity(output).build();
+	}
+	
+	@GET
+	@Path("/users/thatMentioned")
+	public Response usersThatMentioned(
+		@QueryParam("atLeast") int tm_al,
+		@QueryParam("when") String tm_when,
+		@QueryParam("users") String tm_users){
+		
+		String[] splitted = tm_users.split(",");
+		Mention[] users = new Mention[splitted.length];
+		for(int i=0; i<splitted.length; i++) {
+			users[i] = new Mention(Long.parseLong(splitted[i]));
+		}
+		switch(tm_when) {
+			case "last_month":
+				this.authors.thatMentioned(new LastMonth(), new AtLeast(tm_al), users);
+			case "very_last_month":
+				this.authors.thatMentioned(new LastMonthFromNow(), new AtLeast(tm_al), users);
+		}
 		this.authors = this.query.answer();
 		
 		List<Long> result = new ArrayList<Long>();
@@ -49,6 +103,31 @@ public class RestManager {
 		"at least: " + tm_al +
 		" when: " + tm_when +
 		" amongst: " + tm_users +
+		" ----> " + result;
+		return Response.status(200).entity(output).build();
+	}
+	
+	@GET
+	@Path("/users/whoFollow")
+	public Response usersWhoFollow(
+		@QueryParam("atLeast") int wf_al,
+		@QueryParam("users") String wf_users){
+			
+		String[] splitted = wf_users.split(",");
+		Author[] auths = new Author[splitted.length];
+		for(int i=0; i<splitted.length; i++) {
+			auths[i] = new Author(Long.parseLong(splitted[i]));
+		}
+		this.authors.whoFollow(new AtLeast(wf_al), auths);
+
+		this.authors = this.query.answer();
+		
+		List<Long> result = new ArrayList<Long>();
+		for(Author a : this.authors.getAuthors())
+			result.add(a.getId());
+		String output = "Users who follow: " +
+		"at least: " + wf_al +
+		" amongst: " + wf_users +
 		" ----> " + result;
 		return Response.status(200).entity(output).build();
 	}
