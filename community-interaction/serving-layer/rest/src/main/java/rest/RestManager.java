@@ -38,26 +38,11 @@ public class RestManager {
 		@QueryParam("wf_users") String wf_users){
 		
 		if(tm_users!=null && tm_when!=null){
-			String[] splitted = tm_users.split(",");
-			Mention[] users = new Mention[splitted.length];
-			for(int i=0; i<splitted.length; i++) {
-				users[i] = new Mention(Long.parseLong(splitted[i]));
-			}
-			switch(tm_when) {
-				case "last_month":
-					this.authors.thatMentioned(new LastMonth(), new AtLeast(tm_al), users);
-				case "very_last_month":
-					this.authors.thatMentioned(new LastMonthFromNow(), new AtLeast(tm_al), users);
-			}
+			this.authorsThatMentionedSubquery(tm_al, tm_when, tm_users);
 		}
 		
 		if(wf_users!=null){
-			String[] splitted = wf_users.split(",");
-			Author[] auths = new Author[splitted.length];
-			for(int i=0; i<splitted.length; i++) {
-				auths[i] = new Author(Long.parseLong(splitted[i]));
-			}
-			this.authors.whoFollow(new AtLeast(wf_al), auths);
+			this.authorsWhoFollowSubquery(wf_al, wf_users);
 		}
 		
 		this.authors = this.query.answer();
@@ -83,17 +68,7 @@ public class RestManager {
 		@QueryParam("when") String tm_when,
 		@QueryParam("users") String tm_users){
 		
-		String[] splitted = tm_users.split(",");
-		Mention[] users = new Mention[splitted.length];
-		for(int i=0; i<splitted.length; i++) {
-			users[i] = new Mention(Long.parseLong(splitted[i]));
-		}
-		switch(tm_when) {
-			case "last_month":
-				this.authors.thatMentioned(new LastMonth(), new AtLeast(tm_al), users);
-			case "very_last_month":
-				this.authors.thatMentioned(new LastMonthFromNow(), new AtLeast(tm_al), users);
-		}
+		this.authorsThatMentionedSubquery(tm_al, tm_when, tm_users);
 		this.authors = this.query.answer();
 		
 		List<Long> result = new ArrayList<Long>();
@@ -113,13 +88,7 @@ public class RestManager {
 		@QueryParam("atLeast") int wf_al,
 		@QueryParam("users") String wf_users){
 			
-		String[] splitted = wf_users.split(",");
-		Author[] auths = new Author[splitted.length];
-		for(int i=0; i<splitted.length; i++) {
-			auths[i] = new Author(Long.parseLong(splitted[i]));
-		}
-		this.authors.whoFollow(new AtLeast(wf_al), auths);
-
+		this.authorsWhoFollowSubquery(wf_al, wf_users);
 		this.authors = this.query.answer();
 		
 		List<Long> result = new ArrayList<Long>();
@@ -130,6 +99,29 @@ public class RestManager {
 		" amongst: " + wf_users +
 		" ----> " + result;
 		return Response.status(200).entity(output).build();
+	}
+	
+	private void authorsThatMentionedSubquery(int atLeast, String when, String users) {
+		String[] splitted = users.split(",");
+		Mention[] mentions = new Mention[splitted.length];
+		for(int i=0; i<splitted.length; i++) {
+			mentions[i] = new Mention(Long.parseLong(splitted[i]));
+		}
+		switch(when) {
+			case "last_month":
+				this.authors.thatMentioned(new LastMonth(), new AtLeast(atLeast), mentions);
+			case "very_last_month":
+				this.authors.thatMentioned(new LastMonthFromNow(), new AtLeast(atLeast), mentions);
+		}
+	}
+	
+	private void authorsWhoFollowSubquery(int atLeast, String users) {
+		String[] splitted = users.split(",");
+		Author[] auths = new Author[splitted.length];
+		for(int i=0; i<splitted.length; i++) {
+			auths[i] = new Author(Long.parseLong(splitted[i]));
+		}
+		this.authors.whoFollow(new AtLeast(atLeast), auths);
 	}
  
 }
