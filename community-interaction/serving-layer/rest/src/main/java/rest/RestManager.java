@@ -12,6 +12,7 @@ import hbase.query.Mention;
 import hbase.query.time.LastMonth;
 import hbase.query.time.LastMonthFromNow;
 
+import javax.ws.rs.DefaultValue;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.QueryParam;
@@ -37,8 +38,8 @@ public class RestManager {
 		@QueryParam("tm_users") String tm_users,
 		@QueryParam("wf_atLeast") int wf_al,
 		@QueryParam("wf_users") String wf_users,
-		@QueryParam("byId") boolean byId,
-		@QueryParam("take") int take){
+		@DefaultValue("true") @QueryParam("byId") boolean byId,
+		@DefaultValue("10") @QueryParam("take") int take){
 		
 		if(tm_users!=null && tm_when!=null){
 			this.authorsThatMentionedSubquery(tm_al, tm_when, tm_users);
@@ -49,9 +50,7 @@ public class RestManager {
 		}
 		
 		this.authors.rankedById(byId);
-		if(take>0) {
-			this.authors.take(take);
-		}
+		this.authors.take(take);
 		this.authors = this.query.answer();
 		
 		List<Long> result = new ArrayList<Long>();
@@ -74,8 +73,8 @@ public class RestManager {
 		@QueryParam("atLeast") int tm_al,
 		@QueryParam("when") String tm_when,
 		@QueryParam("users") String tm_users,
-		@QueryParam("byId") boolean byId,
-		@QueryParam("take") int take){
+		@DefaultValue("true") @QueryParam("byId") boolean byId,
+		@DefaultValue("10") @QueryParam("take") int take){
 		
 		this.authorsThatMentionedSubquery(tm_al, tm_when, tm_users);
 		this.authors.rankedById(byId);
@@ -100,8 +99,8 @@ public class RestManager {
 	public Response usersWhoFollow(
 		@QueryParam("atLeast") int wf_al,
 		@QueryParam("users") String wf_users,
-		@QueryParam("byId") boolean byId,
-		@QueryParam("take") int take){
+		@DefaultValue("true") @QueryParam("byId") boolean byId,
+		@DefaultValue("10") @QueryParam("take") int take){
 			
 		this.authorsWhoFollowSubquery(wf_al, wf_users);
 		this.authors.rankedById(byId);
@@ -124,8 +123,8 @@ public class RestManager {
 	@Path("/users/whoseFollowersFollow")
 	public Response usersWhoseFollowersFollow(
 		@QueryParam("users") String users,
-		@QueryParam("byHits") boolean byHits,
-		@QueryParam("take") int take){
+		@DefaultValue("true") @QueryParam("byHits") boolean byHits,
+		@DefaultValue("10") @QueryParam("take") int take){
 			
 		this.authorsWhoseFollowersFollowSubquery(users);
 		this.authors.rankedByHits(byHits);
@@ -146,8 +145,8 @@ public class RestManager {
 	@Path("/users/whoseFollowersAreFollowedBy")
 	public Response usersWhoseFollowersAreFollowedBy(
 		@QueryParam("users") String users,
-		@QueryParam("byHits") boolean byHits,
-		@QueryParam("take") int take){
+		@DefaultValue("true") @QueryParam("byHits") boolean byHits,
+		@DefaultValue("10") @QueryParam("take") int take){
 			
 		this.authorsWhoseFollowersAreFollowedBySubquery(users);
 		this.authors.rankedByHits(byHits);
@@ -171,8 +170,8 @@ public class RestManager {
 		@QueryParam("atLeast") int al,
 		@QueryParam("minTimes") int minTimes,
 		@QueryParam("users") String users,
-		@QueryParam("byHits") boolean byHits,
-		@QueryParam("take") int take){
+		@DefaultValue("true") @QueryParam("byHits") boolean byHits,
+		@DefaultValue("10") @QueryParam("take") int take){
 			
 		this.authorsWhoseFollowersMentionedSubquery(al, when, users, minTimes);
 		this.authors.rankedByHits(byHits);
