@@ -350,4 +350,36 @@ public class HTableManager implements HBaseClient {
 		
 		return this.table.get(tableRow);
 	}
+
+
+	@Override
+	public Result[] scan(byte[] lowerRow, byte[] upperRow, byte[][] qualifiers)
+			throws IOException {
+		
+		if(lowerRow == upperRow) {
+			Result[] results = new Result[1];
+			results[0] = this.get(upperRow, qualifiers);
+			return results;
+		}
+		
+		Scan scan = new Scan(lowerRow,upperRow);
+		
+		for(HColumnDescriptor cf: this.table.getTableDescriptor().getColumnFamilies()) {
+			for(byte[] q : qualifiers) {
+				scan.addColumn(cf.getName(), q);
+			}
+		}
+		
+		scan.setBatch(batching);
+				
+		ResultScanner scanner = this.table.getScanner(scan);
+		List<Result> results = new ArrayList<Result>();
+		for (Result res : scanner) {
+			results.add(res);
+		}
+		scanner.close();
+		
+		Result[] finalResult = new Result[results.size()];
+		return results.toArray(finalResult);
+	}
 }

@@ -19,6 +19,7 @@ import hbase.query.HQuery;
 import hbase.query.Mention;
 import hbase.query.time.FixedTime;
 import hbase.query.time.LastMonth;
+import hbase.query.time.MonthsAgo;
 
 /**
  * Subquery to represent the authors-that-mentioned request in a fixed time window
@@ -43,7 +44,7 @@ public class AuthorsThatMentionedFixedTime extends AuthorsThatMentioned {
 									final AtLeast atLeast, final Mention...mentions) {
 		super(query, atLeast, mentions);
 		this.timeRange = timeRange;
-		if(timeRange instanceof LastMonth)
+		if(timeRange instanceof LastMonth || timeRange instanceof MonthsAgo)
 			this.client = HBaseClientFactory.getInstance().getMentionedByMonth();
 		else
 			this.client = HBaseClientFactory.getInstance().getMentionedByDay();
@@ -64,17 +65,19 @@ public class AuthorsThatMentionedFixedTime extends AuthorsThatMentioned {
 				
 		for(Mention m : this.getMentions()){
 			
-			String row = this.timeRange.generateRowKey(m.getMentioned().getId());
-						
-			Result result = this.client.get(Bytes.toBytes(row), auths);
+			String firstRow = this.timeRange.generateFirstRowKey(m.getMentioned().getId());
+			String lastRow = this.timeRange.generateLastRowKey(m.getMentioned().getId());
+			Result[] results = this.client.scan(Bytes.toBytes(firstRow), Bytes.toBytes(lastRow), auths);
 			
-			for(KeyValue kv : result.raw()) {
-				int value = 1;
-				String mentioner = Bytes.toString(kv.getQualifier());
-				if(map.containsKey(mentioner)) {
-					value = map.get(mentioner) + 1;
+			for(Result result : results) {
+				for(KeyValue kv : result.raw()) {
+					int value = 1;
+					String mentioner = Bytes.toString(kv.getQualifier());
+					if(map.containsKey(mentioner)) {
+						value = map.get(mentioner) + 1;
+					}
+					map.put(mentioner, value);
 				}
-				map.put(mentioner, value);
 			}
 		}
 		

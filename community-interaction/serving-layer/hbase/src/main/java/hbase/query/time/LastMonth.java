@@ -55,4 +55,14 @@ public class LastMonth implements FixedTime {
 		return id + "_" + date;
 	}
 
+	@Override
+	public String generateFirstRowKey(long id) {
+		return this.generateRowKey(id);
+	}
+
+	@Override
+	public String generateLastRowKey(long id) {
+		return this.generateRowKey(id);
+	}
+
 }
