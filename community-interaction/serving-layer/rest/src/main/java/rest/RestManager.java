@@ -73,9 +73,15 @@ public class RestManager {
 	public Response usersThatMentioned(
 		@QueryParam("atLeast") int tm_al,
 		@QueryParam("when") String tm_when,
-		@QueryParam("users") String tm_users){
+		@QueryParam("users") String tm_users,
+		@QueryParam("byId") boolean byId,
+		@QueryParam("take") int take){
 		
 		this.authorsThatMentionedSubquery(tm_al, tm_when, tm_users);
+		this.authors.rankedById(byId);
+		if(take>0) {
+			this.authors.take(take);
+		}
 		this.authors = this.query.answer();
 		
 		List<Long> result = new ArrayList<Long>();
@@ -93,9 +99,15 @@ public class RestManager {
 	@Path("/users/whoFollow")
 	public Response usersWhoFollow(
 		@QueryParam("atLeast") int wf_al,
-		@QueryParam("users") String wf_users){
+		@QueryParam("users") String wf_users,
+		@QueryParam("byId") boolean byId,
+		@QueryParam("take") int take){
 			
 		this.authorsWhoFollowSubquery(wf_al, wf_users);
+		this.authors.rankedById(byId);
+		if(take>0) {
+			this.authors.take(take);
+		}
 		this.authors = this.query.answer();
 		
 		List<Long> result = new ArrayList<Long>();
@@ -111,9 +123,15 @@ public class RestManager {
 	@GET
 	@Path("/users/whoseFollowersFollow")
 	public Response usersWhoseFollowersFollow(
-		@QueryParam("users") String users){
+		@QueryParam("users") String users,
+		@QueryParam("byHits") boolean byHits,
+		@QueryParam("take") int take){
 			
 		this.authorsWhoseFollowersFollowSubquery(users);
+		this.authors.rankedByHits(byHits);
+		if(take>0) {
+			this.authors.take(take);
+		}
 		this.authors = this.query.answer();
 		
 		List<Long> result = new ArrayList<Long>();
@@ -127,9 +145,15 @@ public class RestManager {
 	@GET
 	@Path("/users/whoseFollowersAreFollowedBy")
 	public Response usersWhoseFollowersAreFollowedBy(
-		@QueryParam("users") String users){
+		@QueryParam("users") String users,
+		@QueryParam("byHits") boolean byHits,
+		@QueryParam("take") int take){
 			
 		this.authorsWhoseFollowersAreFollowedBySubquery(users);
+		this.authors.rankedByHits(byHits);
+		if(take>0) {
+			this.authors.take(take);
+		}
 		this.authors = this.query.answer();
 		
 		List<Long> result = new ArrayList<Long>();
@@ -146,9 +170,15 @@ public class RestManager {
 		@QueryParam("when") String when,
 		@QueryParam("atLeast") int al,
 		@QueryParam("minTimes") int minTimes,
-		@QueryParam("users") String users){
+		@QueryParam("users") String users,
+		@QueryParam("byHits") boolean byHits,
+		@QueryParam("take") int take){
 			
 		this.authorsWhoseFollowersMentionedSubquery(al, when, users, minTimes);
+		this.authors.rankedByHits(byHits);
+		if(take>0) {
+			this.authors.take(take);
+		}
 		this.authors = this.query.answer();
 		
 		List<Long> result = new ArrayList<Long>();
