@@ -4,6 +4,7 @@ import java.io.IOException;
 
 import hbase.impls.HQueryManager;
 import hbase.query.time.LastMonth;
+import hbase.query.time.MonthsAgo;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -102,6 +103,19 @@ public class HQueryTest {
         printResult(queryManager, query4, info);
         System.out.println("");
 
+        
+        final HQuery query5 = new HQuery()
+								.users()
+								.thatMentioned(new MonthsAgo(2), new AtLeast(1), new Mention(11),
+											new Mention(14), new Mention(12))
+								.whoFollow(new AtLeast(1), new Author(22), new Author(21), new Author(25))
+								.rankedById(true)
+								.take(4);
+
+        info = "The top 4 users by id that mentioned at least 1 among 11, 14, 12 in the last 2 months \n"
+        		+ " and follow at least 1 among 22, 21, 25 \n";
+        printResult(queryManager, query5, info);
+        System.out.println("");
         
         /*final HQuery query2 = new HQuery()
 								.users()
