@@ -129,12 +129,6 @@ public class HQueryTest {
 		printResult(queryManager, query6, info);
 		System.out.println("");
         
-        /*final HQuery query2 = new HQuery()
-								.users()
-								.whoseFollowers().follow(new Author(25))
-								.rankedByHits(true)
-								.take(10);*/
-        
     }
 
     
