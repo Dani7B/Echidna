@@ -40,9 +40,8 @@ public class MonthsAgo implements FixedTime {
 	private void setFromAndTo(int n) {		
 		Calendar now = Calendar.getInstance();
 		now.setTimeInMillis(System.currentTimeMillis());
-		now.add(Calendar.MONTH, -1);// one month ago
 		this.to = now.getTimeInMillis();
-		now.add(Calendar.MONTH, -(n - 1));// n months ago
+		now.add(Calendar.MONTH, -n);// n months ago
 		this.from = now.getTimeInMillis();
 	}
 	

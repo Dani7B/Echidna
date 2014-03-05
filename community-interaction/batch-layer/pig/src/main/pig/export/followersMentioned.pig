@@ -14,12 +14,12 @@ joined = JOIN follow BY follower, mention BY mentioner;
 
 jGrouped = GROUP joined BY mention::mentioned;
 
-/* Work to compute wfmmonthly view */
+/* Work to compute wfmByMonth view */
 
 monthly = FOREACH jGrouped {
 			coupled = FOREACH joined
 				GENERATE (CONCAT(CONCAT((chararray)mention::mentioned,'_'), SUBSTRING(UnixToISO(mention::ts),0,7)),
-					follow::followed) AS tup;
+					CONCAT(CONCAT((chararray)follow::followed,'_'),(chararray)follow::follower)) AS tup;
 				GENERATE FLATTEN(coupled);
 		};
 
@@ -29,12 +29,12 @@ mCounted = FOREACH mGrouped GENERATE group.$0, TOMAP((chararray)group.$1,(int)CO
 whoseFollowersMentionedMonthly = STORE mCounted INTO 'hbase://$WHOSEFOLLOWERSMENTIONEDMONTHLY' USING HBaseStorage;	
 
 
-/* Work to compute wfmdaily view */
+/* Work to compute wfmByDay view */
 
 daily = FOREACH jGrouped {
 			Dcoupled = FOREACH joined
 				GENERATE (CONCAT(CONCAT((chararray)mention::mentioned,'_'), SUBSTRING(UnixToISO(mention::ts),0,10)),
-					follow::followed) AS tupD;
+					CONCAT(CONCAT((chararray)follow::followed,'_'),(chararray)follow::follower))  AS tupD;
 				GENERATE FLATTEN(Dcoupled);
 		};
 

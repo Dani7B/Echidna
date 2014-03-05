@@ -14,6 +14,7 @@ import org.apache.hadoop.hbase.client.Put;
 import org.apache.hadoop.hbase.client.Result;
 import org.apache.hadoop.hbase.client.ResultScanner;
 import org.apache.hadoop.hbase.client.Scan;
+import org.apache.hadoop.hbase.filter.ColumnPrefixFilter;
 import org.apache.hadoop.hbase.filter.CompareFilter;
 import org.apache.hadoop.hbase.filter.BinaryComparator;
 import org.apache.hadoop.hbase.filter.Filter;
@@ -370,6 +371,78 @@ public class HTableManager implements HBaseClient {
 			}
 		}
 		
+		scan.setBatch(batching);
+				
+		ResultScanner scanner = this.table.getScanner(scan);
+		List<Result> results = new ArrayList<Result>();
+		for (Result res : scanner) {
+			results.add(res);
+		}
+		scanner.close();
+		
+		Result[] finalResult = new Result[results.size()];
+		return results.toArray(finalResult);
+	}
+
+
+	@Override
+	public Result[] scan(byte[] lowerRow, byte[] upperRow, byte[][] qualifiers,
+			byte[] min) throws IOException {
+		
+		if(lowerRow == upperRow) {
+			Result[] results = new Result[1];
+			results[0] = this.get(upperRow, qualifiers,min);
+			return results;
+		}
+		
+		Scan scan = new Scan(lowerRow,upperRow);
+		
+		for(HColumnDescriptor cf: this.table.getTableDescriptor().getColumnFamilies()) {
+			for(byte[] q : qualifiers) {
+				scan.addColumn(cf.getName(), q);
+			}
+		}
+		
+		Filter valueFilter = new ValueFilter(CompareFilter.CompareOp.GREATER_OR_EQUAL,
+				new BinaryComparator(min));
+		scan.setFilter(valueFilter);
+		scan.setBatch(batching);
+				
+		ResultScanner scanner = this.table.getScanner(scan);
+		List<Result> results = new ArrayList<Result>();
+		for (Result res : scanner) {
+			results.add(res);
+		}
+		scanner.close();
+		
+		Result[] finalResult = new Result[results.size()];
+		return results.toArray(finalResult);
+	}
+
+
+	@Override
+	public Result[] scanPrefix(byte[] lowerRow, byte[] upperRow,
+			byte[][] qualifiersPrefix, byte[] min) throws IOException {
+		
+		/*if(lowerRow == upperRow) {
+			Result[] results = new Result[1];
+			results[0] = this.get(upperRow, qualifiers,min);
+			return results;
+		}*/
+		
+		Scan scan = new Scan(lowerRow,upperRow);
+		FilterList fList = new FilterList(FilterList.Operator.MUST_PASS_ONE);
+
+		for(byte[] prefix : qualifiersPrefix) {
+			Filter prefixFilter = new ColumnPrefixFilter(prefix);
+			fList.addFilter(prefixFilter);
+		}
+		
+		Filter valueFilter = new ValueFilter(CompareFilter.CompareOp.GREATER_OR_EQUAL,
+				new BinaryComparator(min));
+		fList.addFilter(valueFilter);
+		
+		scan.setFilter(fList);
 		scan.setBatch(batching);
 				
 		ResultScanner scanner = this.table.getScanner(scan);

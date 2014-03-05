@@ -117,6 +117,18 @@ public class HQueryTest {
         printResult(queryManager, query5, info);
         System.out.println("");
         
+        final HQuery query6 = new HQuery()
+								.users()
+								.whoseFollowersMentioned(new MonthsAgo(2), new AtLeast(1), new AtLeastTimes(2),
+										new Mention(14), new Mention(11), new Mention(12))
+								.rankedByHits(true)
+								.take(5);
+
+		info = "The top 5 users whose followers mentioned two or more times \n"
+		+ " at least one among 11, 14 and 12 in the last 2 months \n";
+		printResult(queryManager, query6, info);
+		System.out.println("");
+        
         /*final HQuery query2 = new HQuery()
 								.users()
 								.whoseFollowers().follow(new Author(25))

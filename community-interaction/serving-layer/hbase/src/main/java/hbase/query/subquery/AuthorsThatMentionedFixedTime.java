@@ -74,7 +74,7 @@ public class AuthorsThatMentionedFixedTime extends AuthorsThatMentioned {
 					int value = 1;
 					String mentioner = Bytes.toString(kv.getQualifier());
 					if(map.containsKey(mentioner)) {
-						value = map.get(mentioner) + 1;
+						value = map.get(mentioner) + Bytes.toInt(kv.getValue());
 					}
 					map.put(mentioner, value);
 				}

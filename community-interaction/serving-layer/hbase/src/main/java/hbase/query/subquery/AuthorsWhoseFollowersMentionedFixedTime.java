@@ -20,6 +20,7 @@ import hbase.query.HQuery;
 import hbase.query.Mention;
 import hbase.query.time.FixedTime;
 import hbase.query.time.LastMonth;
+import hbase.query.time.MonthsAgo;
 
 /**
  * Subquery to represent the authors-whose-followers-mentioned request in a fixed time window
@@ -45,7 +46,7 @@ public class AuthorsWhoseFollowersMentionedFixedTime extends AuthorsWhoseFollowe
 							final AtLeast atLeast, final AtLeastTimes times, final Mention...mentions) {
 		super(query, atLeast, times, mentions);
 		this.timeRange = timeRange;
-		if(timeRange instanceof LastMonth)
+		if(timeRange instanceof LastMonth || timeRange instanceof MonthsAgo)
 			this.client = HBaseClientFactory.getInstance().getWhoseFollowersMentionedByMonth();
 		else
 			this.client = HBaseClientFactory.getInstance().getWhoseFollowersMentionedByDay();
@@ -62,31 +63,38 @@ public class AuthorsWhoseFollowersMentionedFixedTime extends AuthorsWhoseFollowe
 		byte[][] auths = new byte[authors.size()][];
 		int i = 0;
 		for(Author a : authors.getAuthors()) {
-			auths[i] = Bytes.toBytes(String.valueOf(a.getId()));
+			auths[i] = Bytes.toBytes(String.valueOf(a.getId()) + "_");
 			i++;
 		}
 				
 		for(Mention m : this.getMentions()){
 			
-			String row = this.timeRange.generateRowKey(m.getMentioned().getId());
-						
-			Result result = this.client.get(Bytes.toBytes(row), auths, Bytes.toBytes(minMentionsPerAuth));
+			String firstRow = this.timeRange.generateFirstRowKey(m.getMentioned().getId());
+			String lastRow = this.timeRange.generateLastRowKey(m.getMentioned().getId());
 			
-			for(KeyValue kv : result.raw()) {
-				int value = 1;
-				String mentioner = Bytes.toString(kv.getQualifier());
-				if(map.containsKey(mentioner)) {
-					value = map.get(mentioner) + 1;
+			
+			Result[] results = this.client.scanPrefix(Bytes.toBytes(firstRow), Bytes.toBytes(lastRow), auths, Bytes.toBytes(minMentionsPerAuth));
+			
+			
+			for(Result result : results) {
+				for(KeyValue kv : result.raw()) {
+					int value = 1;
+					String mentioner = Bytes.toString(kv.getQualifier());
+					if(map.containsKey(mentioner)) {
+						value = map.get(mentioner) + Bytes.toInt(kv.getValue());
+					}
+					map.put(mentioner, value);
 				}
-				map.put(mentioner, value);
 			}
 		}
 		
 		List<Author> result = new ArrayList<Author>();
 		for(Map.Entry<String, Integer> e : map.entrySet()) {
 			int value = e.getValue();
-			if(value >= mentionMin)
-				result.add(new Author(Long.parseLong(e.getKey())));
+			if(value >= mentionMin) {
+				String user = e.getKey().split("_")[0];
+				result.add(new Author(Long.parseLong(user)));
+			}
 		}
 		
 		this.getQuery().updateUsers(result);

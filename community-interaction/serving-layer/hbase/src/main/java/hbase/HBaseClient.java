@@ -196,6 +196,26 @@ public interface HBaseClient {
 	public abstract Result[] scan(final byte[] lowerRow, final byte[] upperRow, 
 									final byte[][] qualifiers) throws IOException;
 	
+	/**
+	 * Scan to return the results in the row range belonging to specified columns
+	 * @return the results satisfying the query
+	 * @param lowerRow the smallest row key to look for (included)
+	 * @param upperRow the biggest row key to look for (excluded)
+	 * @param qualifiers the array of the specified columns to look for
+	 * @param min the minimum allowed value */
+	public abstract Result[] scan(final byte[] lowerRow, final byte[] upperRow,
+					final byte[][] qualifiers, final byte[] min) throws IOException;
+	
+	/**
+	 * Scan to return the results in the row range belonging to specified columns
+	 * @return the results satisfying the query
+	 * @param lowerRow the smallest row key to look for (included)
+	 * @param upperRow the biggest row key to look for (excluded)
+	 * @param qualifiersPrefix the array of the specified columns to look for
+	 * @param min the minimum allowed value */
+	public abstract Result[] scanPrefix(final byte[] lowerRow, final byte[] upperRow,
+					final byte[][] qualifiersPrefix, final byte[] min) throws IOException;
+	
 	
 	/**
 	 * Single get to return the results in the column range
