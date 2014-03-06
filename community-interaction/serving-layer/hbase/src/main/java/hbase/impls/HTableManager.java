@@ -92,6 +92,19 @@ public class HTableManager implements HBaseClient {
 	
 	
 	@Override
+	public Result get(final byte[] row, final byte[] min) throws IOException {
+		
+		Get tableRow = new Get(row);
+		
+		Filter valueFilter = new ValueFilter(CompareFilter.CompareOp.GREATER_OR_EQUAL,
+				new BinaryComparator(min));
+		tableRow.setFilter(valueFilter);
+				
+		return this.table.get(tableRow);
+	}
+	
+	
+	@Override
 	public Result get(final String row, final String[] columnFamilies, 
 							final long[] timeRange, final int maxVersions) throws IOException {
 		
@@ -280,15 +293,18 @@ public class HTableManager implements HBaseClient {
 				new BinaryComparator(upperValue));
 		fList.addFilter(qualifierFilter2);
 		
-		FilterList valueList = new FilterList(FilterList.Operator.MUST_PASS_ONE);
-
-		for(byte[] value : allowedValues) {
-			Filter valueFilter = new ValueFilter(CompareFilter.CompareOp.EQUAL,
-					new BinaryComparator(value));
-			valueList.addFilter(valueFilter);
+		if(allowedValues.length!=0){
+			FilterList valueList = new FilterList(FilterList.Operator.MUST_PASS_ONE);
+	
+			for(byte[] value : allowedValues) {
+				Filter valueFilter = new ValueFilter(CompareFilter.CompareOp.EQUAL,
+						new BinaryComparator(value));
+				valueList.addFilter(valueFilter);
+			}
+			fList.addFilter(valueList);
 		}
-		scan.setBatch(batching);
 		scan.setFilter(fList);
+		scan.setBatch(batching);
 				
 		ResultScanner scanner = this.table.getScanner(scan);
 		List<Result> results = new ArrayList<Result>();
@@ -424,19 +440,15 @@ public class HTableManager implements HBaseClient {
 	public Result[] scanPrefix(byte[] lowerRow, byte[] upperRow,
 			byte[][] qualifiersPrefix, byte[] min) throws IOException {
 		
-		/*if(lowerRow == upperRow) {
-			Result[] results = new Result[1];
-			results[0] = this.get(upperRow, qualifiers,min);
-			return results;
-		}*/
-		
 		Scan scan = new Scan(lowerRow,upperRow);
-		FilterList fList = new FilterList(FilterList.Operator.MUST_PASS_ONE);
+		FilterList fList = new FilterList(FilterList.Operator.MUST_PASS_ALL);
+		FilterList qualifierFilters = new FilterList(FilterList.Operator.MUST_PASS_ONE);
 
 		for(byte[] prefix : qualifiersPrefix) {
 			Filter prefixFilter = new ColumnPrefixFilter(prefix);
-			fList.addFilter(prefixFilter);
+			qualifierFilters.addFilter(prefixFilter);
 		}
+		fList.addFilter(qualifierFilters);
 		
 		Filter valueFilter = new ValueFilter(CompareFilter.CompareOp.GREATER_OR_EQUAL,
 				new BinaryComparator(min));
@@ -454,5 +466,60 @@ public class HTableManager implements HBaseClient {
 		
 		Result[] finalResult = new Result[results.size()];
 		return results.toArray(finalResult);
+	}
+	
+	@Override
+	public Result[] scanPrefix(byte[] lowerRow, byte[] upperRow, byte[][] qualifiersPrefix) throws IOException {
+		
+		Scan scan = new Scan(lowerRow,upperRow);
+		FilterList fList = new FilterList(FilterList.Operator.MUST_PASS_ONE);
+
+		for(byte[] prefix : qualifiersPrefix) {
+			Filter prefixFilter = new ColumnPrefixFilter(prefix);
+			fList.addFilter(prefixFilter);
+		}
+		
+		scan.setFilter(fList);
+		scan.setBatch(batching);
+				
+		ResultScanner scanner = this.table.getScanner(scan);
+		List<Result> results = new ArrayList<Result>();
+		for (Result res : scanner) {
+			results.add(res);
+		}
+		scanner.close();
+		
+		Result[] finalResult = new Result[results.size()];
+		return results.toArray(finalResult);
+	}
+
+
+	@Override
+	public Result getPrefix(byte[] row, byte[][] qualifiersPrefix, byte[] min) throws IOException {
+		
+		Get tableRow = new Get(row);
+		
+		FilterList qualifierFilter = new FilterList(FilterList.Operator.MUST_PASS_ONE);
+
+		for(byte[] prefix : qualifiersPrefix) {
+			Filter prefixFilter = new ColumnPrefixFilter(prefix);
+			qualifierFilter.addFilter(prefixFilter);
+		}
+		
+		FilterList fList = new FilterList(FilterList.Operator.MUST_PASS_ALL);
+		fList.addFilter(qualifierFilter);
+		Filter valueFilter = new ValueFilter(CompareFilter.CompareOp.GREATER_OR_EQUAL,
+				new BinaryComparator(min));
+		fList.addFilter(valueFilter);
+		tableRow.setFilter(fList);
+		
+		return this.table.get(tableRow);
+	}
+
+
+	@Override
+	public Result[] scan(byte[] lowerRow, byte[] upperRow) throws IOException {
+		byte[][] qualifiers = new byte[0][];
+		return this.scan(lowerRow, upperRow, qualifiers);
 	}
 }

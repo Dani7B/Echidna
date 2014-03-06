@@ -52,6 +52,14 @@ public interface HBaseClient {
 	 * @return the result of the get query
 	 * @param row the row key */
 	public abstract Result get(final byte[] row) throws IOException;
+	
+	
+	/**
+	 * Single get to retrieve the latest version of all the columns for a row, value constraints included
+	 * @return the result of the get query
+	 * @param row the row key
+	 * @param min the minumum allowed value for the cell */
+	public abstract Result get(final byte[] row, final byte[] min) throws IOException;
 
 	
 	/**
@@ -165,6 +173,14 @@ public interface HBaseClient {
 
 	
 	/**
+	 * Scan to return the results in the row range
+	 * @return multiple results satisfying the query
+	 * @param lowerRow the smallest row key to look for (included)
+	 * @param upperRow the biggest row key to look for (excluded) */
+	public abstract Result[] scan(final byte[] lowerRow, final byte[] upperRow) throws IOException;
+	
+	
+	/**
 	 * Scan to return the results in the row range and column range
 	 * @return multiple results satisfying the query
 	 * @param lowerRow the smallest row key to look for (included)
@@ -207,14 +223,34 @@ public interface HBaseClient {
 					final byte[][] qualifiers, final byte[] min) throws IOException;
 	
 	/**
-	 * Scan to return the results in the row range belonging to specified columns
+	 * Scan to return the results in the row range belonging to specific columns
 	 * @return the results satisfying the query
 	 * @param lowerRow the smallest row key to look for (included)
 	 * @param upperRow the biggest row key to look for (excluded)
-	 * @param qualifiersPrefix the array of the specified columns to look for
+	 * @param qualifiersPrefix the array of prefixes columns should start with
 	 * @param min the minimum allowed value */
 	public abstract Result[] scanPrefix(final byte[] lowerRow, final byte[] upperRow,
 					final byte[][] qualifiersPrefix, final byte[] min) throws IOException;
+	
+	
+	/**
+	 * Scan to return the results in the row range belonging to specific columns
+	 * @return the results satisfying the query
+	 * @param lowerRow the smallest row key to look for (included)
+	 * @param upperRow the biggest row key to look for (excluded)
+	 * @param qualifiersPrefix the array of prefixes columns should start with */
+	public abstract Result[] scanPrefix(final byte[] lowerRow, final byte[] upperRow,
+					final byte[][] qualifiersPrefix) throws IOException;
+	
+	
+	/**
+	 * Single scan to return the results belonging to specific columns
+	 * @return the results satisfying the query
+	 * @param row the row key to look for
+	 * @param qualifiersPrefix the array of prefixes columns should start with
+	 * @param min the minimum allowed value */
+	public abstract Result getPrefix(final byte[] row, final byte[][] qualifiersPrefix,
+									final byte[] min) throws IOException;
 	
 	
 	/**

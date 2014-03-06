@@ -3,8 +3,10 @@ package hbase.query.subquery;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.apache.hadoop.hbase.KeyValue;
 import org.apache.hadoop.hbase.client.Result;
@@ -81,14 +83,18 @@ public class AuthorsThatMentionedFixedTime extends AuthorsThatMentioned {
 			}
 		}
 		
-		List<Author> result = new ArrayList<Author>();
+		Set<Long> result = new HashSet<Long>();
 		for(Map.Entry<String, Integer> e : map.entrySet()) {
 			int value = e.getValue();
 			if(value >= mentionMin)
-				result.add(new Author(Long.parseLong(e.getKey())));
+				result.add(Long.parseLong(e.getKey()));
 		}
 		
-		this.getQuery().updateUsers(result);
+		List<Author> list = new ArrayList<Author>();
+		for(Long l : result) {
+			list.add(new Author(l));
+		}
+		this.getQuery().updateUsers(list);
 	}
 	
 }

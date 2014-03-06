@@ -93,12 +93,12 @@ public class HQueryTest {
         
         final HQuery query4 = new HQuery()
 								.users()
-								.whoseFollowersMentioned(new LastMonth(), new AtLeast(1), new AtLeastTimes(2),
+								.whoseFollowersMentioned(new LastMonth(), new AtLeast(1), new AtLeastTimes(1),
 										new Mention(11), new Mention(14), new Mention(12))
 								.rankedByHits(true)
 								.take(5);
 
-        info = "The top 5 users whose followers mentioned two or more times \n"
+        info = "The top 5 users whose followers mentioned one or more times \n"
         		+ " at least one among 11, 14 and 12 in the last month \n";
         printResult(queryManager, query4, info);
         System.out.println("");
