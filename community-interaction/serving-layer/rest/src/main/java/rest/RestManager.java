@@ -11,6 +11,7 @@ import hbase.query.HQuery;
 import hbase.query.Mention;
 import hbase.query.time.LastMonth;
 import hbase.query.time.LastMonthFromNow;
+import hbase.query.time.MonthsAgo;
 
 import javax.ws.rs.DefaultValue;
 import javax.ws.rs.GET;
@@ -42,6 +43,7 @@ public class RestManager {
 		@QueryParam("wfafb_users") String wfafb_users,
 		@DefaultValue("1") @QueryParam("wfm_atLeast") int wfm_al,
 		@QueryParam("wfm_when") String wfm_when,
+		@QueryParam("wfm_back") int wfm_back,
 		@DefaultValue("1") @QueryParam("wfm_minTimes") int wfm_minTimes,
 		@QueryParam("wfm_users") String wfm_users,
 		@QueryParam("byId") String byId,
@@ -79,14 +81,16 @@ public class RestManager {
 		}
 		
 		if(wfm_users!=null) {
-			this.authorsWhoseFollowersMentionedSubquery(wfm_al, wfm_when, wfm_users, wfm_minTimes);
-			output += " whose followers mentioned " + 
+			this.authorsWhoseFollowersMentionedSubquery(wfm_al, wfm_when, wfm_back, wfm_users, wfm_minTimes);
+			output += " whose followers mentioned" + 
 						" at least: " + wfm_al + " user";
 			if(wfm_al>1)
 				output += "s";
-			output += " when: " + wfm_when +
-						"amongst: " + wfm_users +
-						"exactly or more than " + wfm_minTimes + " time";
+			output += " when: " + wfm_when;
+			if(wfm_back>0)
+				output += " (" + wfm_back + ")";
+			output += " amongst: " + wfm_users +
+						" exactly or more than " + wfm_minTimes + " time";
 			if(wfm_minTimes>1)
 				output += "s";
 			output += ",";
@@ -214,13 +218,14 @@ public class RestManager {
 	@Path("/users/whoseFollowersMentioned")
 	public Response usersWhoseFollowersMentioned(
 		@QueryParam("when") String when,
+		@QueryParam("back") int back,
 		@DefaultValue("1") @QueryParam("atLeast") int al,
 		@DefaultValue("1") @QueryParam("minTimes") int minTimes,
 		@QueryParam("users") String users,
 		@DefaultValue("true") @QueryParam("byHits") boolean byHits,
 		@DefaultValue("10") @QueryParam("take") int take){
 			
-		this.authorsWhoseFollowersMentionedSubquery(al, when, users, minTimes);
+		this.authorsWhoseFollowersMentionedSubquery(al, when, back, users, minTimes);
 		this.authors.rankedByHits(byHits);
 		if(take>0) {
 			this.authors.take(take);
@@ -230,12 +235,14 @@ public class RestManager {
 		List<Long> result = new ArrayList<Long>();
 		for(Author a : this.authors.getAuthors())
 			result.add(a.getId());
-		String output = "Users whose followers mentioned " + 
-						"at least: " + al + " user";
+		String output = "Users whose followers mentioned" + 
+						" at least: " + al + " user";
 		if(al>1)
 			output += "s";
-		output += " when: " + when +
-					"exactly or more than " + minTimes + " time";
+		output += " when: " + when;
+		if(back>0)
+			output += " (" + back + ")";
+		output += " exactly or more than " + minTimes + " time";
 		if(minTimes>1)
 			output += "s";
 		output += " amongst: " + users +
@@ -271,12 +278,16 @@ public class RestManager {
 	}
 	
 	private void authorsWhoseFollowersMentionedSubquery(int atLeast, String when, 
-											String users, int minTimes) {
+										int back, String users, int minTimes) {
 		
 		Mention[] mentions = mentionsFromString(users);
 		switch(when){
 			case "last_month":
 				this.authors.whoseFollowersMentioned(new LastMonth(), new AtLeast(atLeast),
+						new AtLeastTimes(minTimes), mentions);
+				break;
+			case "months_ago":
+				this.authors.whoseFollowersMentioned(new MonthsAgo(back), new AtLeast(atLeast),
 						new AtLeastTimes(minTimes), mentions);
 				break;
 		}
