@@ -18,6 +18,17 @@ public class Author {
 		this.id = id;
 		this.hits = 1;
 	}
+	
+	
+	/**
+	 * Creates an instance of Author
+	 * @param id the author's id
+	 * @param hits the author's hits
+	 */
+	public Author(final long id, final int hits) {
+		this.id = id;
+		this.hits = hits;
+	}
 
 	
 	/**
@@ -67,5 +78,10 @@ public class Author {
 	 */
 	public String toString() {
 		return "" + this.id;
+	}
+	
+	@Override
+	public int hashCode() {
+		return String.valueOf(this.id).hashCode();
 	}
 }

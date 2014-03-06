@@ -120,7 +120,7 @@ public class AuthorsWhoseFollowersMentionedFixedTime extends AuthorsWhoseFollowe
 		
 		
 		Map<String,Integer> result = new HashMap<String,Integer>();
-		Set<Long> extracted = new HashSet<Long>();
+		Set<String> filtered = new HashSet<String>();
 		for(Set<String> set : sets) {
 			for(String s : set) {
 				int value = 1;
@@ -128,16 +128,25 @@ public class AuthorsWhoseFollowersMentionedFixedTime extends AuthorsWhoseFollowe
 					value += result.get(s);
 				}
 				if(value>=mentionMin){
-					String user = s.split("_")[0];
-					extracted.add(Long.parseLong(user));
+					filtered.add(s);
 				}
 				result.put(s, value);
 			}
 		}
 		
+		Map<Long,Integer> extracted = new HashMap<Long,Integer>();
+		for(String s : filtered) {
+			int value = 1;
+			Long user = Long.parseLong(s.split("_")[0]);
+			if(extracted.containsKey(user)) {
+				value += extracted.get(user);
+			}
+			extracted.put(user, value);
+		}
+		
 		List<Author> list = new ArrayList<Author>();
-		for(Long l : extracted) {
-			list.add(new Author(l));
+		for(Map.Entry<Long, Integer> e : extracted.entrySet()) {
+			list.add(new Author(e.getKey(),e.getValue()));
 		}
 		this.getQuery().updateUsers(list);
 	}
