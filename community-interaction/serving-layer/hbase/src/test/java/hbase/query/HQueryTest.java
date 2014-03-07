@@ -6,15 +6,10 @@ import hbase.impls.HQueryManager;
 import hbase.query.time.LastMonth;
 import hbase.query.time.MonthsAgo;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 /**
  * @author Daniele Morgantini
  */
 public class HQueryTest {
-
-    private static final Logger LOGGER = LoggerFactory.getLogger(HQueryTest.class);
 
     public static void main(String[] args) {
 
