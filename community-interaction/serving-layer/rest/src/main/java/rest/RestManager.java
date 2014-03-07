@@ -18,7 +18,9 @@ import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.Response;
- 
+
+/** Class to handle REST http requests
+ * @author Daniele Morgantini */
 @Path("/search")
 public class RestManager {
 	
@@ -33,6 +35,7 @@ public class RestManager {
 	
 	@GET
 	@Path("/users")
+	/** Method to answer any kind of query, even composed queries */
 	public Response generic(
 		@DefaultValue("1") @QueryParam("tm_atLeast") int tm_al,
 		@QueryParam("tm_when") String tm_when,
@@ -110,12 +113,16 @@ public class RestManager {
 		for(Author a : this.authors.getAuthors())
 			result.add(a.getId());
 		String qAndA = output.substring(0, output.length()-1);
+		if(result.size()==0)
+			return Response.status(Response.Status.NOT_FOUND)
+					.entity("No user found for query --- " + qAndA).build();
 		qAndA += " ----> " + result;
 		return Response.status(200).entity(qAndA).build();
 	}
 	
 	@GET
 	@Path("/users/thatMentioned")
+	/** Method to answer AuthorsThatMentioned subquery */
 	public Response usersThatMentioned(
 		@DefaultValue("1") @QueryParam("atLeast") int tm_al,
 		@QueryParam("when") String tm_when,
@@ -138,13 +145,17 @@ public class RestManager {
 		if(tm_al>1)
 			output += "s";
 		output += " when: " + tm_when +
-				" amongst: " + tm_users +
-				" ----> " + result;
-		return Response.status(200).entity(output).build();
+				" amongst: " + tm_users;
+		if(result.size()==0)
+			return Response.status(Response.Status.NOT_FOUND)
+					.entity("No user found for query --- " + output).build();
+		output += " ----> " + result;
+		return Response.ok().entity(output).build();
 	}
 	
 	@GET
 	@Path("/users/whoFollow")
+	/** Method to answer AuthorsWhoFollow subquery */
 	public Response usersWhoFollow(
 		@DefaultValue("1") @QueryParam("atLeast") int wf_al,
 		@QueryParam("users") String wf_users,
@@ -165,13 +176,17 @@ public class RestManager {
 						" at least: " + wf_al + " user";
 		if(wf_al>1)
 			output += "s";
-		output += " amongst: " + wf_users +
-				  " ----> " + result;
-		return Response.status(200).entity(output).build();
+		output += " amongst: " + wf_users;
+		if(result.size()==0)
+			return Response.status(Response.Status.NOT_FOUND)
+					.entity("No user found for query --- " + output).build();
+		output += " ----> " + result;
+		return Response.ok().entity(output).build();
 	}
 	
 	@GET
 	@Path("/users/whoseFollowersFollow")
+	/** Method to answer AuthorsWhoseFollowersFollow subquery */
 	public Response usersWhoseFollowersFollow(
 		@QueryParam("users") String users,
 		@DefaultValue("true") @QueryParam("byHits") boolean byHits,
@@ -187,13 +202,17 @@ public class RestManager {
 		List<Long> result = new ArrayList<Long>();
 		for(Author a : this.authors.getAuthors())
 			result.add(a.getId());
-		String output = "Users whose followers follow one amongst " + users +
-		" ----> " + result;
-		return Response.status(200).entity(output).build();
+		String output = "Users whose followers follow one amongst " + users;
+		if(result.size()==0)
+			return Response.status(Response.Status.NOT_FOUND)
+					.entity("No user found for query --- " + output).build();
+		output += " ----> " + result;
+		return Response.ok().entity(output).build();
 	}
 	
 	@GET
 	@Path("/users/whoseFollowersAreFollowedBy")
+	/** Method to answer AuthorsWhoseFollowersAreFollowedBy subquery */
 	public Response usersWhoseFollowersAreFollowedBy(
 		@QueryParam("users") String users,
 		@DefaultValue("true") @QueryParam("byHits") boolean byHits,
@@ -209,13 +228,17 @@ public class RestManager {
 		List<Long> result = new ArrayList<Long>();
 		for(Author a : this.authors.getAuthors())
 			result.add(a.getId());
-		String output = "Users whose followers are followed by one amongst" + users +
-		" ----> " + result;
-		return Response.status(200).entity(output).build();
+		String output = "Users whose followers are followed by one amongst" + users;
+		if(result.size()==0)
+			return Response.status(Response.Status.NOT_FOUND)
+					.entity("No user found for query --- " + output).build();
+		output += " ----> " + result;
+		return Response.ok().entity(output).build();
 	}
 	
 	@GET
 	@Path("/users/whoseFollowersMentioned")
+	/** Method to answer AuthorsWhoseFollowersMentioned subquery */
 	public Response usersWhoseFollowersMentioned(
 		@QueryParam("when") String when,
 		@QueryParam("back") int back,
@@ -245,9 +268,12 @@ public class RestManager {
 		output += " exactly or more than " + minTimes + " time";
 		if(minTimes>1)
 			output += "s";
-		output += " amongst: " + users +
-				  " ----> " + result;
-		return Response.status(200).entity(output).build();
+		output += " amongst: " + users;
+		if(result.size()==0)
+			return Response.status(Response.Status.NOT_FOUND)
+					.entity("No user found for query --- " + output).build();
+		output += " ----> " + result;
+		return Response.ok().entity(output).build();
 	}
 	
 	private void authorsThatMentionedSubquery(int atLeast, String when, String users) {
