@@ -17,7 +17,7 @@ public interface HBaseClient {
 	 * @param col the column name
 	 * @param ts the timestamp
 	 * @param value the value in byte */
-	public abstract void put(final String row, final String colfam, final String col,
+	public abstract void put(final byte[] row, final byte[] colfam, final byte[] col,
 								final long ts, final byte[] value) throws IOException;
 
 	
@@ -29,7 +29,7 @@ public interface HBaseClient {
 	 * @param cols the column names
 	 * @param tss the timestamps
 	 * @param values the values */
-	public abstract void put(final String[] rows, final String[] colfams, final String[] cols,
+	public abstract void put(final byte[][] rows, final byte[][] colfams, final byte[][] cols,
 								final long[] tss, final byte[][] values) throws IOException;
 
 	
@@ -37,14 +37,7 @@ public interface HBaseClient {
 	 * Checks the existence of a row in the HTable
 	 * @return a flag to indicate if the row exists in the table
 	 * @param row the row key */
-	public abstract boolean exists(final String row) throws IOException;
-
-	
-	/**
-	 * Single get to retrieve the latest version of all the columns for a row
-	 * @return the result of the get query
-	 * @param row the row key */
-	public abstract Result get(final String row) throws IOException;
+	public abstract boolean exists(final byte[] row) throws IOException;
 	
 	
 	/**
@@ -69,7 +62,7 @@ public interface HBaseClient {
 	 * @param columnFamilies the column families names
 	 * @param timeRange the specified timestamp range: [timeRange[0], timeRange[1])
 	 * @param maxVersions the number of versions to retrieve */
-	public abstract Result get(final String row, final String[] columnFamilies,
+	public abstract Result get(final byte[] row, final byte[][] columnFamilies,
 								final long[] timeRange, final int maxVersions) throws IOException;
 
 	
@@ -80,7 +73,7 @@ public interface HBaseClient {
 	 * @param columnFamilies the column families names
 	 * @param timeStamp the timeStamp identifying the version to retrieve
 	 * @param maxVersions the number of versions to retrieve */
-	public abstract Result get(final String row, final String[] columnFamilies, 
+	public abstract Result get(final byte[] row, final byte[][] columnFamilies, 
 								final long timeStamp, final int maxVersions) throws IOException;
 
 	
@@ -90,7 +83,7 @@ public interface HBaseClient {
 	 * @param row the row key
 	 * @param columnFamilies the column families names
 	 * @param timeRange the specified timestamp range: [timeRange[0], timeRange[1]) */
-	public abstract Result get(final String row, final String[] columnFamilies, final long[] timeRange) throws IOException;
+	public abstract Result get(final byte[] row, final byte[][] columnFamilies, final long[] timeRange) throws IOException;
 
 	
 	/**
@@ -99,7 +92,7 @@ public interface HBaseClient {
 	 * @param row the row key
 	 * @param columnFamilies the column families names
 	 * @param timeStamp the timeStamp identifying the version to retrieve */
-	public abstract Result get(final String row, final String[] columnFamilies, final long timeStamp) throws IOException;
+	public abstract Result get(final byte[] row, final byte[][] columnFamilies, final long timeStamp) throws IOException;
 
 	
 	/**
@@ -108,7 +101,7 @@ public interface HBaseClient {
 	 * @param row the row key
 	 * @param columnFamilies the column families names
 	 * @param timeRange the specified timestamp range: [timeRange[0], timeRange[1]) */
-	public abstract Result getHistory(final String row, final String[] columnFamilies, final long[] timeRange) throws IOException;
+	public abstract Result getHistory(final byte[] row, final byte[][] columnFamilies, final long[] timeRange) throws IOException;
 
 	
 	/**
@@ -117,7 +110,7 @@ public interface HBaseClient {
 	 * @param row the row key
 	 * @param columnFamilies the column families names
 	 * @param timeStamp the timeStamp identifying the version to retrieve */
-	public abstract Result getHistory(final String row, final String[] columnFamilies, final long timeStamp) throws IOException;
+	public abstract Result getHistory(final byte[] row, final byte[][] columnFamilies, final long timeStamp) throws IOException;
 
 	
 	/**
@@ -125,7 +118,7 @@ public interface HBaseClient {
 	 * @return all the versions of the specified columns of the query result
 	 * @param row the row key
 	 * @param columnFamilies the column families names */
-	public abstract Result getHistory(final String row, final String[] columnFamilies) throws IOException;
+	public abstract Result getHistory(final byte[] row, final byte[][] columnFamilies) throws IOException;
 
 	
 	/**
@@ -134,7 +127,7 @@ public interface HBaseClient {
 	 * @param rows the row keys
 	 * @param columnFamilies the column families names
 	 * @param timeRange the specified timestamp range: [timeRange[0], timeRange[1]) */
-	public abstract Result[] get(final String[] rows, final String[] columnFamilies, final long[] timeRange) throws IOException;
+	public abstract Result[] get(final byte[][] rows, final byte[][] columnFamilies, final long[] timeRange) throws IOException;
 
 	
 	/**
@@ -143,7 +136,7 @@ public interface HBaseClient {
 	 * @param rows the row keys
 	 * @param columnFamilies the column families names
 	 * @param timeStamp the timeStamp identifying the version to retrieve */
-	public abstract Result[] get(final String[] rows, final String[] columnFamilies, final long timeStamp) throws IOException;
+	public abstract Result[] get(final byte[][] rows, final byte[][] columnFamilies, final long timeStamp) throws IOException;
 	
 	
 	/**
@@ -152,13 +145,13 @@ public interface HBaseClient {
 	 * @param colfam the name of the column family
 	 * @param col the column name
 	 * @param ts the timestamp */
-	public abstract void delete(final String row, final String colfam, final String col, final long ts) throws IOException;
+	public abstract void delete(final byte[] row, final byte[] colfam, final byte[] col, final long ts) throws IOException;
 
 	
 	/**
 	 * Delete all columns, all versions of the row
 	 * @param row the row key */
-	public abstract void delete(final String row) throws IOException;
+	public abstract void delete(final byte[] row) throws IOException;
 
 	
 	/**
@@ -168,8 +161,8 @@ public interface HBaseClient {
 	 * @param colfams the names of the column families
 	 * @param cols the column names
 	 * @param tss the timestamps */
-	public abstract void delete(final String[] rows, final String[] colfams, 
-									final String[] cols, final long[] tss) throws IOException;
+	public abstract void delete(final byte[][] rows, final byte[][] colfams, 
+									final byte[][] cols, final long[] tss) throws IOException;
 
 	
 	/**

@@ -38,6 +38,11 @@ public class HBaseClientTest {
     
     private HTableManager casa;
     
+    private byte[] salone;
+    private byte[] soggiorno;
+    private byte[] mq;
+    private byte[] bright;
+    
     @BeforeClass
     public void setUp() throws IOException {
     	
@@ -52,17 +57,25 @@ public class HBaseClientTest {
     	this.testTable = this.admin.getTable(testTableName);
     	this.testTable.setWriteBufferSize(20971520L); // Otherwise it doesn't get the default value from config
     	this.casa = new HTableManager(testTable,1);
+    	this.salone = Bytes.toBytes("salone");
+    	this.soggiorno = Bytes.toBytes("soggiorno");
+    	this.bright = Bytes.toBytes("bright");
+    	this.mq = Bytes.toBytes("mq");
     	
-    	String row = "row5";
-    	String[] rows = {row, row, row};
-    	String[] colfams = {"salone", "soggiorno", "salone"};
-    	String[] cols = {"mq", "mq", "mq"};
+    	byte[] row = Bytes.toBytes("row5");
+    	byte[][] rows = {row, row, row};
+    	byte[][] colfams = {salone, soggiorno, salone};
+    	byte[][] cols = {mq, mq, mq};
     	long[] tss = {1L, 2L, 3L};
     	byte[][] values = {Bytes.toBytes(10), Bytes.toBytes(12), Bytes.toBytes(11)};
     	this.casa.put(rows, colfams, cols, tss, values);
-    	String[] rowsDel = {"row13", "row14", "row13", "row15", "row15", "row16", "row16"};
-    	String[] colfamsDel = {"salone", "soggiorno", "salone", "salone", "salone", "salone", "soggiorno"};
-    	String[] colsDel = {"mq", "mq", "mq", "bright", "bright", "mq", "mq"};
+    	byte[] row13 = Bytes.toBytes("row13");
+    	byte[] row14 = Bytes.toBytes("row14");
+    	byte[] row15 = Bytes.toBytes("row15");
+    	byte[] row16 = Bytes.toBytes("row16");
+    	byte[][] rowsDel = {row13, row14, row13, row15, row15, row16, row16};
+    	byte[][] colfamsDel = {salone, soggiorno, salone, salone, salone, salone, soggiorno};
+    	byte[][] colsDel = {mq, mq, mq, bright, bright, mq, mq};
     	long[] tssDel = {1L, 2L, 3L, 1L, 3L, 1L, 3L};
     	byte[][] valuesDel = {Bytes.toBytes(10), Bytes.toBytes(12), Bytes.toBytes(11),
     			Bytes.toBytes(true), Bytes.toBytes(false), Bytes.toBytes(20), Bytes.toBytes(23)};
@@ -99,21 +112,21 @@ public class HBaseClientTest {
     	
     	LOGGER.info("Auto flush: " + this.testTable.isAutoFlush());
     	
-    	String row1 = "row1";
-    	this.casa.put(row1, "salone", "mq", System.currentTimeMillis(), Bytes.toBytes(25));
+    	byte[] row1 = Bytes.toBytes("row1");
+    	this.casa.put(row1, salone, mq, System.currentTimeMillis(), Bytes.toBytes(25));
     	
     	Result result = this.casa.get(row1);    	
     	LOGGER.info(result.toString());
     	assertEquals(result.size(),1);
     	
-    	this.casa.put(row1, "soggiorno", "luminoso", System.currentTimeMillis(), Bytes.toBytes(true));
+    	this.casa.put(row1, soggiorno, Bytes.toBytes("luminoso"), System.currentTimeMillis(), Bytes.toBytes(true));
     	result = this.casa.get(row1);    	
     	LOGGER.info(result.toString());
     	assertEquals(result.size(),2); //it's the size of the cell
     	
     	
-    	String row2 = "row2";
-    	this.casa.put(row2, "soggiorno", "mq", System.currentTimeMillis(), Bytes.toBytes(16));
+    	byte[] row2 = Bytes.toBytes("row2");
+    	this.casa.put(row2, soggiorno, mq, System.currentTimeMillis(), Bytes.toBytes(16));
     	result = this.casa.get(row2);    	
     	LOGGER.info(result.toString());
     	assertEquals(result.size(),1);
@@ -126,14 +139,14 @@ public class HBaseClientTest {
     	this.testTable.setAutoFlush(false);
     	LOGGER.info("Auto flush: " + this.testTable.isAutoFlush());
     	
-    	String row = "row3";
-    	this.casa.put(row, "soggiorno", "mq", System.currentTimeMillis(), Bytes.toBytes(15));
+    	byte[] row = Bytes.toBytes("row3");
+    	this.casa.put(row, soggiorno, mq, System.currentTimeMillis(), Bytes.toBytes(15));
     	
     	Result result = this.casa.get(row);    	
     	LOGGER.info(result.toString());
     	assertEquals(result.size(),0);
     	
-    	this.casa.put(row, "soggiorno", "luminoso", System.currentTimeMillis(), Bytes.toBytes(false));
+    	this.casa.put(row, soggiorno, Bytes.toBytes("luminoso"), System.currentTimeMillis(), Bytes.toBytes(false));
     	this.testTable.flushCommits();
 
     	result = this.casa.get(row);    	
@@ -146,10 +159,10 @@ public class HBaseClientTest {
     @Test
     public void hasInsertedRows() throws IOException {
     	
-    	String row = "row4";
-    	String[] rows = {row, row};
-    	String[] colfams = {"salone", "soggiorno"};
-    	String[] cols = {"mq", "mq"};
+    	byte[] row = Bytes.toBytes("row4");
+    	byte[][] rows = {row, row};
+    	byte[][] colfams = {salone,soggiorno};
+    	byte[][] cols = {mq, mq};
     	long[] tss = {1L, 2L};
     	byte[][] values = {Bytes.toBytes(10), Bytes.toBytes(11)};
     	this.casa.put(rows, colfams, cols, tss, values);
@@ -169,8 +182,8 @@ public class HBaseClientTest {
     @Test
     public void getAllVersions() throws IOException {
     	
-    	String row = "row5";
-    	String[] columnFamilies = {"salone"};
+    	byte[] row = Bytes.toBytes("row5");
+    	byte[][] columnFamilies = {salone};
     	Result result = this.casa.getHistory(row, columnFamilies);
     	
     	List<Integer> expected = new ArrayList<Integer>(Arrays.asList(11, 10));
@@ -186,7 +199,7 @@ public class HBaseClientTest {
     @Test
     public void getAllVersionsAllColumnFamilies() throws IOException {
     	
-    	String row = "row5";
+    	byte[] row = Bytes.toBytes("row5");
     	List<Integer> expected = new ArrayList<Integer>(Arrays.asList(11, 10, 12));
     	List<Integer> resultMq = new ArrayList<Integer>();
     	Result result = this.casa.getHistory(row, null);
@@ -201,10 +214,10 @@ public class HBaseClientTest {
     @Test
     public void getAllVersionsColumnFamilyWithDifferentQualifier() throws IOException {
     	
-    	String row = "row5";
+    	byte[] row = Bytes.toBytes("row5");
     	List<Integer> expectedArray = new ArrayList<Integer>(Arrays.asList(5, 11, 10, 12));
     	List<Integer> resultMq = new ArrayList<Integer>();
-    	this.casa.put(row, "cupola", "raggio", 5L, Bytes.toBytes(5));
+    	this.casa.put(row, Bytes.toBytes("cupola"), Bytes.toBytes("raggio"), 5L, Bytes.toBytes(5));
     	Result result = this.casa.getHistory(row, null);
     	for(KeyValue kv : result.raw()) {
     		resultMq.add(Bytes.toInt(kv.getValue()));
@@ -220,7 +233,7 @@ public class HBaseClientTest {
     @Test
     public void getAllVersionsInTimeRange() throws IOException {
     	
-    	String row = "row5";
+    	byte[] row = Bytes.toBytes("row5");
     	long[] timeRange = {1L,5L};
     	Result result = this.casa.getHistory(row, null, timeRange);
     	assertEquals(result.size(), 3);
@@ -230,10 +243,10 @@ public class HBaseClientTest {
     @Test
     public void getLastVersion() throws IOException {
     	
-    	String row = "row6";
-    	String[] rows = {row, row, row};
-    	String[] colfams = {"salone", "soggiorno", "salone"};
-    	String[] cols = {"mq", "mq", "mq"};
+    	byte[] row = Bytes.toBytes("row6");
+    	byte[][] rows = {row, row, row};
+    	byte[][] colfams = {salone, soggiorno, salone};
+    	byte[][] cols = {mq, mq, mq};
     	long[] tss = {1L, 2L, 3L};
     	byte[][] values = {Bytes.toBytes(10), Bytes.toBytes(12), Bytes.toBytes(11)};
     	this.casa.put(rows, colfams, cols, tss, values);
@@ -253,15 +266,15 @@ public class HBaseClientTest {
     @Test
     public void getTimeRange() throws IOException {
     	
-    	String row = "row7";
-    	String[] rows = {row, row, row};
-    	String[] colfams = {"salone", "soggiorno", "salone"};
-    	String[] cols = {"mq", "mq", "mq"};
+    	byte[] row = Bytes.toBytes("row7");
+    	byte[][] rows = {row, row, row};
+    	byte[][] colfams = {salone, soggiorno, salone};
+    	byte[][] cols = {mq, mq, mq};
     	long[] tss = {1L, 4L, 8L};
     	byte[][] values = {Bytes.toBytes(10), Bytes.toBytes(12), Bytes.toBytes(11)};
     	this.casa.put(rows, colfams, cols, tss, values);
     	
-    	String[] columnFamilies = {"salone"};
+    	byte[][] columnFamilies = {salone};
     	long[] timeRange = {1L,4L};
     	Result result = this.casa.get(row, columnFamilies, timeRange);
     	
@@ -277,31 +290,33 @@ public class HBaseClientTest {
     @Test
     public void getTimeStamp() throws IOException {
     	
-    	String row = "row8";
-    	String[] rows = {row, row};
-    	String[] colfams = {"salone", "salone"};
-    	String[] cols = {"mq", "mq"};
+    	byte[] row = Bytes.toBytes("row8");
+    	byte[][] rows = {row, row};
+    	byte[][] colfams = {salone, salone};
+    	byte[][] cols = {mq, mq};
     	long[] tss = {1L, 4L};
     	byte[][] values = {Bytes.toBytes(10), Bytes.toBytes(12)};
     	this.casa.put(rows, colfams, cols, tss, values);
     	
-    	String[] columnFamilies = {"salone"};
+    	byte[][] columnFamilies = {salone};
     	Result result = this.casa.get(row, columnFamilies, 4L);
     	
-    	assertEquals(Bytes.toInt(result.getValue(Bytes.toBytes("salone"), Bytes.toBytes("mq"))), 12);
+    	assertEquals(Bytes.toInt(result.getValue(salone, mq)), 12);
     }
     
     
     @Test
     public void multipleGets() throws IOException {
-    	String[] rows = {"row10", "row11", "row10"};
-    	String[] colfams = {"salone", "soggiorno", "salone"};
-    	String[] cols = {"mq", "mq", "mq"};
+    	byte[] row10 = Bytes.toBytes("row10");
+    	byte[] row11 = Bytes.toBytes("row11");
+    	byte[][] rows = {row10, row11, row10};
+    	byte[][] colfams = {salone, soggiorno, salone};
+    	byte[][] cols = {mq, mq, mq};
     	long[] tss = {1L, 2L, 3L};
     	byte[][] values = {Bytes.toBytes(16), Bytes.toBytes(21), Bytes.toBytes(17)};
     	this.casa.put(rows, colfams, cols, tss, values);
     	
-    	String[] rowsToQuery = {"row10", "row11"};
+    	byte[][] rowsToQuery = {row10, row11};
     	long[] timeRange = {1L, 4L};
 
     	List<Integer> mqs = new ArrayList<Integer>();
@@ -321,7 +336,8 @@ public class HBaseClientTest {
     @Test
     public void putThenGetClass() throws IOException {
     	
-    	String row = "row9";
+    	byte[] row = Bytes.toBytes("row9");
+    	byte[] rooms = Bytes.toBytes("rooms");
     	Room dependance = new Room("dependance",35);
     	Room cucina = new Room("cucina",14);
     	
@@ -329,9 +345,9 @@ public class HBaseClientTest {
     	HTable houseTable = this.admin.getTable("house");
     	HTableManager house = new HTableManager(houseTable,1);
     	
-    	house.put(row, "rooms", dependance.getName(), System.currentTimeMillis(), 
+    	house.put(row, rooms, Bytes.toBytes(dependance.getName()), System.currentTimeMillis(), 
     			Bytes.toBytes(dependance.getMq()));
-    	house.put(row, "rooms", cucina.getName(), System.currentTimeMillis(), Bytes.toBytes(cucina.getMq()));
+    	house.put(row, rooms, Bytes.toBytes(cucina.getName()), System.currentTimeMillis(), Bytes.toBytes(cucina.getMq()));
     	
     	Result result = house.get(row);
     	    	
@@ -356,7 +372,7 @@ public class HBaseClientTest {
     @Test
     public void existsTest() throws IOException {
     	
-    	String row = "row5";
+    	byte[] row = Bytes.toBytes("row5");
     	boolean exists = this.casa.exists(row);
     	assertTrue(exists);
     }
@@ -364,7 +380,7 @@ public class HBaseClientTest {
     @Test
     public void singleDeleteAllColumnsAllVersions() throws IOException {
     	
-    	String row = "row16";
+    	byte[] row = Bytes.toBytes("row16");
     	this.casa.delete(row);
     	assertFalse(this.casa.exists(row));
     }
@@ -372,22 +388,22 @@ public class HBaseClientTest {
     @Test
     public void singleDelete() throws IOException {
     	
-    	String row = "row13";
+    	byte[] row = Bytes.toBytes("row13");
     	long ts = 2L;
-    	this.casa.delete(row, "salone", "mq", ts);
+    	this.casa.delete(row, salone, mq, ts);
     	assertTrue(this.casa.exists(row));
     }
     
     @Test
     public void batchDelete() throws IOException {
     	
-    	String[] rows = {"row15", "row14"};
-    	String[] colfams = {"salone","soggiorno"};
-    	String[] cols = {"bright", "mq"};
+    	byte[][] rows = {Bytes.toBytes("row15"), Bytes.toBytes("row14")};
+    	byte[][] colfams = {salone, soggiorno};
+    	byte[][] cols = {bright, mq};
     	long[] tss = {5L, 5L};
     	this.casa.delete(rows, colfams, cols, tss);
     	
-    	for(String row : rows)
+    	for(byte[] row : rows)
     		assertFalse(this.casa.exists(row));
     }
     
