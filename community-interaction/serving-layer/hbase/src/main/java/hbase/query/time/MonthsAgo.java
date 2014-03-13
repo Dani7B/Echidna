@@ -18,8 +18,9 @@ public class MonthsAgo implements FixedTime {
 	private long to;
 	
 	/** 
-	 * No arguments constructor
-	 * @return a LastMonth instance
+	 * Creates a MonthsAgo instance
+	 * @return the MonthsAgo instance
+	 * @param months the number of months ago to consider
 	 */
 	public MonthsAgo(int months) {
 		super();
@@ -34,8 +35,7 @@ public class MonthsAgo implements FixedTime {
 	}
 	
 	/**
-	 * Computes the milliseconds of a day in last month
-	 * @return the milliseconds of now, one month ago
+	 * Sets the starting and ending point of the time window
 	 */
 	private void setFromAndTo(int n) {		
 		Calendar now = Calendar.getInstance();
