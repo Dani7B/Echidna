@@ -5,8 +5,8 @@ import java.util.Calendar;
 import java.util.Date;
 
 /**
- * Simple class to represent last month's time window
- * (i.e. if today is 02/02/2014 last month is 01/2014)
+ * Simple class to represent n months ago time window
+ * (i.e. if today is 02/03/2014 and n is 2 we get [01/2014,03/2014) )
  * @author Daniele Morgantini
  */
 public class MonthsAgo implements FixedTime {

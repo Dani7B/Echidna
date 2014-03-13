@@ -4,6 +4,7 @@ import java.io.IOException;
 
 import hbase.impls.HQueryManager;
 import hbase.query.time.LastMonth;
+import hbase.query.time.LastWeek;
 import hbase.query.time.MonthsAgo;
 
 /**
@@ -122,6 +123,18 @@ public class HQueryTest {
 		info = "The top 5 users whose followers mentioned two or more times \n"
 		+ " at least one among 11, 14 and 12 in the last 2 months \n";
 		printResult(queryManager, query6, info);
+		System.out.println("");
+		
+		
+		final HQuery query7 = new HQuery()
+							  .users()
+							  .thatMentioned(new LastWeek(), new AtLeast(1),
+									  new Mention(14), new Mention(11), new Mention(12))
+							  .rankedByHits(true)
+							  .take(5);
+
+		info = "The top 5 users whose mentioned at least one among 11, 14 and 12 during last week \n";
+		printResult(queryManager, query7, info);
 		System.out.println("");
         
     }
