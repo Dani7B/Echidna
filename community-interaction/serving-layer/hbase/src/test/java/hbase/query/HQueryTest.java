@@ -6,6 +6,7 @@ import hbase.impls.HQueryManager;
 import hbase.query.time.LastMonth;
 import hbase.query.time.LastWeek;
 import hbase.query.time.MonthsAgo;
+import hbase.query.time.WeeksAgo;
 
 /**
  * @author Daniele Morgantini
@@ -135,6 +136,17 @@ public class HQueryTest {
 
 		info = "The top 5 users whose mentioned at least one among 11, 14 and 12 during last week \n";
 		printResult(queryManager, query7, info);
+		System.out.println("");
+		
+		final HQuery query8 = new HQuery()
+		  					  .users()
+		  					  .thatMentioned(new WeeksAgo(5), new AtLeast(1),
+		  					  new Mention(14), new Mention(11))
+		  					  .rankedByHits(true)
+		  					  .take(5);
+
+		info = "The top 5 users whose mentioned at least one among 11 and 14 in the last 5 weeks \n";
+		printResult(queryManager, query8, info);
 		System.out.println("");
         
     }
