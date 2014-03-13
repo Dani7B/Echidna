@@ -134,7 +134,7 @@ public class HQueryTest {
 							  .rankedByHits(true)
 							  .take(5);
 
-		info = "The top 5 users whose mentioned at least one among 11, 14 and 12 during last week \n";
+		info = "The top 5 users who mentioned at least one among 11, 14 and 12 during last week \n";
 		printResult(queryManager, query7, info);
 		System.out.println("");
 		
@@ -145,7 +145,7 @@ public class HQueryTest {
 		  					  .rankedByHits(true)
 		  					  .take(5);
 
-		info = "The top 5 users whose mentioned at least one among 11 and 14 in the last 5 weeks \n";
+		info = "The top 5 users who mentioned at least one among 11 and 14 in the last 5 weeks \n";
 		printResult(queryManager, query8, info);
 		System.out.println("");
         

@@ -28,7 +28,7 @@ import hbase.query.time.MonthsAgo;
  * Subquery to represent the authors-whose-followers-mentioned request in a fixed time window
  * @author Daniele Morgantini
  */
-public class AuthorsWhoseFollowersMentionedFixedTime extends AuthorsWhoseFollowersMentioned {
+public class AuthorsWhoseFollowersMentionedFixedTime extends AuthorsThatMentioned {
 	
 	private HBaseClient client;
 	
