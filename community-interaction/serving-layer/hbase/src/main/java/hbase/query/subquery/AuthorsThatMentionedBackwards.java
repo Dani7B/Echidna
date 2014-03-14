@@ -3,10 +3,8 @@ package hbase.query.subquery;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 import org.apache.hadoop.hbase.KeyValue;
 import org.apache.hadoop.hbase.client.Result;
@@ -68,10 +66,10 @@ public class AuthorsThatMentionedBackwards extends AuthorsThatMentioned {
 	@Override
 	public void execute(final Authors authors) throws IOException {
 		
-		Map<byte[],Integer> map = new HashMap<byte[],Integer>();
+		Map<Long,Integer> general = new HashMap<Long,Integer>();
 		final long lowerBound = this.timeRange.getStart();
 		final long upperBound = this.timeRange.getEnd();
-		final int mentionMin = this.getAtLeast().getLowerBound();
+		final int minMentionedAuthors = this.getAtLeast().getLowerBound();
 		final int minTimes = this.getAtLeastTimes().getTimes();
 		
 		byte[][] auths = new byte[authors.size()][];
@@ -84,6 +82,7 @@ public class AuthorsThatMentionedBackwards extends AuthorsThatMentioned {
 				
 		for(Mention m : this.getMentions()){
 			
+			Map<Long, Integer> counter = new HashMap<Long, Integer>();
 			String lowerRow = this.timeRange.generateFirstRowKey(m.getMentioned().getId());
 			String upperRow = this.timeRange.generateLastRowKey(m.getMentioned().getId());
 						
@@ -92,30 +91,38 @@ public class AuthorsThatMentionedBackwards extends AuthorsThatMentioned {
 												Bytes.toBytes(String.valueOf(upperBound)),
 												auths);
 			
-			Set<byte[]> singleIDs = new HashSet<byte[]>();
-			for(Result res : results){
-				for(KeyValue kv : res.raw()){
-					singleIDs.add(kv.getValue());
+			for(Result res : results) {
+				for(KeyValue kv : res.raw()) {
+					Long mentioner = Bytes.toLong(kv.getValue());
+					int value = 1;
+					if(counter.containsKey(mentioner)) {
+						value += counter.get(mentioner);
+					}
+					counter.put(mentioner, value);
 				}
 			}
 			
-			for(byte[] id : singleIDs){
-				int value = 1;
-				if(map.containsKey(id)) {
-					value += map.get(id);
+			for(Map.Entry<Long, Integer> e : counter.entrySet()){
+				if(e.getValue()>= minTimes){
+					Long key = e.getKey();
+					int value = 1;
+					if(general.containsKey(key)) {
+						value += general.get(key);
+					}
+					general.put(key, value);
 				}
-				map.put(id, value);
 			}
 		}
 		
-		List<Author> result = new ArrayList<Author>();
-		for(Map.Entry<byte[], Integer> e : map.entrySet()) {
-			int value = e.getValue();
-			if(value >= mentionMin)
-				result.add(new Author(Bytes.toLong(e.getKey())));
+		List<Author> users = new ArrayList<Author>();
+		for(Map.Entry<Long, Integer> el : general.entrySet()) {
+			int value = el.getValue();
+			if(value >= minMentionedAuthors) {
+				users.add(new Author(el.getKey(),value));
+			}
 		}
 		
-		this.getQuery().updateUsers(result);
+		this.getQuery().updateUsers(users);
 	}
 	
 }

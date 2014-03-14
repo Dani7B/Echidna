@@ -75,7 +75,7 @@ public class AuthorsThatMentionedFixedTime extends AuthorsThatMentioned {
 	public void execute(final Authors authors) throws IOException {
 		
 		Map<String,Integer> general = new HashMap<String,Integer>();
-		final int mentionMin = this.getAtLeast().getLowerBound();
+		final int minMentionedAuthors = this.getAtLeast().getLowerBound();
 		final int minTimes = this.getAtLeastTimes().getTimes();
 		
 		byte[][] auths = new byte[authors.size()][];
@@ -119,25 +119,11 @@ public class AuthorsThatMentionedFixedTime extends AuthorsThatMentioned {
 		List<Author> list = new ArrayList<Author>();
 		for(Map.Entry<String, Integer> el : general.entrySet()) {
 			int counter = el.getValue();
-			if(counter >= mentionMin) {
+			if(counter >= minMentionedAuthors) {
 				list.add(new Author(Long.parseLong(el.getKey()),counter));
 			}
 		}
 		this.getQuery().updateUsers(list);
-		
-		/*
-		Set<Long> result = new HashSet<Long>();
-		for(Map.Entry<String, Integer> e : general.entrySet()) {
-			int value = e.getValue();
-			if(value >= mentionMin)
-				result.add(Long.parseLong(e.getKey()));
-		}
-		
-		List<Author> list = new ArrayList<Author>();
-		for(Long l : result) {
-			list.add(new Author(l));
-		}
-		this.getQuery().updateUsers(list);*/
 	}
 	
 }
