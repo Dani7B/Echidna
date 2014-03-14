@@ -50,8 +50,7 @@ public class LastMonth implements FixedTime {
 		return c.getTimeInMillis();
 	}
 	
-	@Override
-	public String generateRowKey(final long id) {
+	private String generateRowKey(final long id) {
 		return id + "_" + date;
 	}
 

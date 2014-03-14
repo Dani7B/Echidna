@@ -19,30 +19,13 @@ public abstract class AuthorsThatMentioned extends HSubQuery {
 	private AtLeastTimes times;
 	
 	private List<Mention> mentions;
-		
 	
 	/**
 	 * Creates an instance of AuthorsThatMentioned subquery
 	 * @return an instance of AuthorsThatMentioned subquery
 	 * @param query the belonging query
 	 * @param atLeast the minimum number of authors to mention
-	 * @param mentions the mentions of authors
-	 */
-	public AuthorsThatMentioned(final HQuery query, final AtLeast atLeast, final Mention...mentions) {
-		super(query);
-		this.atLeast = atLeast;
-		this.mentions = new ArrayList<Mention>();
-		for(Mention m : mentions)
-			this.mentions.add(m);
-		this.times = new AtLeastTimes(1);
-	}
-	
-	/**
-	 * Creates an instance of AuthorsThatMentioned subquery
-	 * @return an instance of AuthorsThatMentioned subquery
-	 * @param query the belonging query
-	 * @param atLeast the minimum number of authors to mention
-	 * @param times the minimum number of mentions for each mentioned authors
+	 * @param times the minimum number of mentions per mentioned authors
 	 * @param mentions the mentions of authors
 	 */
 	public AuthorsThatMentioned(final HQuery query, final AtLeast atLeast,

@@ -26,6 +26,22 @@ public class WeeksAgo implements FixedTime {
 		this.setFromAndTo(weeks);
 	}
 	
+	/**
+	 * Retrieves the start of the time window
+	 * @return the start of the time window
+	 * */
+	public long getStart() {
+		return this.from;
+	}
+		
+	/**
+	 * Retrieves the end of the time window
+	 * @return the end of the time window
+	 * */
+	public long getEnd() {
+		return this.to;
+	}
+	
 	/** Retrieves the string version of the n weeks ago period
 	 * @return the string version of the n weeks ago period 
 	 */
@@ -43,19 +59,14 @@ public class WeeksAgo implements FixedTime {
 		now.add(Calendar.WEEK_OF_YEAR, -n);// n weeks ago
 		this.from = now.getTimeInMillis();
 	}
-	
-	@Override
-	public String generateRowKey(final long id) {
-		return id + "_" + dateFormatter.format(new Date(to));
-	}
 
 	@Override
-	public String generateFirstRowKey(long id) {
+	public String generateFirstRowKey(final long id) {
 		return id + "_" + dateFormatter.format(new Date(from));
 	}
 
 	@Override
-	public String generateLastRowKey(long id) {
+	public String generateLastRowKey(final long id) {
 		return id + "_" + dateFormatter.format(new Date(to));
 	}
 }

@@ -8,37 +8,47 @@ import java.util.Date;
  * Simple class to represent last week's time window
  * @author Daniele Morgantini
  */
-public class LastWeek extends TimeRange {
+public class LastWeek implements FixedTime {
 
 	private final static SimpleDateFormat dateFormatter = new SimpleDateFormat("yyyy-MM-dd");
 
+	private long from;
+	
+	private long to;
+	
 	/** No arguments constructor */
 	public LastWeek() {
 		Calendar now = Calendar.getInstance();
 		now.setTimeInMillis(System.currentTimeMillis());
-		super.setEnd(now.getTimeInMillis());
+		this.to = now.getTimeInMillis();
 		now.add(Calendar.WEEK_OF_YEAR, -1);// 1 week ago
-		super.setStart(now.getTimeInMillis());
+		this.from = now.getTimeInMillis();
 	}
 
 	/**
-	 * Creates a LastWeek instance
-	 * @return the LastWeek instance
-	 * @param start the lower extreme of the time window
-	 * @param end the upper extreme of the time window
+	 * Retrieves the start of the time window
+	 * @return the start of the time window
 	 * */
-	public LastWeek(long start, long end) {
-		super(start, end);
+	public long getStart() {
+		return this.from;
 	}
-
+		
+	/**
+	 * Retrieves the end of the time window
+	 * @return the end of the time window
+	 * */
+	public long getEnd() {
+		return this.to;
+	}
+	
 	@Override
 	public String generateFirstRowKey(long id) {
-		return id + "_" + dateFormatter.format(new Date(super.getStart()));
+		return id + "_" + dateFormatter.format(new Date(this.from));
 	}
 
 	@Override
 	public String generateLastRowKey(long id) {
-		return id + "_" + dateFormatter.format(new Date(super.getEnd()));
+		return id + "_" + dateFormatter.format(new Date(this.to));
 	}
 
 }

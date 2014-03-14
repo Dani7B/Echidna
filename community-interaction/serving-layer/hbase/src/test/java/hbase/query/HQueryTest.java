@@ -126,15 +126,16 @@ public class HQueryTest {
 		printResult(queryManager, query6, info);
 		System.out.println("");
 		
-		
+		LastWeek lw = new LastWeek();
 		final HQuery query7 = new HQuery()
 							  .users()
-							  .thatMentioned(new LastWeek(), new AtLeast(1),
+							  .thatMentioned(lw, new AtLeast(1), new AtLeastTimes(1),
 									  new Mention(14), new Mention(11), new Mention(12))
 							  .rankedByHits(true)
 							  .take(5);
 
-		info = "The top 5 users who mentioned at least one among 11, 14 and 12 during last week \n";
+		info = "The top 5 users who mentioned at least one among 11, 14 and 12 during last week [" +
+				lw.getStart() + " - " + lw.getEnd() + "] \n";
 		printResult(queryManager, query7, info);
 		System.out.println("");
 		
@@ -149,6 +150,16 @@ public class HQueryTest {
 		printResult(queryManager, query8, info);
 		System.out.println("");
         
+		final HQuery query9 = new HQuery()
+		  					  .users()
+		  					  .thatMentioned(new MonthsAgo(2), new AtLeast(1),
+		  					  new Mention(14), new Mention(11), new Mention(12))
+		  					  .rankedByHits(true)
+		  					  .take(5);
+
+		info = "The top 5 users by rank who mentioned at least one among 11, 14 and 12 in the last 2 months \n";
+		printResult(queryManager, query9, info);
+		System.out.println("");
     }
 
     

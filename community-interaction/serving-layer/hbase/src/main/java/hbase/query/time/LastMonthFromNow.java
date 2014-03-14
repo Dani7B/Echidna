@@ -9,7 +9,7 @@ import java.util.Date;
  * (i.e. if today is 02/02/2014 last month is [02/01/2014-02/02/2014])
  * @author Daniele Morgantini
  */
-public class LastMonthFromNow extends TimeRange{
+public class LastMonthFromNow extends TimeRange {
 
 	private static final SimpleDateFormat dateFormatter = new SimpleDateFormat("yyyy-MM-dd");
 

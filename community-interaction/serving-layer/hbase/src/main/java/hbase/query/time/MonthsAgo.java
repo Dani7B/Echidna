@@ -44,11 +44,6 @@ public class MonthsAgo implements FixedTime {
 		now.add(Calendar.MONTH, -n);// n months ago
 		this.from = now.getTimeInMillis();
 	}
-	
-	@Override
-	public String generateRowKey(final long id) {
-		return id + "_" + dateFormatter.format(new Date(to));
-	}
 
 	@Override
 	public String generateFirstRowKey(long id) {

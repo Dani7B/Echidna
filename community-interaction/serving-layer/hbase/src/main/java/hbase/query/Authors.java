@@ -59,9 +59,24 @@ public class Authors {
 	 * @return this
 	 * @param timeRange the specific time range to take into account
 	 * @param atLeast the minimum number of mentioned authors
+	 * @param times the minimum number of mentions per mentioned author
 	 * @param mentions the mentions
 	 */
 	public Authors thatMentioned(final TimeRange timeRange, final AtLeast atLeast, final Mention... mentions) {
+    	HSubQuery sub = new AuthorsThatMentionedBackwards(this.query, timeRange, atLeast, mentions);
+        return this;
+    }
+	
+	/**
+	 * Adds the authors-that-mentioned subquery to the query
+	 * @return this
+	 * @param timeRange the specific time range to take into account
+	 * @param atLeast the minimum number of mentioned authors
+	 * @param times the minimum number of mentions per mentioned author
+	 * @param mentions the mentions
+	 */
+	public Authors thatMentioned(final TimeRange timeRange, final AtLeast atLeast,
+									final AtLeastTimes times, final Mention... mentions) {
     	HSubQuery sub = new AuthorsThatMentionedBackwards(this.query, timeRange, atLeast, mentions);
         return this;
     }
@@ -75,6 +90,20 @@ public class Authors {
 	 */
 	public Authors thatMentioned(final FixedTime timeRange, final AtLeast atLeast, final Mention... mentions) {
     	HSubQuery sub = new AuthorsThatMentionedFixedTime(this.query, timeRange, atLeast, mentions);
+        return this;
+    }
+	
+	/**
+	 * Adds the authors-that-mentioned subquery to the query
+	 * @return this
+	 * @param timeRange the fixed time range to take into account
+	 * @param atLeast the minimum number of mentioned authors
+	 * @param times the minimum number of mentions per mentioned author
+	 * @param mentions the mentions
+	 */
+	public Authors thatMentioned(final FixedTime timeRange, final AtLeast atLeast,
+									final AtLeastTimes times, final Mention... mentions) {
+    	HSubQuery sub = new AuthorsThatMentionedFixedTime(this.query, timeRange, atLeast, times, mentions);
         return this;
     }
 	
@@ -145,15 +174,6 @@ public class Authors {
     	HSubQuery sub = new AuthorsWhoseFollowersMentionedFixedTime(this.query, timeRange, atLeast, times, mentions);
         return this;
     }
-	
-	/*
-	
-	public WhoseFollowers whoseFollowers() {
-		final HSubQueryComposed sub = new HSubQueryComposed(this.query);
-		final WhoseFollowers part = new WhoseFollowers(sub, this);
-		return part;
-    }
-	*/
 	
 	public Authors rankedByHits(final boolean ascOrDesc) {
     	HSubQuery sub = new AuthorsRankedByHits(this.query, ascOrDesc);

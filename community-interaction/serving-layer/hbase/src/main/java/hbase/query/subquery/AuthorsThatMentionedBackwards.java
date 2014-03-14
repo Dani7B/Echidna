@@ -15,6 +15,7 @@ import org.apache.hadoop.hbase.util.Bytes;
 import hbase.HBaseClient;
 import hbase.impls.HBaseClientFactory;
 import hbase.query.AtLeast;
+import hbase.query.AtLeastTimes;
 import hbase.query.Author;
 import hbase.query.Authors;
 import hbase.query.HQuery;
@@ -42,9 +43,25 @@ public class AuthorsThatMentionedBackwards extends AuthorsThatMentioned {
 	 */
 	public AuthorsThatMentionedBackwards(final HQuery query, final TimeRange timeRange,
 									final AtLeast atLeast, final Mention...mentions) {
-		super(query, atLeast, mentions);
-		this.timeRange = timeRange;
 		
+		super(query, atLeast, new AtLeastTimes(1), mentions);
+		this.timeRange = timeRange;
+		this.client = HBaseClientFactory.getInstance().getMentionedBy();
+	}
+	
+	/**
+	 * Creates an instance of AuthorsThatMentionedBackwards subquery
+	 * @return an instance of AuthorsThatMentionedBackwards subquery
+	 * @param query the belonging query
+	 * @param timeRange the specific time window to take into account
+	 * @param atLeast the minimum number of authors to mention
+	 * @param times the minimum number of mentions per mentioned author
+	 * @param mentions the mentions of authors
+	 */
+	public AuthorsThatMentionedBackwards(final HQuery query, final TimeRange timeRange,
+									final AtLeast atLeast, final AtLeastTimes times, final Mention...mentions) {
+		super(query, atLeast, times, mentions);
+		this.timeRange = timeRange;
 		this.client = HBaseClientFactory.getInstance().getMentionedBy();
 	}
 	
@@ -55,6 +72,7 @@ public class AuthorsThatMentionedBackwards extends AuthorsThatMentioned {
 		final long lowerBound = this.timeRange.getStart();
 		final long upperBound = this.timeRange.getEnd();
 		final int mentionMin = this.getAtLeast().getLowerBound();
+		final int minTimes = this.getAtLeastTimes().getTimes();
 		
 		byte[][] auths = new byte[authors.size()][];
 		int i = 0;
@@ -84,7 +102,7 @@ public class AuthorsThatMentionedBackwards extends AuthorsThatMentioned {
 			for(byte[] id : singleIDs){
 				int value = 1;
 				if(map.containsKey(id)) {
-					value = map.get(id) + 1;
+					value += map.get(id);
 				}
 				map.put(id, value);
 			}
