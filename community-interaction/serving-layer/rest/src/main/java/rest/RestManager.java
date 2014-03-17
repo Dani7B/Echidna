@@ -12,6 +12,7 @@ import hbase.query.Mention;
 import hbase.query.time.LastMonth;
 import hbase.query.time.LastMonthFromNow;
 import hbase.query.time.MonthsAgo;
+import hbase.query.time.WeeksAgo;
 
 import javax.ws.rs.DefaultValue;
 import javax.ws.rs.GET;
@@ -38,7 +39,9 @@ public class RestManager {
 	/** Method to answer any kind of query, even composed queries */
 	public Response generic(
 		@DefaultValue("1") @QueryParam("tm_atLeast") int tm_al,
+		@DefaultValue("1") @QueryParam("tm_minTimes") int tm_times,
 		@QueryParam("tm_when") String tm_when,
+		@QueryParam("tm_back") int tm_back,
 		@QueryParam("tm_users") String tm_users,
 		@DefaultValue("1") @QueryParam("wf_atLeast") int wf_al,
 		@QueryParam("wf_users") String wf_users,
@@ -55,10 +58,12 @@ public class RestManager {
 		
 		String output = "Users";
 		if(tm_users!=null && tm_when!=null){
-			this.authorsThatMentionedSubquery(tm_al, tm_when, tm_users);
-			output += " that mentioned " +
-					"at least: " + tm_al + " user";
+			this.authorsThatMentionedSubquery(tm_al, tm_times, tm_when, tm_back, tm_users);
+			output += " that mentioned at least: " + tm_al + " user";
 			if(tm_al>1)
+				output += "s";
+			output += " exactly or more than " + tm_times + " time";
+			if(tm_times>1)
 				output += "s";
 			output += " when: " + tm_when +
 					" amongst: " + tm_users + ",";
@@ -125,12 +130,14 @@ public class RestManager {
 	/** Method to answer AuthorsThatMentioned subquery */
 	public Response usersThatMentioned(
 		@DefaultValue("1") @QueryParam("atLeast") int tm_al,
+		@DefaultValue("1") @QueryParam("minTimes") int tm_times,
 		@QueryParam("when") String tm_when,
+		@QueryParam("back") int tm_back,
 		@QueryParam("users") String tm_users,
 		@DefaultValue("true") @QueryParam("byId") boolean byId,
 		@DefaultValue("10") @QueryParam("take") int take){
 		
-		this.authorsThatMentionedSubquery(tm_al, tm_when, tm_users);
+		this.authorsThatMentionedSubquery(tm_al, tm_times, tm_when, tm_back, tm_users);
 		this.authors.rankedById(byId);
 		if(take>0) {
 			this.authors.take(take);
@@ -144,8 +151,13 @@ public class RestManager {
 						" at least: " + tm_al + " user";
 		if(tm_al>1)
 			output += "s";
-		output += " when: " + tm_when +
-				" amongst: " + tm_users;
+		output += " exactly or more than " + tm_times + " time";
+		if(tm_times>1)
+			output += "s";
+		output += " when: " + tm_when;
+		if(tm_back>0)
+			output += " (" + tm_back + ")";
+		output += " amongst: " + tm_users;
 		if(result.size()==0)
 			return Response.status(Response.Status.NOT_FOUND)
 					.entity("No user found for query --- " + output).build();
@@ -276,14 +288,22 @@ public class RestManager {
 		return Response.ok().entity(output).build();
 	}
 	
-	private void authorsThatMentionedSubquery(int atLeast, String when, String users) {
+	private void authorsThatMentionedSubquery(int atLeast, int minTimes, String when, int back, String users) {
 		Mention[] mentions = this.mentionsFromString(users);
 		switch(when) {
 			case "last_month":
-				this.authors.thatMentioned(new LastMonth(), new AtLeast(atLeast), mentions);
+				this.authors.thatMentioned(new LastMonth(), new AtLeast(atLeast), new AtLeastTimes(minTimes), mentions);
 				break;
 			case "very_last_month":
 				this.authors.thatMentioned(new LastMonthFromNow(), new AtLeast(atLeast), mentions);
+				break;
+			case "months_ago":
+				this.authors.thatMentioned(new MonthsAgo(back), new AtLeast(atLeast),
+						new AtLeastTimes(minTimes), mentions);
+				break;
+			case "weeks_ago":
+				this.authors.thatMentioned(new WeeksAgo(back), new AtLeast(atLeast),
+						new AtLeastTimes(minTimes), mentions);
 				break;
 		}
 	}
@@ -314,6 +334,10 @@ public class RestManager {
 				break;
 			case "months_ago":
 				this.authors.whoseFollowersMentioned(new MonthsAgo(back), new AtLeast(atLeast),
+						new AtLeastTimes(minTimes), mentions);
+				break;
+			case "weeks_ago":
+				this.authors.whoseFollowersMentioned(new WeeksAgo(back), new AtLeast(atLeast),
 						new AtLeastTimes(minTimes), mentions);
 				break;
 		}
