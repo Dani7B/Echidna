@@ -5,7 +5,7 @@ import java.util.Calendar;
 import java.util.Date;
 
 /**
- * Simple class to represent exact last year's time window
+ * Simple class to represent exact last year's time window, today is excluded
  * @author Daniele Morgantini
  */
 public class LastYearFromNow implements FixedTime {

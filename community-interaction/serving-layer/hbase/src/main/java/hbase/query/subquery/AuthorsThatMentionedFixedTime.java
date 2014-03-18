@@ -20,7 +20,9 @@ import hbase.query.HQuery;
 import hbase.query.Mention;
 import hbase.query.time.FixedTime;
 import hbase.query.time.LastMonth;
+import hbase.query.time.LastYear;
 import hbase.query.time.MonthsAgo;
+import hbase.query.time.ThisYear;
 
 /**
  * Subquery to represent the authors-that-mentioned request in a fixed time window
@@ -65,7 +67,8 @@ public class AuthorsThatMentionedFixedTime extends AuthorsThatMentioned {
 	}
 	
 	private void setClient() {
-		if(this.timeRange instanceof LastMonth || this.timeRange instanceof MonthsAgo)
+		if(this.timeRange instanceof LastMonth || this.timeRange instanceof MonthsAgo ||
+				this.timeRange instanceof LastYear || this.timeRange instanceof ThisYear)
 			this.client = HBaseClientFactory.getInstance().getMentionedByMonth();
 		else
 			this.client = HBaseClientFactory.getInstance().getMentionedByDay();
@@ -90,7 +93,11 @@ public class AuthorsThatMentionedFixedTime extends AuthorsThatMentioned {
 			
 			String firstRow = this.timeRange.generateFirstRowKey(m.getMentioned().getId());
 			String lastRow = this.timeRange.generateLastRowKey(m.getMentioned().getId());
-			Result[] results = this.client.scan(Bytes.toBytes(firstRow), Bytes.toBytes(lastRow), auths);
+			Result[] results;
+			if(this.timeRange instanceof ThisYear)
+				results = this.client.scanPrefix(Bytes.toBytes(firstRow), auths);
+			else
+				results = this.client.scan(Bytes.toBytes(firstRow), Bytes.toBytes(lastRow), auths);
 			
 			for(Result result : results) {
 				for(KeyValue kv : result.raw()) {

@@ -5,6 +5,7 @@ import java.io.IOException;
 import hbase.impls.HQueryManager;
 import hbase.query.time.LastMonth;
 import hbase.query.time.LastWeek;
+import hbase.query.time.LastYear;
 import hbase.query.time.MonthsAgo;
 import hbase.query.time.WeeksAgo;
 
@@ -159,6 +160,17 @@ public class HQueryTest {
 
 		info = "The top 5 users by rank who mentioned at least one among 11, 14 and 12 in the last 2 months \n";
 		printResult(queryManager, query9, info);
+		System.out.println("");
+		
+		final HQuery yearQuery = new HQuery()
+								.users()
+								.thatMentioned(new LastYear(), new AtLeast(1), new Mention(11),
+											new Mention(14), new Mention(12))
+								.rankedByHits(true)
+								.take(5);
+
+		info = "The top 5 users (ranked by hits) that mentioned at least 1 among 11, 14, 12 in the last year \n";
+		printResult(queryManager, yearQuery, info);
 		System.out.println("");
     }
 

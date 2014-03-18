@@ -237,6 +237,14 @@ public interface HBaseClient {
 	
 	
 	/**
+	 * Scan to return the results in the row range(specified by a prefix) belonging to specific columns
+	 * @return the results satisfying the query
+	 * @param rowPrefix the prefix of the row key to look for
+	 * @param qualifiersPrefix the array of prefixes columns should start with */
+	public abstract Result[] scanPrefix(final byte[] rowPrefix, final byte[][] qualifiersPrefix) throws IOException;
+	
+	
+	/**
 	 * Single scan to return the results belonging to specific columns
 	 * @return the results satisfying the query
 	 * @param row the row key to look for
@@ -244,6 +252,13 @@ public interface HBaseClient {
 	 * @param min the minimum allowed value */
 	public abstract Result getPrefix(final byte[] row, final byte[][] qualifiersPrefix,
 									final byte[] min) throws IOException;
+	
+	/**
+	 * Single scan to return the results belonging to specific columns
+	 * @return the results satisfying the query
+	 * @param row the row key to look for
+	 * @param qualifiersPrefix the array of prefixes columns should start with */
+	public abstract Result getPrefix(final byte[] row, final byte[][] qualifiersPrefix) throws IOException;
 	
 	
 	/**

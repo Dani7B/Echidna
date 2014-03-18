@@ -19,8 +19,10 @@ import org.apache.hadoop.hbase.filter.CompareFilter;
 import org.apache.hadoop.hbase.filter.BinaryComparator;
 import org.apache.hadoop.hbase.filter.Filter;
 import org.apache.hadoop.hbase.filter.FilterList;
+import org.apache.hadoop.hbase.filter.PrefixFilter;
 import org.apache.hadoop.hbase.filter.QualifierFilter;
 import org.apache.hadoop.hbase.filter.ValueFilter;
+import org.apache.hadoop.hbase.util.Bytes;
 
 /**
  * Implementation of HBaseClient to communicate with HBase for perfoming CRUD operations on HTable rows.
@@ -364,7 +366,7 @@ public class HTableManager implements HBaseClient {
 	public Result[] scan(byte[] lowerRow, byte[] upperRow, byte[][] qualifiers)
 			throws IOException {
 		
-		if(lowerRow == upperRow) {
+		if(Bytes.equals(lowerRow,upperRow)) {
 			Result[] results = new Result[1];
 			results[0] = this.get(upperRow, qualifiers);
 			return results;
@@ -396,7 +398,7 @@ public class HTableManager implements HBaseClient {
 	public Result[] scan(byte[] lowerRow, byte[] upperRow, byte[][] qualifiers,
 			byte[] min) throws IOException {
 		
-		if(lowerRow == upperRow) {
+		if(Bytes.equals(lowerRow,upperRow)) {
 			Result[] results = new Result[1];
 			results[0] = this.get(upperRow, qualifiers,min);
 			return results;
@@ -433,13 +435,16 @@ public class HTableManager implements HBaseClient {
 		
 		Scan scan = new Scan(lowerRow,upperRow);
 		FilterList fList = new FilterList(FilterList.Operator.MUST_PASS_ALL);
-		FilterList qualifierFilters = new FilterList(FilterList.Operator.MUST_PASS_ONE);
-
-		for(byte[] prefix : qualifiersPrefix) {
-			Filter prefixFilter = new ColumnPrefixFilter(prefix);
-			qualifierFilters.addFilter(prefixFilter);
+		
+		if(qualifiersPrefix.length > 0) {
+			FilterList qualifierFilters = new FilterList(FilterList.Operator.MUST_PASS_ONE);
+	
+			for(byte[] prefix : qualifiersPrefix) {
+				Filter prefixFilter = new ColumnPrefixFilter(prefix);
+				qualifierFilters.addFilter(prefixFilter);
+			}
+			fList.addFilter(qualifierFilters);
 		}
-		fList.addFilter(qualifierFilters);
 		
 		Filter valueFilter = new ValueFilter(CompareFilter.CompareOp.GREATER_OR_EQUAL,
 				new BinaryComparator(min));
@@ -463,11 +468,46 @@ public class HTableManager implements HBaseClient {
 	public Result[] scanPrefix(byte[] lowerRow, byte[] upperRow, byte[][] qualifiersPrefix) throws IOException {
 		
 		Scan scan = new Scan(lowerRow,upperRow);
-		FilterList fList = new FilterList(FilterList.Operator.MUST_PASS_ONE);
+		
+		if(qualifiersPrefix.length > 0) {
+			FilterList fList = new FilterList(FilterList.Operator.MUST_PASS_ONE);
+	
+			for(byte[] prefix : qualifiersPrefix) {
+				Filter prefixFilter = new ColumnPrefixFilter(prefix);
+				fList.addFilter(prefixFilter);
+			}
+			
+			scan.setFilter(fList);
+		}
+		scan.setBatch(batching);
+				
+		ResultScanner scanner = this.table.getScanner(scan);
+		List<Result> results = new ArrayList<Result>();
+		for (Result res : scanner) {
+			results.add(res);
+		}
+		scanner.close();
+		Result[] finalResult = new Result[results.size()];
+		return results.toArray(finalResult);
+	}
 
-		for(byte[] prefix : qualifiersPrefix) {
-			Filter prefixFilter = new ColumnPrefixFilter(prefix);
-			fList.addFilter(prefixFilter);
+	@Override
+	public Result[] scanPrefix(byte[] rowPrefix, byte[][] qualifiersPrefix) throws IOException {
+		
+		Scan scan = new Scan();
+		
+		FilterList fList = new FilterList(FilterList.Operator.MUST_PASS_ALL);
+		
+		Filter rPref = new PrefixFilter(rowPrefix);
+		fList.addFilter(rPref);
+		
+		if(qualifiersPrefix.length > 0) {
+			FilterList qualifierFilters = new FilterList(FilterList.Operator.MUST_PASS_ONE);
+			for(byte[] prefix : qualifiersPrefix) {
+				Filter prefixFilter = new ColumnPrefixFilter(prefix);
+				qualifierFilters.addFilter(prefixFilter);
+			}
+			fList.addFilter(qualifierFilters);
 		}
 		
 		scan.setFilter(fList);
@@ -479,7 +519,6 @@ public class HTableManager implements HBaseClient {
 			results.add(res);
 		}
 		scanner.close();
-		
 		Result[] finalResult = new Result[results.size()];
 		return results.toArray(finalResult);
 	}
@@ -490,19 +529,40 @@ public class HTableManager implements HBaseClient {
 		
 		Get tableRow = new Get(row);
 		
-		FilterList qualifierFilter = new FilterList(FilterList.Operator.MUST_PASS_ONE);
+		FilterList fList = new FilterList(FilterList.Operator.MUST_PASS_ALL);
 
-		for(byte[] prefix : qualifiersPrefix) {
-			Filter prefixFilter = new ColumnPrefixFilter(prefix);
-			qualifierFilter.addFilter(prefixFilter);
+		if(qualifiersPrefix.length > 0) {
+			FilterList qualifierFilter = new FilterList(FilterList.Operator.MUST_PASS_ONE);
+			for(byte[] prefix : qualifiersPrefix) {
+				Filter prefixFilter = new ColumnPrefixFilter(prefix);
+				qualifierFilter.addFilter(prefixFilter);
+			}
+			fList.addFilter(qualifierFilter);
 		}
 		
-		FilterList fList = new FilterList(FilterList.Operator.MUST_PASS_ALL);
-		fList.addFilter(qualifierFilter);
 		Filter valueFilter = new ValueFilter(CompareFilter.CompareOp.GREATER_OR_EQUAL,
 				new BinaryComparator(min));
 		fList.addFilter(valueFilter);
 		tableRow.setFilter(fList);
+		
+		return this.table.get(tableRow);
+	}
+	
+	@Override
+	public Result getPrefix(byte[] row, byte[][] qualifiersPrefix) throws IOException {
+		
+		Get tableRow = new Get(row);
+		
+		if(qualifiersPrefix.length > 0) {
+			FilterList qualifierFilter = new FilterList(FilterList.Operator.MUST_PASS_ONE);
+	
+			for(byte[] prefix : qualifiersPrefix) {
+				Filter prefixFilter = new ColumnPrefixFilter(prefix);
+				qualifierFilter.addFilter(prefixFilter);
+			}
+	
+			tableRow.setFilter(qualifierFilter);
+		}
 		
 		return this.table.get(tableRow);
 	}

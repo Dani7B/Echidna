@@ -5,12 +5,12 @@ import java.util.Calendar;
 import java.util.Date;
 
 /**
- * Simple class to represent last year's time window
+ * Simple class to represent last year's time window, the current month is excluded
  * @author Daniele Morgantini
  */
 public class LastYear implements FixedTime {
 
-	private final static SimpleDateFormat dateFormatter = new SimpleDateFormat("yyyy");
+	private final static SimpleDateFormat dateFormatter = new SimpleDateFormat("yyyy-MM");
 
 	private long from;
 	
