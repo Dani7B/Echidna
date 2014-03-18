@@ -7,6 +7,7 @@ import hbase.query.time.LastMonth;
 import hbase.query.time.LastWeek;
 import hbase.query.time.LastYear;
 import hbase.query.time.MonthsAgo;
+import hbase.query.time.ThisYear;
 import hbase.query.time.WeeksAgo;
 
 /**
@@ -172,6 +173,19 @@ public class HQueryTest {
 		info = "The top 5 users (ranked by hits) that mentioned at least 1 among 11, 14, 12 in the last year \n";
 		printResult(queryManager, yearQuery, info);
 		System.out.println("");
+		
+		final HQuery yearWFMquery = new HQuery()
+									.users()
+									.whoseFollowersMentioned(new ThisYear(), new AtLeast(1), new AtLeastTimes(2),
+											new Mention(14), new Mention(11), new Mention(12))
+									.rankedByHits(true)
+									.take(10);
+
+		info = "The top 10 users whose followers mentioned two or more times \n"
+				+ " at least one among 11, 14 and 12 during this year \n";
+		printResult(queryManager, yearWFMquery, info);
+		System.out.println("");
+		
     }
 
     

@@ -465,6 +465,43 @@ public class HTableManager implements HBaseClient {
 	}
 	
 	@Override
+	public Result[] scanPrefix(byte[] rowPrefix, byte[][] qualifiersPrefix, byte[] min) throws IOException {
+		
+		Scan scan = new Scan();
+		
+		FilterList fList = new FilterList(FilterList.Operator.MUST_PASS_ALL);
+		Filter rPref = new PrefixFilter(rowPrefix);
+		fList.addFilter(rPref);
+		
+		if(qualifiersPrefix.length > 0) {
+			FilterList qualifierFilters = new FilterList(FilterList.Operator.MUST_PASS_ONE);
+	
+			for(byte[] prefix : qualifiersPrefix) {
+				Filter prefixFilter = new ColumnPrefixFilter(prefix);
+				qualifierFilters.addFilter(prefixFilter);
+			}
+			fList.addFilter(qualifierFilters);
+		}
+		
+		Filter valueFilter = new ValueFilter(CompareFilter.CompareOp.GREATER_OR_EQUAL,
+				new BinaryComparator(min));
+		fList.addFilter(valueFilter);
+		
+		scan.setFilter(fList);
+		scan.setBatch(batching);
+				
+		ResultScanner scanner = this.table.getScanner(scan);
+		List<Result> results = new ArrayList<Result>();
+		for (Result res : scanner) {
+			results.add(res);
+		}
+		scanner.close();
+		
+		Result[] finalResult = new Result[results.size()];
+		return results.toArray(finalResult);
+	}
+	
+	@Override
 	public Result[] scanPrefix(byte[] lowerRow, byte[] upperRow, byte[][] qualifiersPrefix) throws IOException {
 		
 		Scan scan = new Scan(lowerRow,upperRow);

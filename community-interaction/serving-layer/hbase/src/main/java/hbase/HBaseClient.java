@@ -227,6 +227,15 @@ public interface HBaseClient {
 	
 	
 	/**
+	 * Scan to return the results in the row range(specified by a prefix) belonging to specific columns
+	 * @return the results satisfying the query
+	 * @param rowPrefix the prefix of the row key to look for
+	 * @param qualifiersPrefix the array of prefixes columns should start with
+	 * @param min the minimum allowed value */
+	public abstract Result[] scanPrefix(final byte[] rowPrefix,	final byte[][] qualifiersPrefix, final byte[] min) throws IOException;
+	
+	
+	/**
 	 * Scan to return the results in the row range belonging to specific columns
 	 * @return the results satisfying the query
 	 * @param lowerRow the smallest row key to look for (included)

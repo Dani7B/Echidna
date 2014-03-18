@@ -22,7 +22,9 @@ import hbase.query.HQuery;
 import hbase.query.Mention;
 import hbase.query.time.FixedTime;
 import hbase.query.time.LastMonth;
+import hbase.query.time.LastYear;
 import hbase.query.time.MonthsAgo;
+import hbase.query.time.ThisYear;
 
 /**
  * Subquery to represent the authors-whose-followers-mentioned request in a fixed time window
@@ -48,7 +50,8 @@ public class AuthorsWhoseFollowersMentionedFixedTime extends AuthorsThatMentione
 							final AtLeast atLeast, final AtLeastTimes times, final Mention...mentions) {
 		super(query, atLeast, times, mentions);
 		this.timeRange = timeRange;
-		if(timeRange instanceof LastMonth || timeRange instanceof MonthsAgo)
+		if(timeRange instanceof LastMonth || timeRange instanceof MonthsAgo ||
+				timeRange instanceof LastYear || timeRange instanceof ThisYear)
 			this.client = HBaseClientFactory.getInstance().getWhoseFollowersMentionedByMonth();
 		else
 			this.client = HBaseClientFactory.getInstance().getWhoseFollowersMentionedByDay();
@@ -75,7 +78,7 @@ public class AuthorsWhoseFollowersMentionedFixedTime extends AuthorsThatMentione
 			String firstRow = this.timeRange.generateFirstRowKey(m.getMentioned().getId());
 			String lastRow = this.timeRange.generateLastRowKey(m.getMentioned().getId());
 			
-			if(firstRow.equalsIgnoreCase(lastRow)) {
+			if(firstRow.equalsIgnoreCase(lastRow) && !(this.timeRange instanceof ThisYear)) {
 				Result result;
 				if(auths.length==0) {
 					result = this.client.get(Bytes.toBytes(lastRow),Bytes.toBytes(minMentionsPerAuth));
@@ -90,11 +93,16 @@ public class AuthorsWhoseFollowersMentionedFixedTime extends AuthorsThatMentione
 			
 			else {
 				Result[] results;
-				if(auths.length==0){
-					results = this.client.scan(Bytes.toBytes(firstRow), Bytes.toBytes(lastRow));
+				if(this.timeRange instanceof ThisYear) {
+					results = this.client.scanPrefix(Bytes.toBytes(firstRow), auths);
 				}
 				else {
-					results = this.client.scanPrefix(Bytes.toBytes(firstRow), Bytes.toBytes(lastRow), auths);
+					if(auths.length==0){
+						results = this.client.scan(Bytes.toBytes(firstRow), Bytes.toBytes(lastRow));
+					}
+					else {
+						results = this.client.scanPrefix(Bytes.toBytes(firstRow), Bytes.toBytes(lastRow), auths);
+					}
 				}
 				Map<String,Integer> map = new HashMap<String,Integer>();
 							
@@ -114,9 +122,6 @@ public class AuthorsWhoseFollowersMentionedFixedTime extends AuthorsThatMentione
 			}
 			sets.add(set);
 		}
-		
-		/* All the sets have been populated. */
-		/* Sum id-mentioner, compare against mentionMin, take only single ids*/
 		
 		
 		Map<String,Integer> result = new HashMap<String,Integer>();
