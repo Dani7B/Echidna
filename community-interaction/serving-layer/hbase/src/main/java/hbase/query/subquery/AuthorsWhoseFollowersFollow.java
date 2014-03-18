@@ -76,9 +76,7 @@ public class AuthorsWhoseFollowersFollow extends HSubQuery {
 		
 		List<Author> list = new ArrayList<Author>();
 		for(Map.Entry<Long, Integer> e : map.entrySet()) {
-			Author a = new Author(e.getKey());
-			a.setHits(e.getValue());
-			list.add(a);
+			list.add(new Author(e.getKey(),e.getValue()));
 		}
 		
 		this.getQuery().updateUsers(list);

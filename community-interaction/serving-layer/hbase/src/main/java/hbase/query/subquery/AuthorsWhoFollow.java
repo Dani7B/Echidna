@@ -82,8 +82,9 @@ public class AuthorsWhoFollow extends HSubQuery {
 		int followMin = this.atLeast.getLowerBound();
 		
 		for(Map.Entry<Long, Integer> e : map.entrySet()) {
-			if(e.getValue() >= followMin)
-				result.add(new Author(e.getKey()));
+			int value = e.getValue();
+			if(value >= followMin)
+				result.add(new Author(e.getKey(), value));
 		}
 		
 		this.getQuery().updateUsers(result);
