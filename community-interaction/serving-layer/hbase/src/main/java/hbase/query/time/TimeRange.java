@@ -11,7 +11,7 @@ public abstract class TimeRange {
 	
 	/**
 	 * No arguments constructor
-	 */
+	 * @return a TimeRange instance	 */
 	public TimeRange() {
 	}
 	

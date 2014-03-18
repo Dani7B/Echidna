@@ -16,7 +16,8 @@ public class LastYearFromNow implements FixedTime {
 	
 	private long to;
 	
-	/** No arguments constructor */
+	/** No arguments constructor 
+	 * @return a LastYearFromNow instance */
 	public LastYearFromNow() {
 		Calendar now = Calendar.getInstance();
 		now.setTimeInMillis(System.currentTimeMillis());

@@ -24,15 +24,15 @@ public class LastMonth implements FixedTime {
 		date = dateFormatter.format(new Date(oneMonthAgo));
 	}
 	
-	/** Retrieves the string version of the last month date
-	 * @return the string version of the last month date 
+	/** Retrieves the string version of last month's date
+	 * @return the string version of last month's date 
 	 */
 	public String getDate() {
 		return date;
 	}
 
-	/** Sets the string version of the last month date
-	 * @param date the string version of the last month date to set
+	/** Sets the string version of last month's date
+	 * @param date the string version of last month's date to set
 	 */
 	public void setDate(String date) {
 		this.date = date;

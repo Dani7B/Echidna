@@ -36,6 +36,7 @@ public class MonthsAgo implements FixedTime {
 	
 	/**
 	 * Sets the starting and ending point of the time window
+	 * @param n the number of months to count back to set the time window
 	 */
 	private void setFromAndTo(int n) {		
 		Calendar now = Calendar.getInstance();

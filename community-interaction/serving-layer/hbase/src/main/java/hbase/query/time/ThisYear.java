@@ -15,7 +15,8 @@ public class ThisYear implements FixedTime {
 	private long now;
 	
 	
-	/** No arguments constructor */
+	/** No arguments constructor 
+	 * @return a ThisYear instance */
 	public ThisYear() {
 		Calendar c = Calendar.getInstance();
 		c.setTimeInMillis(System.currentTimeMillis());

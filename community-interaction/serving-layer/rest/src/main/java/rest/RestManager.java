@@ -11,7 +11,10 @@ import hbase.query.HQuery;
 import hbase.query.Mention;
 import hbase.query.time.LastMonth;
 import hbase.query.time.LastMonthFromNow;
+import hbase.query.time.LastYear;
+import hbase.query.time.LastYearFromNow;
 import hbase.query.time.MonthsAgo;
+import hbase.query.time.ThisYear;
 import hbase.query.time.WeeksAgo;
 
 import javax.ws.rs.DefaultValue;
@@ -297,6 +300,15 @@ public class RestManager {
 			case "very_last_month":
 				this.authors.thatMentioned(new LastMonthFromNow(), new AtLeast(atLeast), mentions);
 				break;
+			case "very_last_year":
+				this.authors.thatMentioned(new LastYearFromNow(), new AtLeast(atLeast), mentions);
+				break;
+			case "last_year":
+				this.authors.thatMentioned(new LastYear(), new AtLeast(atLeast), new AtLeastTimes(minTimes), mentions);
+				break;
+			case "this_year":
+				this.authors.thatMentioned(new ThisYear(), new AtLeast(atLeast), new AtLeastTimes(minTimes), mentions);
+				break;
 			case "months_ago":
 				this.authors.thatMentioned(new MonthsAgo(back), new AtLeast(atLeast),
 						new AtLeastTimes(minTimes), mentions);
@@ -330,6 +342,14 @@ public class RestManager {
 		switch(when){
 			case "last_month":
 				this.authors.whoseFollowersMentioned(new LastMonth(), new AtLeast(atLeast),
+						new AtLeastTimes(minTimes), mentions);
+				break;
+			case "last_year":
+				this.authors.whoseFollowersMentioned(new LastYear(), new AtLeast(atLeast),
+						new AtLeastTimes(minTimes), mentions);
+				break;
+			case "this_month":
+				this.authors.whoseFollowersMentioned(new ThisYear(), new AtLeast(atLeast),
 						new AtLeastTimes(minTimes), mentions);
 				break;
 			case "months_ago":

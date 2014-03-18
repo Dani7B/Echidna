@@ -16,7 +16,8 @@ public class LastYear implements FixedTime {
 	
 	private long to;
 	
-	/** No arguments constructor */
+	/** No arguments constructor 
+	 * @return a LastYear instance */
 	public LastYear() {
 		Calendar now = Calendar.getInstance();
 		now.setTimeInMillis(System.currentTimeMillis());

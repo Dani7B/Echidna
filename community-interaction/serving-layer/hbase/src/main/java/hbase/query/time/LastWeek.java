@@ -16,7 +16,8 @@ public class LastWeek implements FixedTime {
 	
 	private long to;
 	
-	/** No arguments constructor */
+	/** No arguments constructor
+	 * @return a LastWeek instance */
 	public LastWeek() {
 		Calendar now = Calendar.getInstance();
 		now.setTimeInMillis(System.currentTimeMillis());

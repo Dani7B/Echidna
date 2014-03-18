@@ -51,6 +51,7 @@ public class WeeksAgo implements FixedTime {
 	
 	/**
 	 * Sets the starting and ending point of the time window
+	 * @param n the number of weeks to count back to set the time window
 	 */
 	private void setFromAndTo(int n) {		
 		Calendar now = Calendar.getInstance();
