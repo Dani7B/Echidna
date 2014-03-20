@@ -39,7 +39,7 @@ public class RestManager {
 	
 	@GET
 	@Path("/users")
-	/** Method to answer any kind of query, even composed queries */
+	/** Method to answer any kind of query, also composed queries */
 	public Response generic(
 		@DefaultValue("1") @QueryParam("tm_atLeast") int tm_al,
 		@DefaultValue("1") @QueryParam("tm_minTimes") int tm_times,
@@ -107,7 +107,7 @@ public class RestManager {
 			output += ",";
 		}
 		
-		if(byId!=null) {
+		if(byId!=null) { // if byId is present, it's got a priority over byHits
 			boolean b = Boolean.parseBoolean(byId);
 			this.authors.rankedById(b);
 		}
@@ -123,7 +123,7 @@ public class RestManager {
 		String qAndA = output.substring(0, output.length()-1);
 		if(result.size()==0)
 			return Response.status(Response.Status.NOT_FOUND)
-					.entity("No user found for query --- " + qAndA).build();
+					.entity("No user found for query '" + qAndA + "'").build();
 		qAndA += " ----> " + result;
 		return Response.status(200).entity(qAndA).build();
 	}
@@ -137,11 +137,18 @@ public class RestManager {
 		@QueryParam("when") String tm_when,
 		@QueryParam("back") int tm_back,
 		@QueryParam("users") String tm_users,
-		@DefaultValue("true") @QueryParam("byId") boolean byId,
+		@QueryParam("byId") String byId,
+		@DefaultValue("true") @QueryParam("byHits") boolean byHits,
 		@DefaultValue("10") @QueryParam("take") int take){
 		
 		this.authorsThatMentionedSubquery(tm_al, tm_times, tm_when, tm_back, tm_users);
-		this.authors.rankedById(byId);
+		if(byId!=null) { // if byId is present, it's got a priority over byHits
+			boolean b = Boolean.parseBoolean(byId);
+			this.authors.rankedById(b);
+		}
+		else {
+			this.authors.rankedByHits(byHits);
+		}
 		if(take>0) {
 			this.authors.take(take);
 		}
@@ -163,7 +170,7 @@ public class RestManager {
 		output += " amongst: " + tm_users;
 		if(result.size()==0)
 			return Response.status(Response.Status.NOT_FOUND)
-					.entity("No user found for query --- " + output).build();
+					.entity("No user found for query '" + output + "'").build();
 		output += " ----> " + result;
 		return Response.ok().entity(output).build();
 	}
@@ -174,11 +181,18 @@ public class RestManager {
 	public Response usersWhoFollow(
 		@DefaultValue("1") @QueryParam("atLeast") int wf_al,
 		@QueryParam("users") String wf_users,
-		@DefaultValue("true") @QueryParam("byId") boolean byId,
+		@QueryParam("byId") String byId,
+		@DefaultValue("true") @QueryParam("byHits") boolean byHits,
 		@DefaultValue("10") @QueryParam("take") int take){
 			
 		this.authorsWhoFollowSubquery(wf_al, wf_users);
-		this.authors.rankedById(byId);
+		if(byId!=null) { // if byId is present, it's got a priority over byHits
+			boolean b = Boolean.parseBoolean(byId);
+			this.authors.rankedById(b);
+		}
+		else {
+			this.authors.rankedByHits(byHits);
+		}
 		if(take>0) {
 			this.authors.take(take);
 		}
@@ -194,7 +208,7 @@ public class RestManager {
 		output += " amongst: " + wf_users;
 		if(result.size()==0)
 			return Response.status(Response.Status.NOT_FOUND)
-					.entity("No user found for query --- " + output).build();
+					.entity("No user found for query '" + output + "'").build();
 		output += " ----> " + result;
 		return Response.ok().entity(output).build();
 	}
@@ -204,11 +218,18 @@ public class RestManager {
 	/** Method to answer AuthorsWhoseFollowersFollow subquery */
 	public Response usersWhoseFollowersFollow(
 		@QueryParam("users") String users,
+		@QueryParam("byId") String byId,
 		@DefaultValue("true") @QueryParam("byHits") boolean byHits,
 		@DefaultValue("10") @QueryParam("take") int take){
 			
 		this.authorsWhoseFollowersFollowSubquery(users);
-		this.authors.rankedByHits(byHits);
+		if(byId!=null) { // if byId is present, it's got a priority over byHits
+			boolean b = Boolean.parseBoolean(byId);
+			this.authors.rankedById(b);
+		}
+		else {
+			this.authors.rankedByHits(byHits);
+		}
 		if(take>0) {
 			this.authors.take(take);
 		}
@@ -220,7 +241,7 @@ public class RestManager {
 		String output = "Users whose followers follow one amongst " + users;
 		if(result.size()==0)
 			return Response.status(Response.Status.NOT_FOUND)
-					.entity("No user found for query --- " + output).build();
+					.entity("No user found for query '" + output + "'").build();
 		output += " ----> " + result;
 		return Response.ok().entity(output).build();
 	}
@@ -230,11 +251,18 @@ public class RestManager {
 	/** Method to answer AuthorsWhoseFollowersAreFollowedBy subquery */
 	public Response usersWhoseFollowersAreFollowedBy(
 		@QueryParam("users") String users,
+		@QueryParam("byId") String byId,
 		@DefaultValue("true") @QueryParam("byHits") boolean byHits,
 		@DefaultValue("10") @QueryParam("take") int take){
 			
 		this.authorsWhoseFollowersAreFollowedBySubquery(users);
-		this.authors.rankedByHits(byHits);
+		if(byId!=null) { // if byId is present, it's got a priority over byHits
+			boolean b = Boolean.parseBoolean(byId);
+			this.authors.rankedById(b);
+		}
+		else {
+			this.authors.rankedByHits(byHits);
+		}
 		if(take>0) {
 			this.authors.take(take);
 		}
@@ -246,7 +274,7 @@ public class RestManager {
 		String output = "Users whose followers are followed by one amongst" + users;
 		if(result.size()==0)
 			return Response.status(Response.Status.NOT_FOUND)
-					.entity("No user found for query --- " + output).build();
+					.entity("No user found for query '" + output + "'").build();
 		output += " ----> " + result;
 		return Response.ok().entity(output).build();
 	}
@@ -260,11 +288,18 @@ public class RestManager {
 		@DefaultValue("1") @QueryParam("atLeast") int al,
 		@DefaultValue("1") @QueryParam("minTimes") int minTimes,
 		@QueryParam("users") String users,
+		@QueryParam("byId") String byId,
 		@DefaultValue("true") @QueryParam("byHits") boolean byHits,
 		@DefaultValue("10") @QueryParam("take") int take){
 			
 		this.authorsWhoseFollowersMentionedSubquery(al, when, back, users, minTimes);
-		this.authors.rankedByHits(byHits);
+		if(byId!=null) { // if byId is present, it's got a priority over byHits
+			boolean b = Boolean.parseBoolean(byId);
+			this.authors.rankedById(b);
+		}
+		else {
+			this.authors.rankedByHits(byHits);
+		}
 		if(take>0) {
 			this.authors.take(take);
 		}
@@ -286,7 +321,7 @@ public class RestManager {
 		output += " amongst: " + users;
 		if(result.size()==0)
 			return Response.status(Response.Status.NOT_FOUND)
-					.entity("No user found for query --- " + output).build();
+					.entity("No user found for query '" + output + "'").build();
 		output += " ----> " + result;
 		return Response.ok().entity(output).build();
 	}
