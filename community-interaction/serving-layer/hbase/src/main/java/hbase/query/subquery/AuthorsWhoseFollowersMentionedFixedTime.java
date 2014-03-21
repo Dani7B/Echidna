@@ -129,7 +129,7 @@ public class AuthorsWhoseFollowersMentionedFixedTime extends AuthorsThatMentione
 		for(Set<String> set : sets) {
 			for(String s : set) {
 				int value = 1;
-				if(result.containsKey(s)) {
+				if(result.containsKey(s)) {					
 					value += result.get(s);
 				}
 				if(value>=mentionMin){

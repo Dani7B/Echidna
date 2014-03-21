@@ -167,7 +167,20 @@ public class Authors {
 	 * @param followed the followed authors
 	 */
 	public Authors whoseFollowersAreFollowedBy(final Author... followers) {
-    	HSubQuery sub = new AuthorsWhoseFollowersAreFollowedBy(this.query, followers);
+    	HSubQuery sub = new AuthorsWhoseFollowersAreFollowedBy(this.query, new AtLeast(1),
+    							new AtLeastFollowers(1), followers);
+		return this;
+    }
+	
+	/**
+	 * Adds the authors-whose-followers-are-followed-by subquery to the query
+	 * @return this
+	 * @param followed the followed authors
+	 * @param atLeast the minimum number of following authors
+	 * @param minFollowers the minimum number of followers to be followed by an author
+	 */
+	public Authors whoseFollowersAreFollowedBy(final AtLeast atLeast, final AtLeastFollowers minFollowers, final Author... followers) {
+    	HSubQuery sub = new AuthorsWhoseFollowersAreFollowedBy(this.query, atLeast, minFollowers, followers);
 		return this;
     }
 	

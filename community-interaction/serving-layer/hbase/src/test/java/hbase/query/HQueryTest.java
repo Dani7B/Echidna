@@ -64,25 +64,36 @@ public class HQueryTest {
         
         final HQuery queryWFFaL = new HQuery()
 								.users()
-								.whoseFollowersFollow(new AtLeast(1), new AtLeastFollowers(2),
+								.whoseFollowersFollow(new AtLeast(2), new AtLeastFollowers(2),
 										new Author(21),new Author(22), new Author(5))
 								.rankedByHits(true)
 								.take(5);
 
-		info = "The top 5 users whose followers (at least 2 per follow) follow at least 1 amongst 21, 22 and 5 \n";
+		info = "The top 5 users whose followers (at least 2 per follow) follow at least 2 amongst 21, 22 and 5 \n";
 		printResult(queryManager, queryWFFaL, info);
 		System.out.println("");
 
         
         final HQuery query3 = new HQuery()
 								.users()
-								.whoseFollowersAreFollowedBy(new Author(3),new Author(5))
+								.whoseFollowersAreFollowedBy(new Author(3),new Author(5),new Author(32))
 								.rankedByHits(true)
 								.take(5);
 		
-        info = "The top 5 users whose followers are followed by 3 or 5 \n";
+        info = "The top 5 users whose followers are followed by 3, 5 or 32 \n";
         printResult(queryManager, query3, info);
         System.out.println("");
+        
+        final HQuery queryWFAFAl = new HQuery()
+								.users()
+								.whoseFollowersAreFollowedBy(new AtLeast(1), new AtLeastFollowers(2),
+													new Author(3),new Author(5),new Author(32))
+								.rankedByHits(true)
+								.take(5);
+		
+		info = "The top 5 users whose followers (minimum 2) are followed by at least 1 amongst 3, 5 and 32 \n";
+		printResult(queryManager, queryWFAFAl, info);
+		System.out.println("");
 
         
         final HQuery complexQuery = new HQuery()
