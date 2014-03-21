@@ -31,6 +31,7 @@ public class Authors {
 	/**
 	 * Create an instance of Authors
 	 * @param query the query the author collection is associated to
+	 * @return the Authors instance
 	 */
 	public Authors(final HQuery query) {
 		this.query = query;
@@ -89,7 +90,7 @@ public class Authors {
 	 * @param mentions the mentions
 	 */
 	public Authors thatMentioned(final FixedTime timeRange, final AtLeast atLeast, final Mention... mentions) {
-    	HSubQuery sub = new AuthorsThatMentionedFixedTime(this.query, timeRange, atLeast, mentions);
+    	HSubQuery sub = new AuthorsThatMentionedFixedTime(this.query, timeRange, atLeast, new AtLeastTimes(1), mentions);
         return this;
     }
 	
@@ -146,7 +147,17 @@ public class Authors {
 	 * @param followed the followed authors
 	 */
 	public Authors whoseFollowersFollow(final Author... followed) {
-    	HSubQuery sub = new AuthorsWhoseFollowersFollow(this.query, followed);
+    	HSubQuery sub = new AuthorsWhoseFollowersFollow(this.query, new AtLeast(1), new AtLeastFollowers(1), followed);
+		return this;
+    }
+	
+	/**
+	 * Adds the authors-whose-followers-follow subquery to the query
+	 * @return this
+	 * @param followed the followed authors
+	 */
+	public Authors whoseFollowersFollow(final AtLeast atLeast, final AtLeastFollowers minFollowers,final Author... followed) {
+    	HSubQuery sub = new AuthorsWhoseFollowersFollow(this.query, atLeast, minFollowers, followed);
 		return this;
     }
 	
@@ -175,6 +186,23 @@ public class Authors {
         return this;
     }
 	
+	/**
+	 * Adds the authors-whose-followers-mentioned subquery to the query
+	 * @return this
+	 * @param timeRange the specific time range to take into account
+	 * @param atLeast the minimum number of mentioned authors
+	 * @param mentions the mentions
+	 */
+	public Authors whoseFollowersMentioned(final FixedTime timeRange, final AtLeast atLeast, final Mention... mentions) {
+    	HSubQuery sub = new AuthorsWhoseFollowersMentionedFixedTime(this.query, timeRange, atLeast, new AtLeastTimes(1), mentions);
+        return this;
+    }
+	
+	/**
+	 * Adds the authors-ranked-by-hits subquery to the query
+	 * @return this
+	 * @param ascOrDesc the kind of order desired (true=ascendent, false=descendent)
+	 */
 	public Authors rankedByHits(final boolean ascOrDesc) {
     	HSubQuery sub = new AuthorsRankedByHits(this.query, ascOrDesc);
         return this;

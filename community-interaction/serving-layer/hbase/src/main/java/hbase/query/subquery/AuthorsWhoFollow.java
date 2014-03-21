@@ -73,7 +73,7 @@ public class AuthorsWhoFollow extends HSubQuery {
 				long id = Long.valueOf(Bytes.toString(kv.getQualifier()));
 				int value = 1;
 				if(map.containsKey(id))
-					value = map.get(id) + 1;
+					value += map.get(id);
 				map.put(id, value);
 			}
 		}

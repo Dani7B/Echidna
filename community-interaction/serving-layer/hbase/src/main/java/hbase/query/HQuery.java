@@ -18,6 +18,7 @@ public class HQuery {
 	
 	/**
 	 * No argument consturctor
+	 * @return an HQuery instance
 	 */
 	public HQuery() {
 		this.users = new Authors(this);

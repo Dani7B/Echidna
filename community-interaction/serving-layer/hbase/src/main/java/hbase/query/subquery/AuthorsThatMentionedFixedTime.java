@@ -33,22 +33,6 @@ public class AuthorsThatMentionedFixedTime extends AuthorsThatMentioned {
 	private HBaseClient client;
 	
 	private FixedTime timeRange;
-				
-	
-	/**
-	 * Creates an instance of AuthorsThatMentionedFixedTime subquery
-	 * @return an instance of AuthorsThatMentionedFixedTime subquery
-	 * @param query the belonging query
-	 * @param timeRange the fixed time window to take into account
-	 * @param atLeast the minimum number of authors to mention
-	 * @param mentions the mentions of authors
-	 */
-	public AuthorsThatMentionedFixedTime(final HQuery query, final FixedTime timeRange,
-									final AtLeast atLeast, final Mention...mentions) {
-		super(query, atLeast, new AtLeastTimes(1), mentions);
-		this.timeRange = timeRange;
-		this.setClient();
-	}
 	
 	/**
 	 * Creates an instance of AuthorsThatMentionedFixedTime subquery

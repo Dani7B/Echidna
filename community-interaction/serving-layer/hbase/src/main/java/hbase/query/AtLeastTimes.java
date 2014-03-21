@@ -12,6 +12,7 @@ public class AtLeastTimes {
 	/**
 	 * Creates an AtLeastTimes instance
 	 * @param times the minimum to allow for a given property
+	 * @return the AtLeastTimes instance
 	 */
 	public AtLeastTimes(final int times) {
 		this.times = times;

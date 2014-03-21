@@ -54,13 +54,24 @@ public class HQueryTest {
         
         final HQuery query2 = new HQuery()
 								.users()
-								.whoseFollowersFollow(new Author(21),new Author(22))
+								.whoseFollowersFollow(new Author(21),new Author(22),new Author(5))
 								.rankedByHits(true)
 								.take(5);
         
-        info = "The top 5 users whose followers follow 21 or 22 \n";
+        info = "The top 5 users whose followers follow 21, 22 or 5 \n";
         printResult(queryManager, query2, info);
         System.out.println("");
+        
+        final HQuery queryWFFaL = new HQuery()
+								.users()
+								.whoseFollowersFollow(new AtLeast(1), new AtLeastFollowers(2),
+										new Author(21),new Author(22), new Author(5))
+								.rankedByHits(true)
+								.take(5);
+
+		info = "The top 5 users whose followers (at least 2 per follow) follow at least 1 amongst 21, 22 and 5 \n";
+		printResult(queryManager, queryWFFaL, info);
+		System.out.println("");
 
         
         final HQuery query3 = new HQuery()
