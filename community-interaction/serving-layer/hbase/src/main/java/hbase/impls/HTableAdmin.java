@@ -49,8 +49,7 @@ public class HTableAdmin implements HBaseAdministrator {
 		this.connection = HConnectionManager.createConnection(config);
 	}
 	
-	/** Returns the connection to HBase 
-	 * @return the connection to HBase */
+	@Override
 	public HConnection getConnection() {
 		return this.connection;
 	}
@@ -64,8 +63,7 @@ public class HTableAdmin implements HBaseAdministrator {
 			HTableDescriptor desc = new HTableDescriptor(table);
 			
 		    for (String cf : colfams) {
-		      HColumnDescriptor coldef = new HColumnDescriptor(cf);
-		      desc.addFamily(coldef);
+		      desc.addFamily(new HColumnDescriptor(cf));
 		    }
 		    
 		    this.admin.createTable(desc);

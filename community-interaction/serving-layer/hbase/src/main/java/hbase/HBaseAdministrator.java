@@ -6,11 +6,14 @@ import org.apache.hadoop.hbase.client.HConnection;
 import org.apache.hadoop.hbase.client.HTable;
 
 /**
- * Administrator to communicate with HBase for performing operations on HTables.
+ * Administrator to get HBase to perform operations on HTables.
  * @author Daniele Morgantini
  * */
 public interface HBaseAdministrator {
 
+	/**
+	 * Returns the connection to the HBase cluster 
+	 * @return the cluster connection */
 	public abstract HConnection getConnection();
 
 	/**
