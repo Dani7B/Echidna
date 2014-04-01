@@ -16,7 +16,7 @@ import org.apache.hadoop.hbase.client.HConnectionManager;
 import org.apache.hadoop.hbase.client.HTable;
 
 /**
- * Implementation of HBaseAdministrator to communicate with HBase for performing operations on HTables.
+ * Implementation of HBaseAdministrator to get HBase to perform operations on HTables.
  * @author Daniele Morgantini
  * */
 public class HTableAdmin implements HBaseAdministrator {
@@ -27,8 +27,8 @@ public class HTableAdmin implements HBaseAdministrator {
 			
 
 	/**
-     * No argument contructor
-     * @return an instance of the HBaseAdministrator with default configuration
+     * No argument constructor
+     * @return an instance of the HBaseAdministrator with the default configuration
      * @throws MasterNotRunningException 
 	 * @throws ZooKeeperConnectionException */
 	public HTableAdmin() throws MasterNotRunningException, ZooKeeperConnectionException {
@@ -49,7 +49,8 @@ public class HTableAdmin implements HBaseAdministrator {
 		this.connection = HConnectionManager.createConnection(config);
 	}
 	
-	
+	/** Returns the connection to HBase 
+	 * @return the connection to HBase */
 	public HConnection getConnection() {
 		return this.connection;
 	}
@@ -67,7 +68,7 @@ public class HTableAdmin implements HBaseAdministrator {
 		      desc.addFamily(coldef);
 		    }
 		    
-		    admin.createTable(desc);
+		    this.admin.createTable(desc);
 	    }
 	}
 	
@@ -75,13 +76,13 @@ public class HTableAdmin implements HBaseAdministrator {
 	@Override
 	public boolean existsTable(final String table) throws IOException {
 		
-		return admin.tableExists(table);
+		return this.admin.tableExists(table);
 	}
 	
 	
 	@Override
 	public void disableTable(final String table) throws IOException {
-	    admin.disableTable(table);
+	    this.admin.disableTable(table);
 	}
 	
 	
@@ -100,7 +101,7 @@ public class HTableAdmin implements HBaseAdministrator {
 	    
 		if (existsTable(table)) {
 			disableTable(table);
-			admin.deleteTable(table);
+			this.admin.deleteTable(table);
 	    }
 	}
 
