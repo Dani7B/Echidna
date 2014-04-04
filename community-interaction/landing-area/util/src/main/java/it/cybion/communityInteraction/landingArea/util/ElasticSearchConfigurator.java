@@ -30,6 +30,13 @@ public class ElasticSearchConfigurator
         final String index = "mentions";
         final String type = "mention";
         final String mappingFileSource = "/mappings/mention-mapping.json";
+        
+        /*
+        final String clusterName = "community-interaction-development";
+        final String index = "follows";
+        final String type = "follow";
+        final String mappingFileSource = "/mappings/follow-mapping.json";*/
+        
         /*
         final String clusterName = args[0];
         final String index = args[1];
