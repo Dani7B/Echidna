@@ -47,8 +47,8 @@ public class HTableManager implements HBaseClient {
 	public void put(final byte[] row, final byte[] colfam, final byte[] col, 
 						final long ts, final byte[] value) throws IOException {
 		
-		Put tableRow = new Put(row);
-		tableRow.add(colfam, col, ts, value);
+		Put tableRow = new Put(row)
+						   .add(colfam, col, ts, value);
 		this.table.put(tableRow);		
 	}
 	
@@ -60,8 +60,8 @@ public class HTableManager implements HBaseClient {
 		
 		List<Put> tableRows = new ArrayList<Put>();
 		for(int i=0; i<rows.length; i++) {
-			Put tableRow = new Put(rows[i]);
-			tableRow.add(colfams[i], cols[i], tss[i], values[i]);
+			Put tableRow = new Put(rows[i])
+							   .add(colfams[i], cols[i], tss[i], values[i]);
 			tableRows.add(tableRow);
 		}
 		this.table.put(tableRows);
@@ -86,12 +86,12 @@ public class HTableManager implements HBaseClient {
 	
 	@Override
 	public Result get(final byte[] row, final byte[] min) throws IOException {
-		
-		Get tableRow = new Get(row);
-		
+				
 		Filter valueFilter = new ValueFilter(CompareFilter.CompareOp.GREATER_OR_EQUAL,
 				new BinaryComparator(min));
-		tableRow.setFilter(valueFilter);
+		
+		Get tableRow = new Get(row)
+					   .setFilter(valueFilter);
 				
 		return this.table.get(tableRow);
 	}
@@ -101,8 +101,8 @@ public class HTableManager implements HBaseClient {
 	public Result get(final byte[] row, final byte[][] columnFamilies, 
 							final long[] timeRange, final int maxVersions) throws IOException {
 		
-		Get tableRow = prepareGet(row, columnFamilies, 0, timeRange);
-		tableRow.setMaxVersions(maxVersions);
+		Get tableRow = prepareGet(row, columnFamilies, 0, timeRange)
+				       .setMaxVersions(maxVersions);
 		
 		return this.table.get(tableRow);
 	}
@@ -112,8 +112,8 @@ public class HTableManager implements HBaseClient {
 	public Result get(final byte[] row, final byte[][] columnFamilies, 
 						final long timeStamp, final int maxVersions) throws IOException {
 		
-		Get tableRow = prepareGet(row, columnFamilies, timeStamp, null);
-		tableRow.setMaxVersions(maxVersions);
+		Get tableRow = prepareGet(row, columnFamilies, timeStamp, null)
+					   .setMaxVersions(maxVersions);
 		return this.table.get(tableRow);
 	}
 	
@@ -137,8 +137,8 @@ public class HTableManager implements HBaseClient {
 	@Override
 	public Result getHistory(final byte[] row, final byte[][] columnFamilies, final long[] timeRange) throws IOException {
 		
-		Get tableRow = prepareGet(row, columnFamilies, 0, timeRange);
-		tableRow.setMaxVersions();
+		Get tableRow = prepareGet(row, columnFamilies, 0, timeRange)
+					   .setMaxVersions();
 		return this.table.get(tableRow);
 	}
 	
@@ -146,8 +146,8 @@ public class HTableManager implements HBaseClient {
 	@Override
 	public Result getHistory(final byte[] row, final byte[][] columnFamilies, final long timeStamp) throws IOException {
 		
-		Get tableRow = prepareGet(row, columnFamilies, timeStamp, null);
-		tableRow.setMaxVersions();
+		Get tableRow = prepareGet(row, columnFamilies, timeStamp, null)
+				       .setMaxVersions();
 		return this.table.get(tableRow);
 	}
 	
@@ -202,11 +202,9 @@ public class HTableManager implements HBaseClient {
 				get.addFamily(cf);
 		
 		if(timeRange == null)
-			get.setTimeStamp(timeStamp);
+			return get.setTimeStamp(timeStamp);
 		else
-			get.setTimeRange(timeRange[0], timeRange[1]);
-		
-		return get;
+			return get.setTimeRange(timeRange[0], timeRange[1]);		
 	}
 	
 	
@@ -224,16 +222,15 @@ public class HTableManager implements HBaseClient {
 			for(byte[] cf : columnFamilies)
 				get.addFamily(cf);
 		
-		get.setMaxVersions();
-		return get;
+		return get.setMaxVersions();
 	}
 	
 	
 	@Override
 	public void delete(final byte[] row, final byte[] colfam, final byte[] col, final long ts) throws IOException {
 		
-		Delete tableRow = new Delete(row);
-		tableRow.deleteColumns(colfam, col, ts);
+		Delete tableRow = new Delete(row)
+					      .deleteColumns(colfam, col, ts);
 		this.table.delete(tableRow);		
 	}
 	
@@ -250,14 +247,14 @@ public class HTableManager implements HBaseClient {
 	public void delete(final byte[][] rows, final byte[][] colfams, final byte[][] cols, final long[] tss)
 				throws IOException {
 		
-		List<Delete> tableRows = new ArrayList<Delete>();
+		List<Delete> deleteRows = new ArrayList<Delete>();
 		
 		for(int i=0; i<rows.length; i++) {
-			Delete tableRow = new Delete(rows[i]);
-			tableRow.deleteColumns(colfams[i], cols[i], tss[i]);
-			tableRows.add(tableRow);
+			Delete deleteRow = new Delete(rows[i])
+			                  .deleteColumns(colfams[i], cols[i], tss[i]);
+			deleteRows.add(deleteRow);
 		}
-		this.table.delete(tableRows);
+		this.table.delete(deleteRows);
 	}
 
 
@@ -273,9 +270,7 @@ public class HTableManager implements HBaseClient {
 	@Override
 	public Result[] scan(final byte[] lowerRow, final byte[] upperRow, final byte[] lowerValue,
 							final byte[] upperValue, final byte[][] allowedValues) throws IOException {
-				
-		Scan scan = new Scan(lowerRow,upperRow);
-				
+		
 		FilterList fList = new FilterList(FilterList.Operator.MUST_PASS_ALL);
 		
 		Filter qualifierFilter1 = new QualifierFilter(CompareFilter.CompareOp.GREATER_OR_EQUAL,
@@ -296,7 +291,10 @@ public class HTableManager implements HBaseClient {
 			}
 			fList.addFilter(valueList);
 		}
-		scan.setFilter(fList);
+		
+		Scan scan = new Scan(lowerRow,upperRow)
+					.setFilter(fList);
+		
 		scan.setBatch(batching);
 				
 		ResultScanner scanner = this.table.getScanner(scan);
@@ -313,9 +311,7 @@ public class HTableManager implements HBaseClient {
 	
 	@Override
 	public Result get(final byte[] row, final byte[] lowerValue, final byte[] upperValue) throws IOException {
-				
-		Get tableRow = new Get(row);
-				
+								
 		FilterList fList = new FilterList(FilterList.Operator.MUST_PASS_ALL);
 		
 		Filter filter1 = new QualifierFilter(CompareFilter.CompareOp.GREATER_OR_EQUAL,
@@ -326,7 +322,8 @@ public class HTableManager implements HBaseClient {
 				new BinaryComparator(upperValue));
 		fList.addFilter(filter2);
 		
-		tableRow.setFilter(fList);
+		Get tableRow = new Get(row)
+					   .setFilter(fList);
 		
 		return this.table.get(tableRow);
 	}
@@ -433,7 +430,6 @@ public class HTableManager implements HBaseClient {
 	public Result[] scanPrefix(byte[] lowerRow, byte[] upperRow,
 			byte[][] qualifiersPrefix, byte[] min) throws IOException {
 		
-		Scan scan = new Scan(lowerRow,upperRow);
 		FilterList fList = new FilterList(FilterList.Operator.MUST_PASS_ALL);
 		
 		if(qualifiersPrefix.length > 0) {
@@ -450,7 +446,8 @@ public class HTableManager implements HBaseClient {
 				new BinaryComparator(min));
 		fList.addFilter(valueFilter);
 		
-		scan.setFilter(fList);
+		Scan scan = new Scan(lowerRow,upperRow)
+					.setFilter(fList);
 		scan.setBatch(batching);
 				
 		ResultScanner scanner = this.table.getScanner(scan);
@@ -466,9 +463,7 @@ public class HTableManager implements HBaseClient {
 	
 	@Override
 	public Result[] scanPrefix(byte[] rowPrefix, byte[][] qualifiersPrefix, byte[] min) throws IOException {
-		
-		Scan scan = new Scan();
-		
+				
 		FilterList fList = new FilterList(FilterList.Operator.MUST_PASS_ALL);
 		Filter rPref = new PrefixFilter(rowPrefix);
 		fList.addFilter(rPref);
@@ -487,7 +482,8 @@ public class HTableManager implements HBaseClient {
 				new BinaryComparator(min));
 		fList.addFilter(valueFilter);
 		
-		scan.setFilter(fList);
+		Scan scan = new Scan()
+					.setFilter(fList);
 		scan.setBatch(batching);
 				
 		ResultScanner scanner = this.table.getScanner(scan);
@@ -530,9 +526,7 @@ public class HTableManager implements HBaseClient {
 
 	@Override
 	public Result[] scanPrefix(byte[] rowPrefix, byte[][] qualifiersPrefix) throws IOException {
-		
-		Scan scan = new Scan();
-		
+				
 		FilterList fList = new FilterList(FilterList.Operator.MUST_PASS_ALL);
 		
 		Filter rPref = new PrefixFilter(rowPrefix);
@@ -547,7 +541,8 @@ public class HTableManager implements HBaseClient {
 			fList.addFilter(qualifierFilters);
 		}
 		
-		scan.setFilter(fList);
+		Scan scan = new Scan()
+					.setFilter(fList);
 		scan.setBatch(batching);
 				
 		ResultScanner scanner = this.table.getScanner(scan);
@@ -563,9 +558,7 @@ public class HTableManager implements HBaseClient {
 
 	@Override
 	public Result getPrefix(byte[] row, byte[][] qualifiersPrefix, byte[] min) throws IOException {
-		
-		Get tableRow = new Get(row);
-		
+				
 		FilterList fList = new FilterList(FilterList.Operator.MUST_PASS_ALL);
 
 		if(qualifiersPrefix.length > 0) {
@@ -580,7 +573,9 @@ public class HTableManager implements HBaseClient {
 		Filter valueFilter = new ValueFilter(CompareFilter.CompareOp.GREATER_OR_EQUAL,
 				new BinaryComparator(min));
 		fList.addFilter(valueFilter);
-		tableRow.setFilter(fList);
+		
+		Get tableRow = new Get(row)
+					   .setFilter(fList);
 		
 		return this.table.get(tableRow);
 	}
