@@ -16,32 +16,31 @@ import org.elasticsearch.common.transport.InetSocketTransportAddress;
 import org.elasticsearch.indices.IndexMissingException;
 
 /**
-* Simple class to configure ElasticSearch started as a service
-*/
-public class ElasticSearchConfigurator
+ * Simple class to configure ElasticSearch started as a service
+ */
+public class ElasticSearchConfiguratorNoMapping 
 {
     public static void main( String[] args ) throws InterruptedException{
-    
-     final String host = "localhost";
+    	
+    	final String host = "localhost";
         final int transportPort = 9300;
         
         
         final String clusterName = "community-interaction-development";
-        final String index = "mentions";
-        final String type = "mention";
-        final String mappingFileSource = "/mappings/mention-mapping.json";
+        final String index = "twitter-champions";
+        final String type = "tweet";
         
         /*
-		final String clusterName = "community-interaction-development";
-		final String index = "follows";
-		final String type = "follow";
-		final String mappingFileSource = "/mappings/follow-mapping.json";*/
+        final String clusterName = "community-interaction-development";
+        final String index = "follows";
+        final String type = "follow";
+        final String mappingFileSource = "/mappings/follow-mapping.json";*/
         
         /*
-		final String clusterName = args[0];
-		final String index = args[1];
-		final String type = args[2];
-		final String mappingFileSource = args[3];*/
+        final String clusterName = args[0];
+        final String index = args[1];
+        final String type = args[2];
+        final String mappingFileSource = args[3];*/
         
         
      // Create a TransportClient
@@ -51,49 +50,27 @@ public class ElasticSearchConfigurator
                 new InetSocketTransportAddress(host, transportPort));
         
         transportClient.admin()
-				         .cluster()
-				         .prepareHealth()
-				         .setWaitForYellowStatus()
-				         .execute()
-				         .actionGet();
+        			   .cluster()
+        			   .prepareHealth()
+        			   .setWaitForYellowStatus()
+        			   .execute()
+        			   .actionGet();
                 
         try {
-	        DeleteIndexResponse deleteIndexResponse = transportClient.admin()
-														             .indices()
-														             .delete(new DeleteIndexRequest(index))
-														             .actionGet();
+        	DeleteIndexResponse deleteIndexResponse = transportClient.admin()
+            									 .indices()
+            									 .delete(new DeleteIndexRequest(index))
+            									 .actionGet();
         } catch (IndexMissingException e) {
             System.out.println("index does not exist - continue");
         }
 
 		finally {
-			transportClient.admin()
-			.indices()
-			.prepareCreate(index)
-			.execute()
-			.actionGet();
-
-			// create mapping
-			final File mappingFile = FileHelper.readFromClasspath(mappingFileSource);
-			
-			String mappingContent = "";
-			
-			try {
-				mappingContent = FileHelper.readFile(mappingFile);
-			} catch (IOException e) {
-				e.printStackTrace();
-			}
-	
-			PutMappingResponse putResponse = transportClient.admin()
-															.indices()
-															.preparePutMapping(index)
-															.setType(type)
-															.setSource(mappingContent)
-															.execute()
-															.actionGet();
-	
-			Thread.sleep(2000);
-			System.out.println("Created index " + index + " in cluster " + clusterName + " and put mapping " + mappingFileSource);
+	    	transportClient.admin()
+	    				   .indices()
+	    				   .prepareCreate(index)
+	    				   .execute()
+	    				   .actionGet();
 		}
     }
     
@@ -108,4 +85,3 @@ public class ElasticSearchConfigurator
     }
 
 }
-

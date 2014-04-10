@@ -28,7 +28,7 @@ public class ElasticsearchImportExport {
     public static void main( String[] args ) throws InterruptedException{
     	
     	final int maxTweets = 100000;
-        final int scrollSize = 1000;
+        final int scrollSize = 500;
     	
     	final String localHost = "localhost";
         final int localTransportPort = 9300;
@@ -72,8 +72,8 @@ public class ElasticsearchImportExport {
         
         // Scroll until no hits are returned
         int count = 0;
+    	LOGGER.info("Start");
         while (count < maxTweets) {
-        	LOGGER.info(count + " / " + maxTweets);
             scrollResp = gaiaTransportClient.prepareSearchScroll(scrollResp.getScrollId())
                     .setScroll(new TimeValue(600000)).execute().actionGet();
             for (SearchHit hit : scrollResp.getHits()) {
@@ -86,13 +86,13 @@ public class ElasticsearchImportExport {
                 }
             }
             count += scrollResp.getHits().getHits().length;
+        	LOGGER.info(count + " / 100500");
             // Break condition: No hits are returned
             if (scrollResp.getHits().getHits().length == 0) {
                 break;
             }
             
-        }
-        
+        }        
     }
     
     
