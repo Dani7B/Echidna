@@ -104,7 +104,7 @@ public class ElasticsearchImportExport {
 
     private static void storeTweet(Client client, String index, String type, String tweet) {
     	
-    	final IndexResponse response = client.prepareIndex("twitter-champions", "tweet")
+    	final IndexResponse response = client.prepareIndex(index, type)
 							                 .setSource(tweet)
 							                 .setRefresh(true)
 							                 .execute()
