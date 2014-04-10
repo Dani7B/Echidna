@@ -1,13 +1,7 @@
 package it.cybion.communityInteraction.landingArea.util;
 
-import it.cybion.commons.FileHelper;
-
-import java.io.File;
-import java.io.IOException;
-
 import org.elasticsearch.action.admin.indices.delete.DeleteIndexRequest;
 import org.elasticsearch.action.admin.indices.delete.DeleteIndexResponse;
-import org.elasticsearch.action.admin.indices.mapping.put.PutMappingResponse;
 import org.elasticsearch.client.Client;
 import org.elasticsearch.client.transport.TransportClient;
 import org.elasticsearch.common.settings.ImmutableSettings;
@@ -28,7 +22,6 @@ public class ElasticSearchConfiguratorNoMapping
         
         final String clusterName = "community-interaction-development";
         final String index = "twitter-champions";
-        final String type = "tweet";
         
         /*
         final String clusterName = "community-interaction-development";
