@@ -29,7 +29,9 @@ public class ElasticsearchImportExport {
     	
     	final int maxTweets = 100000;
         final int scrollSize = 500;
-    	
+        final int shards = 3;
+        final int realTotal = (int) Math.ceil((double)maxTweets /(scrollSize * shards))*scrollSize * shards;
+        
     	final String localHost = "localhost";
         final int localTransportPort = 9300;
         final String localClusterName = "community-interaction-development";
@@ -44,23 +46,18 @@ public class ElasticsearchImportExport {
         final String twitterChampion = "ee7eb7f6-8ab1-40ad-b7f8-d47fe0ae02a0";
         
         // Create a TransportClient for localhost
-       Client localTransportClient = buildClient(localHost, localTransportPort, localClusterName);
+        Client localTransportClient = buildClient(localHost, localTransportPort, localClusterName);
         
-       localTransportClient.admin()
-        			   .cluster()
-        			   .prepareHealth()
-        			   .setWaitForYellowStatus()
-        			   .execute()
-        			   .actionGet();
+        localTransportClient.admin()
+	        			    .cluster()
+	        			    .prepareHealth()
+	        			    .setWaitForYellowStatus()
+	        			    .execute()
+	        			    .actionGet();
         
         // Create a TransportClient for gaia
         Client gaiaTransportClient = buildClient(gaiaHost, gaiaTransportPort, gaiaClusterName);
         
-        /*
-        ClusterStateResponse response = gaiaTransportClient.admin().cluster().prepareState().execute().actionGet();
-        boolean hasIndex = response.getState().metaData().hasIndex(gaiaIndex);
-        LOGGER.info("Does " + gaiaIndex + " index exist? " + hasIndex);
-        */
         final QueryBuilder query = QueryBuilders.boolQuery().must(
                 QueryBuilders.fieldQuery("monitoringActivityId", twitterChampion));
         
@@ -86,13 +83,13 @@ public class ElasticsearchImportExport {
                 }
             }
             count += scrollResp.getHits().getHits().length;
-        	LOGGER.info(count + " / 100500");
+        	LOGGER.info(count + " / " + realTotal);
             // Break condition: No hits are returned
             if (scrollResp.getHits().getHits().length == 0) {
                 break;
             }
-            
-        }        
+        }
+    	LOGGER.info("End");
     }
     
     
@@ -107,12 +104,10 @@ public class ElasticsearchImportExport {
 
     private static void storeTweet(Client client, String index, String type, String tweet) {
     	
-    	final IndexResponse response = client
-						                .prepareIndex("twitter-champions", "tweet")
-						                .setSource(tweet)
-						                .setRefresh(true)
-						                .execute()
-						                .actionGet();
-
+    	final IndexResponse response = client.prepareIndex("twitter-champions", "tweet")
+							                 .setSource(tweet)
+							                 .setRefresh(true)
+							                 .execute()
+							                 .actionGet();
     }
 }
