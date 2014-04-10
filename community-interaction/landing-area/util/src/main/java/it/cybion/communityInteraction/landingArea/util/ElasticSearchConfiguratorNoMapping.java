@@ -23,18 +23,6 @@ public class ElasticSearchConfiguratorNoMapping
         final String clusterName = "community-interaction-development";
         final String index = "twitter-champions";
         
-        /*
-        final String clusterName = "community-interaction-development";
-        final String index = "follows";
-        final String type = "follow";
-        final String mappingFileSource = "/mappings/follow-mapping.json";*/
-        
-        /*
-        final String clusterName = args[0];
-        final String index = args[1];
-        final String type = args[2];
-        final String mappingFileSource = args[3];*/
-        
         
      // Create a TransportClient
         final Settings transportClientSettings = ImmutableSettings.settingsBuilder().put(
