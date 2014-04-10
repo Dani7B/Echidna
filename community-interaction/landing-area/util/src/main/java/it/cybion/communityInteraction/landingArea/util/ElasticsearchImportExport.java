@@ -18,7 +18,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * Simple class to configure ElasticSearch started as a service
+ * Simple class to export tweet from an elasticsearch index to another
  */
 public class ElasticsearchImportExport {
 	
