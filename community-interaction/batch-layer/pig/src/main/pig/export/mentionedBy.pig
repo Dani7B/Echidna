@@ -25,7 +25,7 @@ mentioned_group = GROUP simple BY mentioned;
 
 month = FOREACH mentioned_group {
 		  mentioned_month = FOREACH simple
-					GENERATE (CONCAT(CONCAT((chararray)mentioned,'_'), SUBSTRING(UnixToISO(ts),0,7)) , mentioner) AS couple;
+					GENERATE (CONCAT(CONCAT((chararray)mentioned,'_'), SUBSTRING(UnixToISO(ts),0,7)), mentioner) AS couple;
 			GENERATE FLATTEN(mentioned_month);
 		};
 		
@@ -41,7 +41,7 @@ STORE montly INTO 'hbase://$MONTHLY' USING HBaseStorage;
 
 day = FOREACH mentioned_group {
 		  mentioned_day = FOREACH simple
-				GENERATE (CONCAT(CONCAT((chararray)mentioned,'_'), SUBSTRING(UnixToISO(ts),0,10)) , mentioner) AS couple, ts;
+				GENERATE (CONCAT(CONCAT((chararray)mentioned,'_'), SUBSTRING(UnixToISO(ts),0,10)), mentioner) AS couple, ts;
 			GENERATE FLATTEN(mentioned_day);
 		};
 		

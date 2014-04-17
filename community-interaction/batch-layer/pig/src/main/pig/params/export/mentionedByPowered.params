@@ -1,0 +1,5 @@
+REDUCERS=3
+INPUTDIR=hdfs://localhost:54310/user/daniele/tweets
+GLOBAL=mentionedBy
+MONTHLY=mentionedByMonth
+DAILY=mentionedByDay

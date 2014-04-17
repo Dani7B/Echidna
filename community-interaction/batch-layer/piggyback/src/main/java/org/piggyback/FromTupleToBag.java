@@ -13,6 +13,7 @@ public class FromTupleToBag extends EvalFunc<DataBag> {
      TupleFactory tupleFactory = TupleFactory.getInstance();
      BagFactory bagFactory = BagFactory.getInstance();
  
+     @Override
      public DataBag exec(Tuple input) throws IOException {
          
              DataBag output = bagFactory.newDefaultBag();
