@@ -1,0 +1,3 @@
+REDUCERS=3
+TWEETS=hdfs://localhost:54310/user/daniele/tweets
+OUTPUTDIR=test/tweets

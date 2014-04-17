@@ -1,2 +1,2 @@
 REDUCERS=3
-OUTPUTDIR=testing/tweets
+TWEETS=hdfs://localhost:54310/user/daniele/tweets
