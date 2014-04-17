@@ -5,8 +5,12 @@
 SET default_parallel $REDUCERS;
 
 tweets = LOAD '$TWEETS/part*' USING BinStorage() AS (id:map[],tweet:map[],monitoringActivityId:chararray);
-ext = FOREACH tweets GENERATE tweet#'createdAt' AS timestamp:long, tweet#'entities' AS entities:map[], tweet#'user' AS user:map[];
-ext1 = FOREACH ext GENERATE timestamp, entities#'userMentions' AS mentions:tuple(map[]), user#'id' AS mentioner:long;
+ext = FOREACH tweets GENERATE tweet#'createdAt' AS timestamp:long,
+							  tweet#'user' AS user:map[],
+							  tweet#'entities' AS entities:map[];
+ext1 = FOREACH ext GENERATE timestamp,
+							user#'id' AS mentioner:long,
+						 	entities#'userMentions' AS mentions:tuple(map[]);
 /* ext2 = FOREACH ext1 GENERATE timestamp, FLATTEN(mentions) AS mention:map[];
 * ext3 = FOREACH ext2 {
 *		c = mention#'id';

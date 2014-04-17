@@ -2,7 +2,7 @@
 * Simple code to read mentioned-by relationships from binary file and store them into HBase
 */
 SET default_parallel $REDUCERS;
-REGISTER '/home/daniele/Pig/pig-0.12.0/contrib/piggybank/java/piggybank.jar';
+REGISTER '/home/daniele/Pig/pig-0.12.1/contrib/piggybank/java/piggybank.jar';
 DEFINE UnixToISO org.apache.pig.piggybank.evaluation.datetime.convert.UnixToISO();
 DEFINE HBaseStorage org.apache.pig.backend.hadoop.hbase.HBaseStorage('t:*', '-caster HBaseBinaryConverter');
 
