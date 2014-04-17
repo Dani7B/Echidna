@@ -9,6 +9,7 @@
   </parent>
   <artifactId>piggyback</artifactId>
   <name>piggyback</name>
+  <packaging>jar</packaging>
   <url>http://maven.apache.org</url>
   <properties>
     <pigunit.version>0.12.1</pigunit.version>
@@ -19,6 +20,10 @@
 		<artifactId>pigunit</artifactId>
 		<version>${pigunit.version}</version>
 	</dependency>
+	<dependency>
+        <groupId>org.apache.hadoop</groupId>
+        <artifactId>hadoop-core</artifactId>
+    </dependency>
     <dependency>
       <groupId>junit</groupId>
       <artifactId>junit</artifactId>
