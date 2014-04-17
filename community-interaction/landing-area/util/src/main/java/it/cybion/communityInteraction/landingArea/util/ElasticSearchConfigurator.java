@@ -27,21 +27,26 @@ public class ElasticSearchConfigurator
         
         
         final String clusterName = "community-interaction-development";
-        final String index = "mentions";
-        final String type = "mention";
-        final String mappingFileSource = "/mappings/mention-mapping.json";
+		final String index = "test";
+		final String type = "tweet";
+		final String mappingFileSource = "/mappings/tweet-mapping.json";
         
         /*
+        final String clusterName = "community-interaction-development";
+		final String index = "mentions";
+		final String type = "mention";
+		final String mappingFileSource = "/mappings/mention-mapping.json";
+        
 		final String clusterName = "community-interaction-development";
 		final String index = "follows";
 		final String type = "follow";
-		final String mappingFileSource = "/mappings/follow-mapping.json";*/
-        
-        /*
+		final String mappingFileSource = "/mappings/follow-mapping.json";
+		
+		------------------------****------------------------------------
 		final String clusterName = args[0];
 		final String index = args[1];
 		final String type = args[2];
-		final String mappingFileSource = args[3];*/
+		final String mappingFileSource = args[3]; */
         
         
      // Create a TransportClient

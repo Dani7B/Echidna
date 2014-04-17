@@ -1,0 +1,493 @@
+{
+	"tweet": {
+    	"properties": {
+        	"id": {
+            	"properties": {
+        			"id": {
+                    	"type": "string"
+                    }
+                }
+            },
+			"tweet": {
+            	"properties": {
+                	"text": {
+                    	"type": "string"
+                    },
+                    "currentUserRetweetId": {
+                        "type": "long"
+                    },
+                    "retweetCount": {
+                        "type": "long"
+                    },
+                    "geoLocation": {
+            			"properties": {
+                        	"longitude": {
+                            	"type": "double"
+                            },
+                            "latitude": {
+                                "type": "double"
+                            }
+                        }
+                    },
+                    "inReplyToScreenName": {
+                    	"type": "string"
+                    },
+                    "truncated": {
+                        "type": "boolean"
+                    },
+                    "retweetedStatus": {
+            			"properties": {
+                        	"text": {
+                            	"type": "string"
+                            },
+                            "currentUserRetweetId": {
+                                "type": "long"
+                            },
+                            "retweetCount": {
+                                "type": "long"
+                            },
+                            "geoLocation": {
+            					"properties": {
+                                	"longitude": {
+                                    	"type": "double"
+                                    },
+                                    "latitude": {
+                                    	"type": "double"
+                                    }
+                                }
+                            },
+                            "inReplyToScreenName": {
+                            	"type": "string"
+                            },
+                            "truncated": {
+                            	"type": "boolean"
+                            },
+                            "entities": {
+            					"properties": {
+                                	"urls": {
+            							"properties": {
+                                        	"displayUrl": {
+                                            	"type": "string"
+                                            },
+                                            "indices": {
+                                                "type": "long"
+                                            },
+                                            "expandedUrl": {
+                                                "type": "string"
+                                            },
+                                            "url": {
+                                                "type": "string"
+                                            }
+                                        }
+                                    },
+                                    "hashtags": {
+            							"properties": {
+                                        	"text": {
+                                                "type": "string"
+                                            },
+                                        	"indices": {
+                                                "type": "long"
+                                            }
+                                        }
+                                    },
+                                    "userMentions": {
+            							"properties": {
+                                            "id": {
+                                                "type": "long"
+                                            },
+                                            "name": {
+                                                "type": "string"
+                                            },
+                                            "screenName": {
+                                                "type": "string"
+                                            },
+                                            "indices": {
+                                                "type": "long"
+                                            }
+                                        }
+                                    }
+                                }
+                            },
+                            "lang": {
+                            	"type": "string"
+                            },
+                            "possiblySensitive": {
+                            	"type": "boolean"
+                            },
+                            "id": {
+                            	"type": "long"
+                            },
+                            "inReplyToStatusId": {
+                                "type": "long"
+                            },
+                            "favoriteCount": {
+                                "type": "long"
+                            },
+                            "favorited": {
+                                "type": "boolean"
+                            },
+                            "retweet": {
+                                "type": "boolean"
+                            },
+                            "createdAt": {
+                                "type": "long"
+                            },
+                            "inReplyToUserId": {
+                                "type": "long"
+                            },
+                            "place": {
+                                "properties": {
+                                    "id": {
+                                        "type": "string"
+                                    },
+                                    "name": {
+                                        "type": "string"
+                                    },
+                                    "countryCode": {
+                                        "type": "string"
+                                    },
+                                    "boundingBoxType": {
+                                        "type": "string"
+                                    },
+                                    "placeType": {
+                                        "type": "string"
+                                    },
+                                    "url": {
+                                        "type": "string"
+                                    },
+                                    "fullname": {
+                                        "type": "string"
+                                    },
+                                    "country": {
+                                        "type": "string"
+                                    }
+                                }
+                            },
+                            "user": {
+                                "properties": {
+                                    "friendsCount": {
+                                        "type": "long"
+                                    },
+                                    "favouritesCount": {
+                                        "type": "long"
+                                    },
+                                    "screenName": {
+                                        "type": "string"
+                                    },
+                                    "profileImageUrl": {
+                                        "type": "string"
+                                    },
+                                    "geoEnabled": {
+                                        "type": "boolean"
+                                    },
+                                    "listedCount": {
+                                        "type": "long"
+                                    },
+                                    "defaultProfileImage": {
+                                        "type": "boolean"
+                                    },
+                                    "entities": {
+		            					"properties": {
+		                                	"urls": {
+		            							"properties": {
+		                                        	"displayUrl": {
+		                                            	"type": "string"
+		                                            },
+		                                            "indices": {
+		                                                "type": "long"
+		                                            },
+		                                            "expandedUrl": {
+		                                                "type": "string"
+		                                            },
+		                                            "url": {
+		                                                "type": "string"
+		                                            }
+		                                        }
+		                                    },
+		                                    "hashtags": {
+		            							"properties": {
+		                                        	"text": {
+		                                                "type": "string"
+		                                            },
+		                                        	"indices": {
+		                                                "type": "long"
+		                                            }
+		                                        }
+		                                    },
+		                                    "userMentions": {
+		            							"properties": {
+		                                            "id": {
+		                                                "type": "long"
+		                                            },
+		                                            "name": {
+		                                                "type": "string"
+		                                            },
+		                                            "screenName": {
+		                                                "type": "string"
+		                                            },
+		                                            "indices": {
+		                                                "type": "long"
+		                                            }
+		                                        }
+		                                    }
+		                                }
+		                            },
+                                    "url": {
+                                        "type": "string"
+                                    },
+                                    "id": {
+                                        "type": "long"
+                                    },
+                                    "protected": {
+                                        "type": "boolean"
+                                    },
+                                    "verified": {
+                                        "type": "boolean"
+                                    },
+                                    "createdAt": {
+                                        "type": "long"
+                                    },
+                                    "description": {
+                                        "type": "string"
+                                    },
+                                    "name": {
+                                        "type": "string"
+                                    },
+                                    "utcOffset": {
+                                        "type": "long"
+                                    },
+                                    "followersCount": {
+                                        "type": "long"
+                                    },
+                                    "statusesCount": {
+                                        "type": "long"
+                                    },
+                                    "contributorsEnabled": {
+                                        "type": "boolean"
+                                    },
+                                    "defaultProfile": {
+                                        "type": "boolean"
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "entities": {
+                        "properties": {
+                            "urls": {
+                                "properties": {
+                                    "displayUrl": {
+                                        "type": "string"
+                                    },
+                                    "indices": {
+                                        "type": "long"
+                                    },
+                                    "expandedUrl": {
+                                        "type": "string"
+                                    },
+                                    "url": {
+                                        "type": "string"
+                                    }
+                                }
+                            },
+                            "hashtags": {
+                                "properties": {
+                                    "text": {
+                                        "type": "string"
+                                    },
+                                    "indices": {
+                                        "type": "long"
+                                    }
+                                }
+                            },
+                            "userMentions": {
+                                "properties": {
+                                    "id": {
+                                        "type": "long"
+                                    },
+                                    "name": {
+                                        "type": "string"
+                                    },
+                                    "screenName": {
+                                        "type": "string"
+                                    },
+                                    "indices": {
+                                        "type": "string"
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "lang": {
+                        "type": "string"
+                    },
+                    "possiblySensitive": {
+                        "type": "boolean"
+                    },
+                    "id": {
+                        "type": "long"
+                    },
+                    "inReplyToStatusId": {
+                        "type": "long"
+                    },
+                    "source": {
+                        "type": "string"
+                    },
+                    "favoriteCount": {
+                        "type": "long"
+                    },
+                    "favorited": {
+                        "type": "boolean"
+                    },
+                    "retweet": {
+                        "type": "boolean"
+                    },
+                    "createdAt": {
+                        "type": "long"
+                    },
+                    "inReplyToUserId": {
+                        "type": "long"
+                    },
+                    "place": {
+                        "properties": {
+                            "id": {
+                                "type": "string"
+                            },
+                            "name": {
+                                "type": "string"
+                            },
+                            "countryCode": {
+                                "type": "string"
+                            },
+                            "boundingBoxType": {
+                                "type": "string"
+                            },
+                            "placeType": {
+                                "type": "string"
+                            },
+                            "url": {
+                                "type": "string"
+                            },
+                            "fullname": {
+                                "type": "string"
+                            },
+                            "country": {
+                                "type": "string"
+                            }
+                        }
+                    },
+                    "user": {
+                        "properties": {
+                            "friendsCount": {
+                                "type": "long"
+                            },
+                            "favouritesCount": {
+                                "type": "long"
+                            },
+                            "screenName": {
+                                "type": "string"
+                            },
+                            "profileImageUrl": {
+                                "type": "string"
+                            },
+                            "geoEnabled": {
+                                "type": "boolean"
+                            },
+                            "listedCount": {
+                                "type": "long"
+                            },
+                            "defaultProfileImage": {
+                                "type": "boolean"
+                            },
+                            "entities": {
+            					"properties": {
+                                	"urls": {
+            							"properties": {
+                                        	"displayUrl": {
+                                            	"type": "string"
+                                            },
+                                            "indices": {
+                                                "type": "long"
+                                            },
+                                            "expandedUrl": {
+                                                "type": "string"
+                                            },
+                                            "url": {
+                                                "type": "string"
+                                            }
+                                        }
+                                    },
+                                    "hashtags": {
+            							"properties": {
+                                        	"text": {
+                                                "type": "string"
+                                            },
+                                        	"indices": {
+                                                "type": "long"
+                                            }
+                                        }
+                                    },
+                                    "userMentions": {
+            							"properties": {
+                                            "id": {
+                                                "type": "long"
+                                            },
+                                            "name": {
+                                                "type": "string"
+                                            },
+                                            "screenName": {
+                                                "type": "string"
+                                            },
+                                            "indices": {
+                                                "type": "long"
+                                            }
+                                        }
+                                    }
+                                }
+                            },
+                            "url": {
+                                "type": "string"
+                            },
+                            "id": {
+                                "type": "long"
+                            },
+                            "protected": {
+                                "type": "boolean"
+                            },
+                            "verified": {
+                                "type": "boolean"
+                            },
+                            "createdAt": {
+                                "type": "long"
+                            },
+                            "description": {
+                                "type": "string"
+                            },
+                            "name": {
+                                "type": "string"
+                            },
+                            "utcOffset": {
+                                "type": "long"
+                            },
+                            "followersCount": {
+                                "type": "long"
+                            },
+                            "statusesCount": {
+                                "type": "long"
+                            },
+                            "contributorsEnabled": {
+                                "type": "boolean"
+                            },
+                            "defaultProfile": {
+                                "type": "boolean"
+                            }
+                        }
+                    }
+                }
+            },
+            "monitoringActivityId": {
+                "type": "string"
+            }
+        }
+    }
+}

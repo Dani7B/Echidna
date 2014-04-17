@@ -27,7 +27,26 @@ public class ElasticsearchImportExport {
     
     public static void main( String[] args ) throws InterruptedException{
     	
-    	final int maxTweets = 100000;
+    	final int maxTweets = 100;
+        final int scrollSize = 2;
+        final int shards = 5;
+        final int realTotal = (int) Math.ceil((double)maxTweets /(scrollSize * shards))*scrollSize * shards;
+        
+    	final String localHost = "localhost";
+        final int localTransportPort = 9300;
+        final String localClusterName = "community-interaction-development";
+        final String localIndex = "test";
+        final String localType = "tweet";
+        
+        final String gaiaHost = "localhost";
+        final int gaiaTransportPort = 9300;
+        final String gaiaClusterName = "community-interaction-development";
+        final String gaiaIndex = "twitter-champions";
+        final String gaiaType = "tweet‏";
+        final String twitterChampion = "ee7eb7f6-8ab1-40ad-b7f8-d47fe0ae02a0";
+        
+        /*
+        final int maxTweets = 100000;
         final int scrollSize = 500;
         final int shards = 3;
         final int realTotal = (int) Math.ceil((double)maxTweets /(scrollSize * shards))*scrollSize * shards;
@@ -43,7 +62,7 @@ public class ElasticsearchImportExport {
         final String gaiaClusterName = "social-insights";
         final String gaiaIndex = "twitter_v1";
         final String gaiaType = "context_tweet‏";
-        final String twitterChampion = "ee7eb7f6-8ab1-40ad-b7f8-d47fe0ae02a0";
+        final String twitterChampion = "ee7eb7f6-8ab1-40ad-b7f8-d47fe0ae02a0"; */
         
         // Create a TransportClient for localhost
         Client localTransportClient = buildClient(localHost, localTransportPort, localClusterName);
@@ -61,7 +80,7 @@ public class ElasticsearchImportExport {
         final QueryBuilder query = QueryBuilders.boolQuery().must(
                 QueryBuilders.fieldQuery("monitoringActivityId", twitterChampion));
         
-        SearchResponse scrollResp = gaiaTransportClient.prepareSearch(gaiaIndex).setTypes("context_tweet")
+        SearchResponse scrollResp = gaiaTransportClient.prepareSearch(gaiaIndex).setTypes("tweet")
                 .setSearchType(SearchType.SCAN).setScroll(new TimeValue(60000)).setQuery(query)
                 .addSort(SortBuilders.fieldSort("tweet.createdAt").order(SortOrder.DESC))
                 .setSize(scrollSize).execute().actionGet();
@@ -69,6 +88,7 @@ public class ElasticsearchImportExport {
         
         // Scroll until no hits are returned
         int count = 0;
+        String g;
     	LOGGER.info("Start");
         while (count < maxTweets) {
             scrollResp = gaiaTransportClient.prepareSearchScroll(scrollResp.getScrollId())
