@@ -10,5 +10,6 @@
   <name>Batch Layer</name>
   <modules>
   	<module>pig</module>
+  	<module>piggyback</module>
   </modules>
 </project>

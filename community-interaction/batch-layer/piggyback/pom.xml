@@ -7,8 +7,8 @@
     <artifactId>batch-layer</artifactId>
     <version>1.0-SNAPSHOT</version>
   </parent>
-  <artifactId>pig</artifactId>
-  <name>pig</name>
+  <artifactId>piggyback</artifactId>
+  <name>piggyback</name>
   <url>http://maven.apache.org</url>
   <properties>
     <pigunit.version>0.12.1</pigunit.version>
