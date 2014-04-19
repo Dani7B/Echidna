@@ -9,17 +9,9 @@ DEFINE HBaseStorage org.apache.pig.backend.hadoop.hbase.HBaseStorage('t:*', '-ca
 /* Code in common to all the jobs */
 
 mention = LOAD '$INPUTDIR/part*' USING BinStorage() AS (mentioner:long, mentioned:long, ts:long);
-mentionedBy = GROUP mention BY mentioned;
 
-simple = FOREACH mentionedBy {
-			reversed = FOREACH mention
-				GENERATE mentioned, ts, mentioner;
-			GENERATE FLATTEN(reversed);
-		};
-
+simple = FOREACH mention GENERATE mentioned, mentioner, ts;
 mentioned_group = GROUP simple BY mentioned;
-
-
 
 /* Work to compute mentionedByMonth view */
 

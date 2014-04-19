@@ -16,25 +16,17 @@ ext = FOREACH tweets GENERATE tweet#'createdAt' AS timestamp:long,
 							  tweet#'entities' AS entities:map[];
 							  
 ext1 = FOREACH ext GENERATE timestamp,
-							user#'id' AS mentioner:long,
-						 	entities#'userMentions' AS mentions:tuple(map[]);
+ 							user#'id' AS mentioner,
+ 						 	entities#'userMentions' AS mentions:tuple(map[]);
 						 	
 ext2 = FOREACH ext1 GENERATE timestamp, mentioner, FromTupleToBag(mentions) AS mentionsBag:bag{t:(p:map[])};
 ext3 = FOREACH ext2 GENERATE mentioner, FLATTEN(mentionsBag) AS mentioned:map[], timestamp;
-singleLine = FOREACH ext3 GENERATE mentioner, mentioned#'id' AS mentionedId:long, timestamp;
+ext4 = FOREACH ext3 GENERATE mentioned#'id' AS mentionedId, mentioner, timestamp;
+simple = FOREACH ext4 GENERATE (long)mentionedId, (long)mentioner, timestamp;
 
 /* Code in common to all the jobs */
 
-mentionedBy = GROUP singleLine BY mentionedId;
-
-simple = FOREACH mentionedBy {
-			reversed = FOREACH singleLine
-				GENERATE mentionedId, timestamp, mentioner;
-			GENERATE FLATTEN(reversed);
-		};
-
 mentioned_group = GROUP simple BY mentionedId;
-
 
 
 /* Work to compute mentionedByMonth view */
@@ -47,7 +39,7 @@ month = FOREACH mentioned_group {
 		
 monthLine = GROUP month BY couple;
 montly = FOREACH monthLine
-				GENERATE group.$0, TOMAP((chararray) group.$1, (int)COUNT(month));
+				GENERATE group.$0, TOMAP((chararray) group.$1, COUNT(month));
 		
 STORE montly INTO 'hbase://$MONTHLY' USING HBaseStorage;
 
@@ -63,7 +55,7 @@ day = FOREACH mentioned_group {
 		
 dayLine = GROUP day BY couple;
 daily = FOREACH dayLine
-				GENERATE group.$0, TOMAP((chararray) group.$1, (int)COUNT(day));
+				GENERATE group.$0, TOMAP((chararray) group.$1, COUNT(day));
 
 STORE daily INTO 'hbase://$DAILY' USING HBaseStorage;		
 
