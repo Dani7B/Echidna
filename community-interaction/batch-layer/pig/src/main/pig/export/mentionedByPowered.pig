@@ -39,7 +39,7 @@ month = FOREACH mentioned_group {
 		
 monthLine = GROUP month BY couple;
 montly = FOREACH monthLine
-				GENERATE group.$0, TOMAP((chararray) group.$1, COUNT(month));
+				GENERATE group.$0, TOMAP((chararray) group.$1, (int)COUNT(month));
 		
 STORE montly INTO 'hbase://$MONTHLY' USING HBaseStorage;
 
@@ -55,7 +55,7 @@ day = FOREACH mentioned_group {
 		
 dayLine = GROUP day BY couple;
 daily = FOREACH dayLine
-				GENERATE group.$0, TOMAP((chararray) group.$1, COUNT(day));
+				GENERATE group.$0, TOMAP((chararray) group.$1, (int)COUNT(day));
 
 STORE daily INTO 'hbase://$DAILY' USING HBaseStorage;		
 
