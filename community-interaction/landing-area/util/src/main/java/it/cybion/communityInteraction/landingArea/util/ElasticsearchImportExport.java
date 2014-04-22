@@ -27,15 +27,15 @@ public class ElasticsearchImportExport {
     
     public static void main( String[] args ) throws InterruptedException{
     	
-    	final int maxTweets = 100;
-        final int scrollSize = 2;
+    	final int maxTweets = 100500;
+        final int scrollSize = 100;
         final int shards = 5;
         final int realTotal = (int) Math.ceil((double)maxTweets /(scrollSize * shards))*scrollSize * shards;
         
     	final String localHost = "localhost";
         final int localTransportPort = 9300;
         final String localClusterName = "community-interaction-development";
-        final String localIndex = "test";
+        final String localIndex = "twitter_champions";
         final String localType = "tweet";
         
         final String gaiaHost = "localhost";
@@ -43,7 +43,7 @@ public class ElasticsearchImportExport {
         final String gaiaClusterName = "community-interaction-development";
         final String gaiaIndex = "twitter-champions";
         final String gaiaType = "tweet‏";
-        final String twitterChampion = "ee7eb7f6-8ab1-40ad-b7f8-d47fe0ae02a0";
+        final String twitterChampions = "ee7eb7f6-8ab1-40ad-b7f8-d47fe0ae02a0";
         
         /*
         final int maxTweets = 100000;
@@ -78,7 +78,7 @@ public class ElasticsearchImportExport {
         Client gaiaTransportClient = buildClient(gaiaHost, gaiaTransportPort, gaiaClusterName);
         
         final QueryBuilder query = QueryBuilders.boolQuery().must(
-                QueryBuilders.fieldQuery("monitoringActivityId", twitterChampion));
+                QueryBuilders.fieldQuery("monitoringActivityId", twitterChampions));
         
         SearchResponse scrollResp = gaiaTransportClient.prepareSearch(gaiaIndex).setTypes("tweet")
                 .setSearchType(SearchType.SCAN).setScroll(new TimeValue(60000)).setQuery(query)

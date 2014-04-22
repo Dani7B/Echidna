@@ -4,8 +4,8 @@
 
 SET default_parallel $REDUCERS;
 
-mention = LOAD '$INF/part-*' AS (mentioner:long, mentioned:long, timestamp:long);
+mention = LOAD '$INM/part-*' AS (mentioner:long, mentioned:long, timestamp:long);
 STORE mention INTO '$MENTIONS' USING BinStorage();
 
-follows = LOAD '$INM/part-*' AS (follower:long, followed:long, timestamp:long);
+follows = LOAD '$INF/part-*' AS (follower:long, followed:long, timestamp:long);
 STORE follows INTO '$FOLLOWS' USING BinStorage();

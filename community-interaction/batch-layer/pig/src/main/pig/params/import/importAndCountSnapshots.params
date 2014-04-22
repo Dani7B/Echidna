@@ -1,2 +1,4 @@
 REDUCERS=3
+INDEX=profiles
+TYPE=snapshot
 OUTPUTDIR=import/snapshotsPerUser

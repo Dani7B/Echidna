@@ -1,2 +1,4 @@
 REDUCERS=3
+INDEX=m
+TYPE=snapshot
 OUTPUTDIR=import/snapshots

@@ -1,4 +1,8 @@
 REDUCERS=3
+MENTIONINDEX=mentions
+MENTIONTYPE=mention
+FOLLOWINDEX=follows
+FOLLOWTYPE=follow
 MENTIONS=hdfs://localhost:54310/user/daniele/mentions
 FOLLOWS=hdfs://localhost:54310/user/daniele/follows
 FROM=0000000000000

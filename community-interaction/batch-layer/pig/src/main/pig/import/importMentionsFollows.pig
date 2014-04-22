@@ -7,11 +7,11 @@ REGISTER /home/daniele/.m2/repository/org/elasticsearch/elasticsearch-hadoop/1.3
 DEFINE ESStorage org.elasticsearch.hadoop.pig.ESStorage();
 
 
-mention = LOAD 'mentions/mention/_search?q=timestamp:[$FROM+TO+$TO]' USING ESStorage 
+mention = LOAD '$MENTIONINDEX/$MENTIONTYPE/_search?q=timestamp:[$FROM+TO+$TO]' USING ESStorage 
 				AS (mentioner:long, mentioned:long, timestamp:long);
 STORE mention INTO '$MENTIONS' USING BinStorage();
 
 
-follows = LOAD 'follows/follow/_search?q=timestamp:[$FROM+TO+$TO]' USING ESStorage 
+follows = LOAD '$FOLLOWINDEX/$FOLLOWTYPE/_search?q=timestamp:[$FROM+TO+$TO]' USING ESStorage 
 				AS (follower:long, followed:long, timestamp:long);
 STORE follows INTO '$FOLLOWS' USING BinStorage();

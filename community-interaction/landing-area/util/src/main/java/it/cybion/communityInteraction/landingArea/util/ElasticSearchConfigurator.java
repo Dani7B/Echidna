@@ -27,7 +27,7 @@ public class ElasticSearchConfigurator
         
         
         final String clusterName = "community-interaction-development";
-		final String index = "test";
+		final String index = "twitter_champions";
 		final String type = "tweet";
 		final String mappingFileSource = "/mappings/tweet-mapping.json";
         
