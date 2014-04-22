@@ -8,6 +8,10 @@ import org.apache.pig.data.DataBag;
 import org.apache.pig.data.Tuple;
 import org.apache.pig.data.TupleFactory;
 
+/***
+ * UDF to turn a tuple into a bag
+ * @author Daniele Morgantini
+ */
 public class FromTupleToBag extends EvalFunc<DataBag> {
 	
      TupleFactory tupleFactory = TupleFactory.getInstance();

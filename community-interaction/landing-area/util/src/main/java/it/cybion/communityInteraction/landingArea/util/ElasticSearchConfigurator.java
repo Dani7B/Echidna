@@ -16,7 +16,7 @@ import org.elasticsearch.common.transport.InetSocketTransportAddress;
 import org.elasticsearch.indices.IndexMissingException;
 
 /**
-* Simple class to configure ElasticSearch started as a service
+* Simple class to configure Elasticsearch started as a service
 */
 public class ElasticSearchConfigurator
 {
