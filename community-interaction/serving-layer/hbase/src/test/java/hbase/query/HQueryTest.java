@@ -119,8 +119,8 @@ public class HQueryTest {
 								.rankedByHits(true)
 								.take(5);
 
-        info = "The top 5 users whose followers mentioned one or more times \n"
-        		+ " at least one among 11, 14 and 12 in the last month \n";
+        info = "The top 5 users whose followers mentioned 1 or more times \n"
+        		+ " at least 1 among 11, 14 and 12 in the last month \n";
         printResult(queryManager, query4, info);
         System.out.println("");
 
@@ -145,8 +145,8 @@ public class HQueryTest {
 								.rankedByHits(true)
 								.take(5);
 
-		info = "The top 5 users whose followers mentioned two or more times \n"
-		+ " at least one among 11, 14 and 12 in the last 2 months \n";
+		info = "The top 5 users whose followers mentioned 2 or more times \n"
+		+ " at least 1 among 11, 14 and 12 in the last 2 months \n";
 		printResult(queryManager, query6, info);
 		System.out.println("");
 		
@@ -158,7 +158,7 @@ public class HQueryTest {
 							  .rankedByHits(true)
 							  .take(5);
 
-		info = "The top 5 users that mentioned at least one among 11, 14 and 12 during last week [" +
+		info = "The top 5 users that mentioned at least 1 among 11, 14 and 12 during last week [" +
 				lw.getStart() + " - " + lw.getEnd() + "] \n";
 		printResult(queryManager, query7, info);
 		System.out.println("");
@@ -170,7 +170,7 @@ public class HQueryTest {
 		  					  .rankedByHits(true)
 		  					  .take(5);
 
-		info = "The top 5 users that mentioned at least one among 11 and 14 in the last 5 weeks \n";
+		info = "The top 5 users that mentioned at least 1 among 11 and 14 in the last 5 weeks \n";
 		printResult(queryManager, query8, info);
 		System.out.println("");
         
@@ -181,7 +181,7 @@ public class HQueryTest {
 		  					  .rankedByHits(true)
 		  					  .take(5);
 
-		info = "The top 5 users by rank that mentioned at least one among 11, 14 and 12 in the last 2 months \n";
+		info = "The top 5 users by rank that mentioned at least 1 among 11, 14 and 12 in the last 2 months \n";
 		printResult(queryManager, query9, info);
 		System.out.println("");
 		
@@ -203,8 +203,8 @@ public class HQueryTest {
 									.rankedByHits(true)
 									.take(10);
 
-		info = "The top 10 users whose followers mentioned two or more times \n"
-				+ " at least one among 11, 14 and 12 during this year \n";
+		info = "The top 10 users whose followers mentioned 2 or more times \n"
+				+ " at least 1 among 11, 14 and 12 during this year \n";
 		printResult(queryManager, yearWFMquery, info);
 		System.out.println("");
 		
