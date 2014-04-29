@@ -3,8 +3,10 @@ package hbase.impls;
 import hbase.HBaseAdministrator;
 
 import java.io.IOException;
+import java.util.Map;
 
 import org.apache.hadoop.conf.Configuration;
+import org.apache.hadoop.fs.Path;
 import org.apache.hadoop.hbase.HBaseConfiguration;
 import org.apache.hadoop.hbase.HColumnDescriptor;
 import org.apache.hadoop.hbase.HTableDescriptor;
@@ -65,6 +67,25 @@ public class HTableAdmin implements HBaseAdministrator {
 		    for (String cf : colfams) {
 		      desc.addFamily(new HColumnDescriptor(cf));
 		    }
+		    
+		    this.admin.createTable(desc);
+	    }
+	}
+	
+	@Override
+	public void createTable(final String table, final String coprocessorName, final String jarPath,
+			final int priority, final Map<String,String> params, final String... colfams) throws IOException {
+		
+		if(!existsTable(table)) {
+		
+			HTableDescriptor desc = new HTableDescriptor(table);
+			
+		    for (String cf : colfams) {
+		      desc.addFamily(new HColumnDescriptor(cf));
+		    }
+		    
+		    Path jpath = new Path(jarPath);
+		    desc.addCoprocessor(coprocessorName, jpath, priority, params);
 		    
 		    this.admin.createTable(desc);
 	    }

@@ -12,6 +12,7 @@
   
   	<modules>
     	<module>hbase</module>
+    	<module>coprocessors</module>
     	<module>rest</module>
     <module>resting</module>
   </modules>
