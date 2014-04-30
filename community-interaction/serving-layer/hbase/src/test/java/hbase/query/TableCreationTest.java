@@ -2,9 +2,6 @@ package hbase.query;
 
 import java.io.IOException;
 
-import org.apache.hadoop.hbase.MasterNotRunningException;
-import org.apache.hadoop.hbase.ZooKeeperConnectionException;
-
 import hbase.HBaseAdministrator;
 import hbase.impls.HTableAdmin;
 

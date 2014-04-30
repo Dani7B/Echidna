@@ -1,8 +1,11 @@
 package hbase;
 
 import java.io.IOException;
+import java.util.Map;
 
 import org.apache.hadoop.hbase.client.Result;
+import org.apache.hadoop.hbase.client.coprocessor.Batch;
+import org.apache.hadoop.hbase.ipc.CoprocessorProtocol;
 
 /**
  * Client to communicate with HBase for perfoming CRUD operations on HTable rows.
@@ -295,4 +298,13 @@ public interface HBaseClient {
 	 * @param min the minimum allowed value */
 	public abstract Result get(final byte[] row, final byte[][] qualifiers, final byte[] min) throws IOException;
 
+	
+	/**
+	 * Method to execute coprocessorExec method from the HTable
+	 * @param startKey the start row key for the internal scan 
+	 * @param endKey the end row key for the internal scan 
+	 * @param callable the unit of work to execute
+	 * @return the result from the execution in the region
+	 */
+	public abstract <T extends CoprocessorProtocol,R> Map<byte[],R> coprocessorExec(Class<T> protocol, byte[] startKey, byte[] endKey, Batch.Call<T,R> callable) throws IOException, Throwable;
 }

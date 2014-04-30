@@ -5,6 +5,7 @@ import hbase.HBaseClient;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.hadoop.hbase.HColumnDescriptor;
 import org.apache.hadoop.hbase.client.Delete;
@@ -14,6 +15,7 @@ import org.apache.hadoop.hbase.client.Put;
 import org.apache.hadoop.hbase.client.Result;
 import org.apache.hadoop.hbase.client.ResultScanner;
 import org.apache.hadoop.hbase.client.Scan;
+import org.apache.hadoop.hbase.client.coprocessor.Batch;
 import org.apache.hadoop.hbase.filter.ColumnPrefixFilter;
 import org.apache.hadoop.hbase.filter.CompareFilter;
 import org.apache.hadoop.hbase.filter.BinaryComparator;
@@ -22,6 +24,7 @@ import org.apache.hadoop.hbase.filter.FilterList;
 import org.apache.hadoop.hbase.filter.PrefixFilter;
 import org.apache.hadoop.hbase.filter.QualifierFilter;
 import org.apache.hadoop.hbase.filter.ValueFilter;
+import org.apache.hadoop.hbase.ipc.CoprocessorProtocol;
 import org.apache.hadoop.hbase.util.Bytes;
 
 /**
@@ -604,5 +607,11 @@ public class HTableManager implements HBaseClient {
 	public Result[] scan(byte[] lowerRow, byte[] upperRow) throws IOException {
 		byte[][] qualifiers = new byte[0][];
 		return this.scan(lowerRow, upperRow, qualifiers);
+	}
+	
+	@Override
+	public <T extends CoprocessorProtocol,R> Map<byte[],R> coprocessorExec(Class<T> protocol,
+					byte[] startKey, byte[] endKey, Batch.Call<T,R> callable) throws IOException, Throwable {
+		return this.table.coprocessorExec(protocol, startKey, endKey, callable);
 	}
 }
