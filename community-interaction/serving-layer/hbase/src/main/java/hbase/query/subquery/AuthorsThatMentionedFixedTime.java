@@ -58,6 +58,15 @@ public class AuthorsThatMentionedFixedTime extends AuthorsThatMentioned {
 			this.client = HBaseClientFactory.getInstance().getMentionedByDay();
 	}
 	
+	/**
+	 * Retrieves the timeRange
+	 * @return the timeRange
+	 */
+	public FixedTime getTimeRange() {
+		return this.timeRange;
+	}
+	
+	
 	@Override
 	public void execute(final Authors authors) throws IOException {
 		
@@ -85,10 +94,10 @@ public class AuthorsThatMentionedFixedTime extends AuthorsThatMentioned {
 			
 			for(Result result : results) {
 				for(KeyValue kv : result.raw()) {
-					int value = 1;
+					int value = Bytes.toInt(kv.getValue());
 					String mentioner = Bytes.toString(kv.getQualifier());
 					if(map.containsKey(mentioner)) {
-						value = map.get(mentioner) + Bytes.toInt(kv.getValue());
+						value += map.get(mentioner);
 					}
 					map.put(mentioner, value);
 				}
@@ -116,5 +125,4 @@ public class AuthorsThatMentionedFixedTime extends AuthorsThatMentioned {
 		}
 		this.getQuery().updateUsers(list);
 	}
-	
 }
