@@ -58,14 +58,6 @@ public class AuthorsThatMentionedFixedTime extends AuthorsThatMentioned {
 			this.client = HBaseClientFactory.getInstance().getMentionedByDay();
 	}
 	
-	/**
-	 * Retrieves the timeRange
-	 * @return the timeRange
-	 */
-	public FixedTime getTimeRange() {
-		return this.timeRange;
-	}
-	
 	/*
 	@Override
 	public void execute(final Authors authors) throws IOException {
@@ -147,6 +139,7 @@ public class AuthorsThatMentionedFixedTime extends AuthorsThatMentioned {
 			long id = m.getMentioned().getId();
 			lista.add(this.timeRange.generateFirstRowKey(id));
 			lista.add(this.timeRange.generateLastRowKey(id));
+			toPass.put(id, lista);
 			if(id < min)
 				min = id;
 			if(id > max)
@@ -156,14 +149,14 @@ public class AuthorsThatMentionedFixedTime extends AuthorsThatMentioned {
 		String minRowKey = this.timeRange.generateFirstRowKey(min);
 		String maxRowKey = this.timeRange.generateLastRowKey(max);
 		
-		Batch.Call call = null;
+		Batch.Call<AuthorAggregatorProtocol, Map<String, Map<String, Integer>>> call = null;
 		try {
 			if(this.timeRange instanceof ThisYear) {
 				call = Batch.forMethod(AuthorAggregatorProtocol.class,
 										"aggregateMentionsByMMThisYear", auths, toPass);
 			} else {
 				call = Batch.forMethod(AuthorAggregatorProtocol.class,
-						"aggregateMentionsByMMThisYear", auths, toPass);
+						"aggregateMentionsByMM", auths, toPass);
 			}
 		} catch (NoSuchMethodException e1) {
 			e1.printStackTrace();
@@ -171,7 +164,7 @@ public class AuthorsThatMentionedFixedTime extends AuthorsThatMentioned {
 		
 		Map<byte[], Map<String, Map<String, Integer>>> results = null;
 		try {
-			results = (Map<byte[], Map<String,Map<String,Integer>>>) this.client.coprocessorExec(AuthorAggregatorProtocol.class,
+			results = this.client.coprocessorExec(AuthorAggregatorProtocol.class,
 					Bytes.toBytes(minRowKey), Bytes.toBytes(maxRowKey), call);
 		} catch (Throwable e1) {
 			e1.printStackTrace();

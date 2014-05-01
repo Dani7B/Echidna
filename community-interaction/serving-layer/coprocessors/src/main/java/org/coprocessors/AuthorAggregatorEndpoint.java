@@ -52,9 +52,8 @@ public class AuthorAggregatorEndpoint extends BaseEndpointCoprocessor implements
 					qualifierFilters.addFilter(new QualifierFilter(CompareFilter.CompareOp.EQUAL,
 							new BinaryComparator(q)));
 				}
-			scan.setFilter(qualifierFilters);
+				scan.setFilter(qualifierFilters);
 			}									
-			
 			InternalScanner scanner = environment.getRegion().getScanner(scan);
 			try {
 				List<KeyValue> curVals = new ArrayList<KeyValue>();
@@ -89,7 +88,6 @@ public class AuthorAggregatorEndpoint extends BaseEndpointCoprocessor implements
 			Map<String,Integer> map = new HashMap<String,Integer>();
 			
 			String firstRow = m.getValue().get(0);
-			String lastRow = m.getValue().get(1);
 				
 			FilterList fList = new FilterList(FilterList.Operator.MUST_PASS_ALL);
 			
@@ -128,6 +126,99 @@ public class AuthorAggregatorEndpoint extends BaseEndpointCoprocessor implements
 		      scanner.close();
 		    }
 			general.put(String.valueOf(m.getKey()), map);
+		}
+		return general;
+	}
+	
+	@Override
+	public Map<String,Integer> aggregateMentions(byte[][] auths, Map<Long,List<String>> args) throws IOException {
+		Map<String,Integer> general = new HashMap<String,Integer>();
+		RegionCoprocessorEnvironment environment = (RegionCoprocessorEnvironment) getEnvironment();
+		
+		for(Map.Entry<Long, List<String>> m : args.entrySet()){
+			
+			int count = 0;
+			String firstRow = m.getValue().get(0);
+				
+			FilterList fList = new FilterList(FilterList.Operator.MUST_PASS_ALL);
+			
+			Filter rPref = new PrefixFilter(Bytes.toBytes(firstRow));
+			fList.addFilter(rPref);
+			
+			if(auths.length > 0) {
+				FilterList qualifierFilters = new FilterList(FilterList.Operator.MUST_PASS_ONE);
+				for(byte[] prefix : auths) {
+					Filter prefixFilter = new ColumnPrefixFilter(prefix);
+					qualifierFilters.addFilter(prefixFilter);
+				}
+				fList.addFilter(qualifierFilters);
+			}
+			
+			Scan scan = new Scan()
+						.setFilter(fList);				
+			
+			InternalScanner scanner = environment.getRegion().getScanner(scan);
+			try {
+				List<KeyValue> curVals = new ArrayList<KeyValue>();
+			    boolean done = false;
+			    do {
+			    	curVals.clear();
+			        done = scanner.next(curVals);
+			        for(KeyValue kv : curVals) {
+			        	count += Bytes.toInt(kv.getValue());
+			        }
+			    } while (done);
+		    } finally {
+		      scanner.close();
+		    }
+			general.put(String.valueOf(m.getKey()), count);
+		}
+		return general;
+	}
+
+	@Override
+	public Map<String,Integer> aggregateMentionsThisYear(byte[][] auths, Map<Long,List<String>> args) throws IOException {
+		
+		Map<String,Integer> general = new HashMap<String,Integer>();
+		RegionCoprocessorEnvironment environment = (RegionCoprocessorEnvironment) getEnvironment();
+		
+		for(Map.Entry<Long, List<String>> m : args.entrySet()){
+			
+			int count = 0;
+			String firstRow = m.getValue().get(0);
+				
+			FilterList fList = new FilterList(FilterList.Operator.MUST_PASS_ALL);
+			
+			Filter rPref = new PrefixFilter(Bytes.toBytes(firstRow));
+			fList.addFilter(rPref);
+			
+			if(auths.length > 0) {
+				FilterList qualifierFilters = new FilterList(FilterList.Operator.MUST_PASS_ONE);
+				for(byte[] prefix : auths) {
+					Filter prefixFilter = new ColumnPrefixFilter(prefix);
+					qualifierFilters.addFilter(prefixFilter);
+				}
+				fList.addFilter(qualifierFilters);
+			}
+			
+			Scan scan = new Scan()
+						.setFilter(fList);				
+			
+			InternalScanner scanner = environment.getRegion().getScanner(scan);
+			try {
+				List<KeyValue> curVals = new ArrayList<KeyValue>();
+			    boolean done = false;
+			    do {
+			    	curVals.clear();
+			        done = scanner.next(curVals);
+			        for(KeyValue kv : curVals) {
+			        	count += Bytes.toInt(kv.getValue());
+			        }
+			    } while (done);
+		    } finally {
+		      scanner.close();
+		    }
+			general.put(String.valueOf(m.getKey()), count);
 		}
 		return general;
 	}
