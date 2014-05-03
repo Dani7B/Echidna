@@ -52,9 +52,9 @@ public class AuthorsWhoseFollowersMentionedFixedTime extends AuthorsThatMentione
 		this.timeRange = timeRange;
 		if(timeRange instanceof LastMonth || timeRange instanceof MonthsAgo ||
 				timeRange instanceof LastYear || timeRange instanceof ThisYear)
-			this.client = HBaseClientFactory.getInstance().getWhoseFollowersMentionedByMonth();
+			this.client = HBaseClientFactory.getInstance().getWhoseFollowersMentionedMonth();
 		else
-			this.client = HBaseClientFactory.getInstance().getWhoseFollowersMentionedByDay();
+			this.client = HBaseClientFactory.getInstance().getWhoseFollowersMentionedDay();
 
 	}
 	

@@ -30,9 +30,9 @@ public class HBaseClientFactory {
 	
 	private HBaseClient whoseFollowersAreFollowedBy;
 	
-	private HBaseClient whoseFollowersMentionedByMonth;
+	private HBaseClient whoseFollowersMentionedMonth;
 	
-	private HBaseClient whoseFollowersMentionedByDay;
+	private HBaseClient whoseFollowersMentionedDay;
 	
 	private static int LARGEBATCH = 50;
 	private static int MEDIUMBATCH = 25;
@@ -98,16 +98,16 @@ public class HBaseClientFactory {
 		return this.whoseFollowersAreFollowedBy;
 	}
 	
-	public HBaseClient getWhoseFollowersMentionedByMonth() {
-		this.whoseFollowersMentionedByMonth = this.instantiateClient(this.whoseFollowersMentionedByMonth, 
-												"wfmByMonth", LARGEBATCH);
-		return this.whoseFollowersMentionedByMonth;
+	public HBaseClient getWhoseFollowersMentionedMonth() {
+		this.whoseFollowersMentionedMonth = this.instantiateClient(this.whoseFollowersMentionedMonth, 
+												"wfmMonth", LARGEBATCH);
+		return this.whoseFollowersMentionedMonth;
 	}
 	
-	public HBaseClient getWhoseFollowersMentionedByDay() {
-		this.whoseFollowersMentionedByDay = this.instantiateClient(this.whoseFollowersMentionedByDay,
-												"wfmByDay", MEDIUMBATCH);
-		return this.whoseFollowersMentionedByDay;
+	public HBaseClient getWhoseFollowersMentionedDay() {
+		this.whoseFollowersMentionedDay = this.instantiateClient(this.whoseFollowersMentionedDay,
+												"wfmDay", MEDIUMBATCH);
+		return this.whoseFollowersMentionedDay;
 	}
 	
 	

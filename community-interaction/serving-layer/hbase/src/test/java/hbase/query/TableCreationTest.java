@@ -25,6 +25,15 @@ public class TableCreationTest {
         			HBaseAdministrator.PRIORITY_USER, null, "t");
         	System.out.println("Created table " + tables[i]);
         }
-
+        
+        String[] noCoprocessorTables = new String[] {"followedBy", "follow", "wff", "wfafb", "wfmDay", "wfmMonth"};
+        for(int i=0; i<noCoprocessorTables.length; i++) {
+        	if(admin.existsTable(noCoprocessorTables[i])) {
+        		admin.deleteTable(noCoprocessorTables[i]);
+            	System.out.println("Deleted table " + noCoprocessorTables[i]);
+        	}
+        	admin.createTable(tables[i], "t");
+        	System.out.println("Created table " + noCoprocessorTables[i]);
+        }
     }
 }
