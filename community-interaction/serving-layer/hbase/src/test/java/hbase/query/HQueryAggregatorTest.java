@@ -5,6 +5,7 @@ import java.io.IOException;
 import hbase.impls.HQueryManager;
 import hbase.query.time.LastMonth;
 import hbase.query.time.LastYear;
+import hbase.query.time.LastYearFromNow;
 import hbase.query.time.MonthsAgo;
 import hbase.query.time.WeeksAgo;
 
@@ -26,7 +27,7 @@ public class HQueryAggregatorTest {
 								.users()
 								.thatMentioned(new LastMonth(), new AtLeast(1), new Mention(11),
 											new Mention(14), new Mention(12))
-								.rankedById(false)
+								.rankedById(true)
 								.take(4);
 
     	String info = "The top 4 users by id that mentioned at least 1 among 11, 14, 12 in the last month \n";
@@ -34,24 +35,19 @@ public class HQueryAggregatorTest {
         System.out.println("");
         
         
-        
-        
-        final HQuery complexQuery = new HQuery()
+        final HQuery query2 = new HQuery()
 								.users()
 								.thatMentioned(new LastMonth(), new AtLeast(1), new Mention(11),
 											new Mention(14), new Mention(12))
 								.rankedByHits(true)
 								.take(5);
 
-        info = "The top 5 users that mentioned at least 1 among 11, 14, 12 in the last month \n";
-        printResult(queryManager, complexQuery, info);
+        info = "The top 5 users that mentioned at least 1 among 11, 14, 12 in the last month, ranked by hits \n";
+        printResult(queryManager, query2, info);
         System.out.println("");
 
         
-       
-
-        
-        final HQuery query5 = new HQuery()
+        final HQuery query3 = new HQuery()
 								.users()
 								.thatMentioned(new MonthsAgo(3), new AtLeast(1), new Mention(11),
 											new Mention(14), new Mention(12))
@@ -59,22 +55,22 @@ public class HQueryAggregatorTest {
 								.take(4);
 
         info = "The top 4 users by id that mentioned at least 1 among 11, 14, 12 in the last 3 months \n";
-        printResult(queryManager, query5, info);
+        printResult(queryManager, query3, info);
         System.out.println("");
         
 		
-		final HQuery query8 = new HQuery()
+		final HQuery query4 = new HQuery()
 		  					  .users()
 		  					  .thatMentioned(new WeeksAgo(10), new AtLeast(1),
 		  					  new Mention(14), new Mention(11))
 		  					  .rankedByHits(true)
 		  					  .take(5);
 
-		info = "The top 5 users that mentioned at least 1 among 11 and 14 in the last 10 weeks \n";
-		printResult(queryManager, query8, info);
+		info = "The top 5 users that mentioned at least 1 among 11 and 14 in the last 10 weeks, ranked by hits \n";
+		printResult(queryManager, query4, info);
 		System.out.println("");
         
-		final HQuery query9 = new HQuery()
+		final HQuery query5 = new HQuery()
 		  					  .users()
 		  					  .thatMentioned(new MonthsAgo(4), new AtLeast(1),
 		  					  new Mention(14), new Mention(11), new Mention(12))
@@ -82,19 +78,9 @@ public class HQueryAggregatorTest {
 		  					  .take(5);
 
 		info = "The top 5 users by rank that mentioned at least 1 among 11, 14 and 12 in the last 4 months \n";
-		printResult(queryManager, query9, info);
+		printResult(queryManager, query5, info);
 		System.out.println("");
 		
-		final HQuery query9Mentioned = new HQuery()
-		  							   .users()
-		  							   .mentioned(new MonthsAgo(4), new AtLeastTimes(3),
-		  									   new Mention(4), new Mention(3), new Mention(2))
-		  							   .rankedByHits(true)
-		  							   .take(3);
-
-		info = "The top 3 users (by rank) mentioned at least 3 times among 4, 3 and 2 in the last 4 months \n";
-		printResult(queryManager, query9Mentioned, info);
-		System.out.println("");
 		
 		final HQuery yearQuery = new HQuery()
 								.users()
@@ -108,15 +94,50 @@ public class HQueryAggregatorTest {
 		System.out.println("");
 		
 		
+		final HQuery queryMentioned = new HQuery()
+									   .users()
+									   .mentioned(new MonthsAgo(4), new AtLeastTimes(3),
+											   new Mention(14), new Mention(11), new Mention(12))
+									   .rankedByHits(true)
+									   .take(3);
+
+		info = "The top 3 users (by rank) mentioned at least 3 times among 14, 11 and 12 in the last 4 months \n";
+		printResult(queryManager, queryMentioned, info);
+		System.out.println("");
+		
+		
 		final HQuery yearQueryMentioned = new HQuery()
 										 .users()
-										 .mentioned(new LastYear(), new AtLeastTimes(3), new Mention(3),
-												 new Mention(2), new Mention(4))
+										 .mentioned(new LastYear(), new AtLeastTimes(3), new Mention(11),
+												 new Mention(12), new Mention(14))
 										 .rankedByHits(true)
 										 .take(3);
 
-		info = "The top 3 users (ranked by hits) mentioned at least 3 times among 3, 2, 4 in the last year \n";
+		info = "The top 3 users (ranked by hits) mentioned at least 3 times among 11, 12, 14 in the last year \n";
 		printResult(queryManager, yearQueryMentioned, info);
+		System.out.println("");
+		
+		final HQuery query6 = new HQuery()
+								.users()
+								.thatMentioned(new LastYearFromNow(), new AtLeast(1), new Mention(11),
+											new Mention(14), new Mention(12))
+								.rankedById(true)
+								.take(4);
+
+		info = "The top 4 users by id that mentioned at least 1 among 11, 14, 12 in the very lasy year from now \n";
+		printResult(queryManager, query6, info);
+		System.out.println("");
+		
+		
+		final HQuery query7 = new HQuery()
+								.users()
+								.mentioned(new LastYearFromNow(), new AtLeastTimes(3), new Mention(11),
+											new Mention(14), new Mention(12))
+								.rankedById(true)
+								.take(4);
+
+		info = "The top 4 users by id that mentioned at least 1 among 11, 14, 12 in the very lasy year from now \n";
+		printResult(queryManager, query7, info);
 		System.out.println("");
     }
 

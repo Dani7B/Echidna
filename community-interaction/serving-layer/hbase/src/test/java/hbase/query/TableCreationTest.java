@@ -6,7 +6,7 @@ import hbase.HBaseAdministrator;
 import hbase.impls.HTableAdmin;
 
 /**
- * Simple class to create tables in HBase
+ * Simple class to create tables in HBase and assign them a coprocessor
  * @author Daniele Morgantini
  */
 public class TableCreationTest {

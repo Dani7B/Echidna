@@ -1,5 +1,6 @@
 package hbase.query;
 
+import hbase.query.subquery.AuthorsMentionedBackwards;
 import hbase.query.subquery.AuthorsMentionedFixedTime;
 import hbase.query.subquery.AuthorsRankedByHits;
 import hbase.query.subquery.AuthorsRankedById;
@@ -234,6 +235,17 @@ public class Authors {
         return this;
     }
 	
+	/**
+	 * Adds the authors-mentioned subquery to the query
+	 * @return this
+	 * @param timeRange the specific time range to take into account
+	 * @param times the minimum number of mentions per mentioned author
+	 * @param mentions the mentions
+	 */
+	public Authors mentioned(final TimeRange timeRange, final AtLeastTimes times, final Mention... mentions) {
+    	HSubQuery sub = new AuthorsMentionedBackwards(this.query, timeRange, times, mentions);
+        return this;
+    }
 	
 	/**
 	 * Retrieves the authors list

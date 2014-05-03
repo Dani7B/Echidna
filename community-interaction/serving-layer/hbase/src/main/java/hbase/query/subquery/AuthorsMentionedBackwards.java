@@ -17,58 +17,52 @@ import hbase.query.Author;
 import hbase.query.Authors;
 import hbase.query.HQuery;
 import hbase.query.Mention;
-import hbase.query.time.FixedTime;
-import hbase.query.time.LastMonth;
-import hbase.query.time.LastYear;
-import hbase.query.time.MonthsAgo;
-import hbase.query.time.ThisYear;
+import hbase.query.time.TimeRange;
 
 /**
- * Subquery to represent the authors-mentioned request in a fixed time window
+ * Subquery to represent the very specific and precise authors-mentioned request
  * @author Daniele Morgantini
  */
-public class AuthorsMentionedFixedTime extends AuthorsMentioned {
+public class AuthorsMentionedBackwards extends AuthorsMentioned {
 	
 	private HBaseClient client;
 	
-	private FixedTime timeRange;
+	private TimeRange timeRange;
+		
 	
 	/**
-	 * Creates an instance of AuthorsMentionedFixedTime subquery
-	 * @return an instance of AuthorsMentionedFixedTime subquery
+	 * Creates an instance of AuthorsMentionedBackwards subquery
+	 * @return an instance of AuthorsMentionedBackwards subquery
 	 * @param query the belonging query
-	 * @param timeRange the fixed time window to take into account
+	 * @param timeRange the specific time window to take into account
 	 * @param times the minimum number of mentions per mentioned author
 	 * @param mentions the mentions of authors
 	 */
-	public AuthorsMentionedFixedTime(final HQuery query, final FixedTime timeRange,
-						final AtLeastTimes times, final Mention...mentions) {
+	public AuthorsMentionedBackwards(final HQuery query, final TimeRange timeRange,
+									final AtLeastTimes times, final Mention...mentions) {
+		
 		super(query, times, mentions);
 		this.timeRange = timeRange;
-		this.setClient();
-	}
-	
-	private void setClient() {
-		if(this.timeRange instanceof LastMonth || this.timeRange instanceof MonthsAgo ||
-				this.timeRange instanceof LastYear || this.timeRange instanceof ThisYear)
-			this.client = HBaseClientFactory.getInstance().getMentionedByMonth();
-		else
-			this.client = HBaseClientFactory.getInstance().getMentionedByDay();
+		this.client = HBaseClientFactory.getInstance().getMentionedBy();
 	}
 	
 	@Override
 	public void execute(final Authors authors) throws IOException {
 		
+		final long lowerBound = this.timeRange.getStart();
+		final long upperBound = this.timeRange.getEnd();
 		final int minTimes = this.getAtLeastTimes().getTimes();
+		
 		byte[][] auths = new byte[authors.size()][];
 		int i = 0;
-		long min = Long.MAX_VALUE;
-		long max = 0;
 		for(Author a : authors.getAuthors()) {
-			auths[i] = Bytes.toBytes(String.valueOf(a.getId()));
+			auths[i] = Bytes.toBytes(a.getId());
 			i++;
 		}
 		
+		long min = Long.MAX_VALUE;
+		long max = 0;
+				
 		Map<Long,List<String>> toPass = new HashMap<Long,List<String>>();
 		for(Mention m : this.getMentions()) {
 			List<String> lista = new ArrayList<String>();
@@ -87,18 +81,13 @@ public class AuthorsMentionedFixedTime extends AuthorsMentioned {
 		
 		Batch.Call<AuthorAggregatorProtocol, Map<String,Integer>> call = null;
 		try {
-			if(this.timeRange instanceof ThisYear) {
-				call = Batch.forMethod(AuthorAggregatorProtocol.class,
-										"aggregateMentionsThisYear", auths, toPass);
-			} else {
-				call = Batch.forMethod(AuthorAggregatorProtocol.class,
-						"aggregateMentions", auths, toPass);
-			}
+			call = Batch.forMethod(AuthorAggregatorProtocol.class,
+						"aggregateMentionsBackwards", auths, lowerBound, upperBound, toPass);
 		} catch (NoSuchMethodException e1) {
 			e1.printStackTrace();
 		}
 		
-		Map<byte[],Map<String,Integer>> results = null;
+		Map<byte[], Map<String, Integer>> results = null;
 		try {
 			results = this.client.coprocessorExec(AuthorAggregatorProtocol.class,
 					Bytes.toBytes(minRowKey), Bytes.toBytes(maxRowKey), call);

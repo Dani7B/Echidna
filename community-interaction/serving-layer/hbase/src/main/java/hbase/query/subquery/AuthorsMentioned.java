@@ -18,8 +18,8 @@ public abstract class AuthorsMentioned extends HSubQuery {
 	private List<Mention> mentions;
 	
 	/**
-	 * Creates an instance of AuthorsThatMentioned subquery
-	 * @return an instance of AuthorsThatMentioned subquery
+	 * Creates an instance of AuthorsMentioned subquery
+	 * @return an instance of AuthorsMentioned subquery
 	 * @param query the belonging query
 	 * @param times the minimum number of mentions per mentioned authors
 	 * @param mentions the mentions of authors

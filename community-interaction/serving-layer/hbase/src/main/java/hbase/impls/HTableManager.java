@@ -284,7 +284,7 @@ public class HTableManager implements HBaseClient {
 				new BinaryComparator(upperValue));
 		fList.addFilter(qualifierFilter2);
 		
-		if(allowedValues.length!=0){
+		if(allowedValues.length>0){
 			FilterList valueList = new FilterList(FilterList.Operator.MUST_PASS_ONE);
 	
 			for(byte[] value : allowedValues) {
