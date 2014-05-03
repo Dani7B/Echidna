@@ -124,7 +124,7 @@ public class HQueryAggregatorTest {
 								.rankedById(true)
 								.take(4);
 
-		info = "The top 4 users by id that mentioned at least 1 among 11, 14, 12 in the very lasy year from now \n";
+		info = "The top 4 users by id that mentioned at least 1 among 11, 14, 12 in the very last year from now \n";
 		printResult(queryManager, query6, info);
 		System.out.println("");
 		
@@ -133,10 +133,10 @@ public class HQueryAggregatorTest {
 								.users()
 								.mentioned(new LastYearFromNow(), new AtLeastTimes(3), new Mention(11),
 											new Mention(14), new Mention(12))
-								.rankedById(true)
-								.take(4);
+								.rankedByHits(true)
+								.take(3);
 
-		info = "The top 4 users by id that mentioned at least 1 among 11, 14, 12 in the very lasy year from now \n";
+		info = "The top 3 users ranked by hits mentioned at least 3 times among 11, 14, 12 in the very last year from now \n";
 		printResult(queryManager, query7, info);
 		System.out.println("");
     }
