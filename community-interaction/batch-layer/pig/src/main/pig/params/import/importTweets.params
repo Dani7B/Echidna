@@ -2,3 +2,5 @@ REDUCERS=3
 INDEX=twitter_champions
 TYPE=tweet
 TWEETS=hdfs://localhost:54310/user/daniele/tweets
+FROM=1384886021000
+TO=1385921489000
