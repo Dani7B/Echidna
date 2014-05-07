@@ -1,17 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
   <modelVersion>4.0.0</modelVersion>
   <parent>
     <groupId>it.cybion</groupId>
-    <artifactId>community-interaction</artifactId>
+    <artifactId>echidna</artifactId>
     <version>1.0-SNAPSHOT</version>
   </parent>
-  <artifactId>landing-area</artifactId>
-  <name>Landing Area</name>
+  <artifactId>serving-layer</artifactId>
+  <name>Serving Layer</name>
   <packaging>pom</packaging>
   
-  <modules>
-    	<module>es-hadoop</module>
-    	<module>snapshots</module>
-    	<module>util</module>
+  	<modules>
+    	<module>hbase</module>
+    	<module>coprocessors</module>
+    	<module>rest</module>
+    <module>resting</module>
   </modules>
 </project>

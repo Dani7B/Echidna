@@ -2,14 +2,16 @@
   <modelVersion>4.0.0</modelVersion>
   <parent>
     <groupId>it.cybion</groupId>
-    <artifactId>community-interaction</artifactId>
+    <artifactId>echidna</artifactId>
     <version>1.0-SNAPSHOT</version>
   </parent>
-  <artifactId>batch-layer</artifactId>
+  <artifactId>landing-area</artifactId>
+  <name>Landing Area</name>
   <packaging>pom</packaging>
-  <name>Batch Layer</name>
+  
   <modules>
-  	<module>pig</module>
-  	<module>piggyback</module>
+    	<module>es-hadoop</module>
+    	<module>snapshots</module>
+    	<module>util</module>
   </modules>
 </project>
