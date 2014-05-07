@@ -10,6 +10,8 @@ import hbase.query.time.MonthsAgo;
 import hbase.query.time.WeeksAgo;
 
 /**
+ * Simple class to test the queries based on mentions, initially developed to test
+ * the aggregations performed by coprocessors
  * @author Daniele Morgantini
  */
 public class HQueryAggregatorTest {

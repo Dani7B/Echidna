@@ -11,6 +11,7 @@ import hbase.query.time.ThisYear;
 import hbase.query.time.WeeksAgo;
 
 /**
+ * Simple class to test the queries based on mentions and follower-followed relationships
  * @author Daniele Morgantini
  */
 public class HQueryTest {

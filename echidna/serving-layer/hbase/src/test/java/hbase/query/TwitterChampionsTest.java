@@ -11,7 +11,7 @@ import hbase.query.time.ThisYear;
 import hbase.query.time.WeeksAgo;
 
 /**
- * Test to query against Twitter Champions repository
+ * Test to query against Twitter Champions repository, using coprocessors
  * @author Daniele Morgantini
  */
 public class TwitterChampionsTest {
