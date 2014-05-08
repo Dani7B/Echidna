@@ -1,23 +1,39 @@
 /*
-* Simple code to read mentioned-by relationships from binary file and store them into HBase
+* Simple code to load tweets from HDFS, extract mentioner-mentioned information out of it
+* and store it into HBase
 */
+
 SET default_parallel $REDUCERS;
 REGISTER '/home/daniele/Pig/pig-0.12.1/contrib/piggybank/java/piggybank.jar';
+REGISTER '/home/daniele/piggyback-1.0-SNAPSHOT.jar';
+DEFINE FromTupleToBag org.piggyback.FromTupleToBag();
 DEFINE UnixToISO org.apache.pig.piggybank.evaluation.datetime.convert.UnixToISO();
 DEFINE HBaseStorage org.apache.pig.backend.hadoop.hbase.HBaseStorage('t:*', '-caster HBaseBinaryConverter');
 
+tweets = LOAD '$INPUTDIR/part*' USING BinStorage() AS (id:map[],tweet:map[],monitoringActivityId:chararray);
+ext = FOREACH tweets GENERATE tweet#'createdAt' AS timestamp:long,
+							  tweet#'user' AS user:map[],
+							  tweet#'entities' AS entities:map[];
+							  
+ext1 = FOREACH ext GENERATE timestamp,
+ 							user#'id' AS mentioner,
+ 						 	entities#'userMentions' AS mentions:tuple(map[]);
+						 	
+ext2 = FOREACH ext1 GENERATE timestamp, mentioner, FromTupleToBag(mentions) AS mentionsBag:bag{t:(p:map[])};
+ext3 = FOREACH ext2 GENERATE mentioner, FLATTEN(mentionsBag) AS mentioned:map[], timestamp;
+ext4 = FOREACH ext3 GENERATE mentioned#'id' AS mentionedId, mentioner, timestamp;
+simple = FOREACH ext4 GENERATE (long)mentionedId, (long)mentioner, timestamp;
+
 /* Code in common to all the jobs */
 
-mention = LOAD '$INPUTDIR/part*' USING BinStorage() AS (mentioner:long, mentioned:long, ts:long);
+mentioned_group = GROUP simple BY mentionedId;
 
-simple = FOREACH mention GENERATE mentioned, mentioner, ts;
-mentioned_group = GROUP simple BY mentioned;
 
 /* Work to compute mentionedByMonth view */
 
 month = FOREACH mentioned_group {
 		  mentioned_month = FOREACH simple
-					GENERATE (CONCAT(CONCAT((chararray)mentioned,'_'), SUBSTRING(UnixToISO(ts),0,7)), mentioner) AS couple;
+					GENERATE (CONCAT(CONCAT((chararray)mentionedId,'_'), SUBSTRING(UnixToISO(timestamp),0,7)), mentioner) AS couple;
 			GENERATE FLATTEN(mentioned_month);
 		};
 		
@@ -33,7 +49,7 @@ STORE montly INTO 'hbase://$MONTHLY' USING HBaseStorage;
 
 day = FOREACH mentioned_group {
 		  mentioned_day = FOREACH simple
-				GENERATE (CONCAT(CONCAT((chararray)mentioned,'_'), SUBSTRING(UnixToISO(ts),0,10)), mentioner) AS couple, ts;
+				GENERATE (CONCAT(CONCAT((chararray)mentionedId,'_'), SUBSTRING(UnixToISO(timestamp),0,10)), mentioner) AS couple, timestamp;
 			GENERATE FLATTEN(mentioned_day);
 		};
 		
@@ -50,7 +66,7 @@ STORE daily INTO 'hbase://$DAILY' USING HBaseStorage;
 mentionedByGroup = GROUP day BY couple;
 global = FOREACH mentionedByGroup {
 				part = FOREACH day
-					GENERATE couple.$0, TOMAP((chararray)ts,couple.$1);
+					GENERATE couple.$0, TOMAP((chararray)timestamp,couple.$1);
 				GENERATE FLATTEN(part);
 			};
 

@@ -1,6 +1,0 @@
-REDUCERS=3
-INPUTDIR=hdfs://localhost:54310/user/daniele/follows
-FOLLOWEDBY=followedBy
-FOLLOW=follow
-WHOSEFOLLOWERSFOLLOW=wff
-WHOSEFOLLOWERSAREFOLLOWEDBY=wfafb

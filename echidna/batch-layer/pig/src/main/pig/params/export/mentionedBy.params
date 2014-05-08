@@ -1,3 +1,5 @@
 REDUCERS=3
-INPUTDIR=import/mentions
-OUTPUTDIR=mentionedBy
+INPUTDIR=hdfs://localhost:54310/user/daniele/tweets
+GLOBAL=mentionedBy
+MONTHLY=mentionedByMonth
+DAILY=mentionedByDay
