@@ -3,7 +3,7 @@
 */
 
 SET default_parallel $REDUCERS;
-REGISTER '/home/daniele/Pig/pig-0.12.1/contrib/piggybank/java/piggybank.jar';
+REGISTER '$PIGGYBANK/piggybank.jar';
 DEFINE UnixToISO org.apache.pig.piggybank.evaluation.datetime.convert.UnixToISO();
 DEFINE HBaseStorage org.apache.pig.backend.hadoop.hbase.HBaseStorage('t:*', '-caster HBaseBinaryConverter');
 
@@ -26,7 +26,7 @@ monthly = FOREACH jGrouped {
 mGrouped = GROUP monthly BY tup;
 mCounted = FOREACH mGrouped GENERATE group.$0, TOMAP((chararray)group.$1,(int)COUNT(monthly));
 
-whoseFollowersMentionedMonthly = STORE mCounted INTO 'hbase://$WHOSEFOLLOWERSMENTIONEDMONTHLY' USING HBaseStorage;	
+whoseFollowersMentionedMonthly = STORE mCounted INTO '$WHOSEFOLLOWERSMENTIONEDMONTHLY' USING HBaseStorage;	
 
 
 /* Work to compute wfmByDay view */
@@ -41,5 +41,5 @@ daily = FOREACH jGrouped {
 dGrouped = GROUP daily BY tupD;
 dCounted = FOREACH dGrouped GENERATE group.$0, TOMAP((chararray)group.$1,(int)COUNT(daily));
 
-whoseFollowersMentionedDaily = STORE mCounted INTO 'hbase://$WHOSEFOLLOWERSMENTIONEDDAILY' USING HBaseStorage;	
+whoseFollowersMentionedDaily = STORE mCounted INTO '$WHOSEFOLLOWERSMENTIONEDDAILY' USING HBaseStorage;	
 

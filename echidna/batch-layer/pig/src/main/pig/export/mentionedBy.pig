@@ -4,8 +4,8 @@
 */
 
 SET default_parallel $REDUCERS;
-REGISTER '/home/daniele/Pig/pig-0.12.1/contrib/piggybank/java/piggybank.jar';
-REGISTER '/home/daniele/piggyback-1.0-SNAPSHOT.jar';
+REGISTER '$PIGGYBANK/piggybank.jar';
+REGISTER '$PIGGYBACK/piggyback-1.0-SNAPSHOT.jar';
 DEFINE FromTupleToBag org.piggyback.FromTupleToBag();
 DEFINE UnixToISO org.apache.pig.piggybank.evaluation.datetime.convert.UnixToISO();
 DEFINE HBaseStorage org.apache.pig.backend.hadoop.hbase.HBaseStorage('t:*', '-caster HBaseBinaryConverter');
@@ -41,7 +41,7 @@ monthLine = GROUP month BY couple;
 montly = FOREACH monthLine
 				GENERATE group.$0, TOMAP((chararray) group.$1, (int)COUNT(month));
 		
-STORE montly INTO 'hbase://$MONTHLY' USING HBaseStorage;
+STORE montly INTO '$MONTHLY' USING HBaseStorage;
 
 
 
@@ -57,7 +57,7 @@ dayLine = GROUP day BY couple;
 daily = FOREACH dayLine
 				GENERATE group.$0, TOMAP((chararray) group.$1, (int)COUNT(day));
 
-STORE daily INTO 'hbase://$DAILY' USING HBaseStorage;		
+STORE daily INTO '$DAILY' USING HBaseStorage;		
 
 
 
@@ -70,4 +70,4 @@ global = FOREACH mentionedByGroup {
 				GENERATE FLATTEN(part);
 			};
 
-STORE global INTO 'hbase://$GLOBAL' USING HBaseStorage;
+STORE global INTO '$GLOBAL' USING HBaseStorage;

@@ -1,5 +1,6 @@
 REDUCERS=3
+PIGGYBANK=/home/daniele/Pig/pig-0.12.1/contrib/piggybank/java
 FOLLOWS=hdfs://localhost:54310/user/daniele/follows
 MENTIONS=hdfs://localhost:54310/user/daniele/mentions
-WHOSEFOLLOWERSMENTIONEDMONTHLY=wfmMonth
-WHOSEFOLLOWERSMENTIONEDDAILY=wfmDay
+WHOSEFOLLOWERSMENTIONEDMONTHLY=hbase://wfmMonth
+WHOSEFOLLOWERSMENTIONEDDAILY=hbase://wfmDay

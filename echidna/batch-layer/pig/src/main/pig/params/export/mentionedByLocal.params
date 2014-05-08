@@ -1,3 +1,6 @@
 REDUCERS=3
+PIGGYBANK=/home/daniele/Pig/pig-0.12.1/contrib/piggybank/java
 INPUTDIR=import/mentions
-OUTPUTDIR=mentionedBy
+GLOBAL=hbase://mentionedBy
+MONTHLY=hbase://mentionedByMonth
+DAILY=hbase://mentionedByDay

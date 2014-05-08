@@ -1,3 +1,6 @@
 REDUCERS=3
 INPUTDIR=import/follows
-OUTPUTDIR=followedBy
+FOLLOWEDBY=hbase://followedBy
+FOLLOW=hbase://follow
+WHOSEFOLLOWERSFOLLOW=hbase://wff
+WHOSEFOLLOWERSAREFOLLOWEDBY=hbase://wfafb

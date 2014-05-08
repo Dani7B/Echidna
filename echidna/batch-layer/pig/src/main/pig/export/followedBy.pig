@@ -16,7 +16,7 @@ upsideDown = FOREACH followedBy {
 			GENERATE FLATTEN(reversed);
 		};
 		
-STORE upsideDown INTO 'hbase://$FOLLOWEDBY' USING HBaseStorage;
+STORE upsideDown INTO '$FOLLOWEDBY' USING HBaseStorage;
 
 
 
@@ -29,7 +29,7 @@ downsideUp = FOREACH follows {
 			GENERATE FLATTEN(straight);
 			};
 
-STORE downsideUp INTO 'hbase://$FOLLOW' USING HBaseStorage;
+STORE downsideUp INTO '$FOLLOW' USING HBaseStorage;
 
 
 /* Work to compute "whose followers follow" view */
@@ -52,7 +52,7 @@ couples = FOREACH jGrouped {
 tuples = GROUP couples by couple;
 wff = FOREACH tuples GENERATE group.$0, TOMAP((chararray)group.$1,(int)COUNT(couples));
 
-whoseFollowersFollow = STORE wff INTO 'hbase://$WHOSEFOLLOWERSFOLLOW' USING HBaseStorage;
+whoseFollowersFollow = STORE wff INTO '$WHOSEFOLLOWERSFOLLOW' USING HBaseStorage;
 
 
 
@@ -70,4 +70,4 @@ couplesF = FOREACH jGroupedF {
 tuplesF = GROUP couplesF by coupleF;
 wfafb = FOREACH tuplesF GENERATE group.$0, TOMAP((chararray)group.$1,(int)COUNT(couplesF));
 
-whoseFollowersAreFollowedBy = STORE wfafb INTO 'hbase://$WHOSEFOLLOWERSAREFOLLOWEDBY' USING HBaseStorage;	
+whoseFollowersAreFollowedBy = STORE wfafb INTO '$WHOSEFOLLOWERSAREFOLLOWEDBY' USING HBaseStorage;	
