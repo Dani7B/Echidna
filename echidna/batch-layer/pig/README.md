@@ -1,7 +1,7 @@
 Pig
 =========
 
-Generating views with Apache Pig.
+Generating batch views with Apache Pig (0.12.1).
 
 ### Wiki ###
 1. [How to run Pig scripts](https://github.com/Dani7B/Echidna/wiki/How-to-run-Pig-scripts)   
