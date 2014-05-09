@@ -262,26 +262,26 @@ public class HTableManager implements HBaseClient {
 
 
 	@Override
-	public Result[] scan(final byte[] lowerRow, final byte[] upperRow, final byte[] lowerValue,
-							final byte[] upperValue) throws IOException {
+	public Result[] scan(final byte[] lowerRow, final byte[] upperRow, final byte[] lowerQualifier,
+							final byte[] upperQualifier) throws IOException {
 		
 		byte[][] allowedValues = new byte[0][];
-		return this.scan(lowerRow, upperRow, lowerValue, upperValue, allowedValues);
+		return this.scan(lowerRow, upperRow, lowerQualifier, upperQualifier, allowedValues);
 	}
 	
 	
 	@Override
-	public Result[] scan(final byte[] lowerRow, final byte[] upperRow, final byte[] lowerValue,
-							final byte[] upperValue, final byte[][] allowedValues) throws IOException {
+	public Result[] scan(final byte[] lowerRow, final byte[] upperRow, final byte[] lowerQualifier,
+							final byte[] upperQualifier, final byte[][] allowedValues) throws IOException {
 		
 		FilterList fList = new FilterList(FilterList.Operator.MUST_PASS_ALL);
 		
 		Filter qualifierFilter1 = new QualifierFilter(CompareFilter.CompareOp.GREATER_OR_EQUAL,
-				new BinaryComparator(lowerValue));
+				new BinaryComparator(lowerQualifier));
 		fList.addFilter(qualifierFilter1);
 		
 		Filter qualifierFilter2 = new QualifierFilter(CompareFilter.CompareOp.LESS_OR_EQUAL,
-				new BinaryComparator(upperValue));
+				new BinaryComparator(upperQualifier));
 		fList.addFilter(qualifierFilter2);
 		
 		if(allowedValues.length>0){
@@ -313,16 +313,16 @@ public class HTableManager implements HBaseClient {
 	
 	
 	@Override
-	public Result get(final byte[] row, final byte[] lowerValue, final byte[] upperValue) throws IOException {
+	public Result get(final byte[] row, final byte[] lowerQualifier, final byte[] upperQualifier) throws IOException {
 								
 		FilterList fList = new FilterList(FilterList.Operator.MUST_PASS_ALL);
 		
 		Filter filter1 = new QualifierFilter(CompareFilter.CompareOp.GREATER_OR_EQUAL,
-				new BinaryComparator(lowerValue));
+				new BinaryComparator(lowerQualifier));
 		fList.addFilter(filter1);
 		
 		Filter filter2 = new QualifierFilter(CompareFilter.CompareOp.LESS_OR_EQUAL,
-				new BinaryComparator(upperValue));
+				new BinaryComparator(upperQualifier));
 		fList.addFilter(filter2);
 		
 		Get tableRow = new Get(row)

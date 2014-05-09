@@ -14,7 +14,7 @@ import org.apache.hadoop.hbase.ipc.CoprocessorProtocol;
 public interface HBaseClient {
 	
 	/**
-	 * Single put to insert a row into the specified table.
+	 * Single put to insert a some value into the specified table.
 	 * @param row the row key
 	 * @param colfam the name of the column family
 	 * @param col the column name
@@ -25,8 +25,8 @@ public interface HBaseClient {
 
 	
 	/**
-	 * Batch put to insert rows into the specified table.
-	 * All the arrays have the same length. At the i-th index the values belong to the same row.
+	 * Batch put to insert some values into the specified table.
+	 * All the arrays have the same length. At the i-th index the values belong to the same row/cell.
 	 * @param rows the row keys
 	 * @param colfams the names of the column families
 	 * @param cols the column names
@@ -143,7 +143,7 @@ public interface HBaseClient {
 	
 	
 	/**
-	 * Single delete to erase a row from the specified table.
+	 * Single delete to erase a column from the specified table.
 	 * @param row the row key
 	 * @param colfam the name of the column family
 	 * @param col the column name
@@ -152,14 +152,14 @@ public interface HBaseClient {
 
 	
 	/**
-	 * Delete all columns, all versions of the row
+	 * Delete the whole row, including any versions of the cells
 	 * @param row the row key */
 	public abstract void delete(final byte[] row) throws IOException;
 
 	
 	/**
-	 * Batch delete to erase rows from the specified table.
-	 * All the arrays have the same length. At the i-th index the values belong to the same row.
+	 * Batch delete to erase columns from the specified table.
+	 * All the arrays have the same length. At the i-th index the values belong to the same row/cell.
 	 * @param rows the row keys
 	 * @param colfams the names of the column families
 	 * @param cols the column names
@@ -181,10 +181,10 @@ public interface HBaseClient {
 	 * @return multiple results satisfying the query
 	 * @param lowerRow the smallest row key to look for (included)
 	 * @param upperRow the biggest row key to look for (excluded)
-	 * @param lowerValue the smallest qualifier (column) value in the range (included)
-	 * @param upperValue the biggest qualifier (column) value in the range (excluded) */
+	 * @param lowerQualifier the smallest qualifier (column) value in the range (included)
+	 * @param upperQualifier the biggest qualifier (column) value in the range (excluded) */
 	public abstract Result[] scan(final byte[] lowerRow, final byte[] upperRow,
-									final byte[] lowerValue, final byte[] upperValue) throws IOException;
+									final byte[] lowerQualifier, final byte[] upperQualifier) throws IOException;
 	
 	
 	/**
@@ -192,11 +192,11 @@ public interface HBaseClient {
 	 * @return multiple results satisfying the query
 	 * @param lowerRow the smallest row key to look for (included)
 	 * @param upperRow the biggest row key to look for (excluded)
-	 * @param lowerValue the smallest qualifier (column) value in the range (included)
-	 * @param upperValue the biggest qualifier (column) value in the range (excluded) 
+	 * @param lowerQualifier the smallest qualifier (column) value in the range (included)
+	 * @param upperQualifier the biggest qualifier (column) value in the range (excluded) 
 	 * @param allowedValues the list of allowed values to consider */
-	public abstract Result[] scan(final byte[] lowerRow, final byte[] upperRow, final byte[] lowerValue,
-									final byte[] upperValue, final byte[][] allowedValues) throws IOException;
+	public abstract Result[] scan(final byte[] lowerRow, final byte[] upperRow, final byte[] lowerQualifier,
+								final byte[] upperQualifier, final byte[][] allowedValues) throws IOException;
 	
 	
 	/**
@@ -277,9 +277,9 @@ public interface HBaseClient {
 	 * Single get to return the results in the column range
 	 * @return the results satisfying the query
 	 * @param row the row key
-	 * @param lowerValue the smallest qualifier (column) value in the range (included)
-	 * @param upperValue the biggest qualifier (column) value in the range (excluded) */
-	public abstract Result get(final byte[] row, final byte[] lowerValue, final byte[] upperValue) throws IOException;
+	 * @param lowerQualifier the smallest qualifier (column) value in the range (included)
+	 * @param upperQualifier the biggest qualifier (column) value in the range (excluded) */
+	public abstract Result get(final byte[] row, final byte[] lowerQualifier, final byte[] upperQualifier) throws IOException;
 	
 	
 	/**
