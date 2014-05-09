@@ -177,7 +177,7 @@ public interface HBaseClient {
 	
 	
 	/**
-	 * Scan to return the results in the row range and column range
+	 * Scan to return columns in the row and column ranges
 	 * @return multiple results satisfying the query
 	 * @param lowerRow the smallest row key to look for (included)
 	 * @param upperRow the biggest row key to look for (excluded)
@@ -188,7 +188,7 @@ public interface HBaseClient {
 	
 	
 	/**
-	 * Scan to return the results in the row range and column range
+	 * Scan to return specific columns in the row range, containing allowed values
 	 * @return multiple results satisfying the query
 	 * @param lowerRow the smallest row key to look for (included)
 	 * @param upperRow the biggest row key to look for (excluded)
@@ -200,7 +200,7 @@ public interface HBaseClient {
 	
 	
 	/**
-	 * Scan to return the results in the row range for specified columns
+	 * Scan to return specific columns in the row range
 	 * @return multiple results satisfying the query
 	 * @param lowerRow the smallest row key to look for (included)
 	 * @param upperRow the biggest row key to look for (excluded)
@@ -209,7 +209,7 @@ public interface HBaseClient {
 									final byte[][] qualifiers) throws IOException;
 	
 	/**
-	 * Scan to return the results in the row range belonging to specified columns
+	 * Scan to return specific columns in the row range containing a minimum value
 	 * @return the results satisfying the query
 	 * @param lowerRow the smallest row key to look for (included)
 	 * @param upperRow the biggest row key to look for (excluded)
@@ -219,7 +219,7 @@ public interface HBaseClient {
 					final byte[][] qualifiers, final byte[] min) throws IOException;
 	
 	/**
-	 * Scan to return the results in the row range belonging to specific columns
+	 * Scan to return specific columns in the row range containing a minimum value
 	 * @return the results satisfying the query
 	 * @param lowerRow the smallest row key to look for (included)
 	 * @param upperRow the biggest row key to look for (excluded)
@@ -230,7 +230,7 @@ public interface HBaseClient {
 	
 	
 	/**
-	 * Scan to return the results in the row range(specified by a prefix) belonging to specific columns
+	 * Scan to return specific columns in the row range(specified by a prefix) containing a minimum value
 	 * @return the results satisfying the query
 	 * @param rowPrefix the prefix of the row key to look for
 	 * @param qualifiersPrefix the array of prefixes columns should start with
@@ -249,7 +249,7 @@ public interface HBaseClient {
 	
 	
 	/**
-	 * Scan to return the results in the row range(specified by a prefix) belonging to specific columns
+	 * Scan to return specific columns in the row range(specified by a prefix)
 	 * @return the results satisfying the query
 	 * @param rowPrefix the prefix of the row key to look for
 	 * @param qualifiersPrefix the array of prefixes columns should start with */
@@ -257,7 +257,7 @@ public interface HBaseClient {
 	
 	
 	/**
-	 * Single scan to return the results belonging to specific columns
+	 * Single get to retrieve specific columns, containing a minimum value 
 	 * @return the results satisfying the query
 	 * @param row the row key to look for
 	 * @param qualifiersPrefix the array of prefixes columns should start with
@@ -266,7 +266,7 @@ public interface HBaseClient {
 									final byte[] min) throws IOException;
 	
 	/**
-	 * Single scan to return the results belonging to specific columns
+	 * Single get to retrieve specific columns 
 	 * @return the results satisfying the query
 	 * @param row the row key to look for
 	 * @param qualifiersPrefix the array of prefixes columns should start with */
