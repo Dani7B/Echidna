@@ -1,4 +1,4 @@
-package hbase.impls;
+package hbase.query;
 
 import java.io.IOException;
 

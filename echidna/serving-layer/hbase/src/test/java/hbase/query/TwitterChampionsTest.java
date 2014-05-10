@@ -2,7 +2,6 @@ package hbase.query;
 
 import java.io.IOException;
 
-import hbase.impls.HQueryManager;
 import hbase.query.time.LastMonth;
 import hbase.query.time.LastWeek;
 import hbase.query.time.LastYear;
