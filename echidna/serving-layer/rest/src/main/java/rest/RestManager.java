@@ -1,5 +1,6 @@
 package rest;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -21,7 +22,11 @@ import javax.ws.rs.DefaultValue;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.QueryParam;
+import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
+
+import org.codehaus.jettison.json.JSONException;
+import org.codehaus.jettison.json.JSONObject;
 
 /** Class to handle REST http requests
  * @author Daniele Morgantini */
@@ -31,7 +36,8 @@ public class RestManager {
 	private Authors authors;
 	
 	private HQuery query;
- 
+	
+	
 	public RestManager() {
 		this.query = new HQuery();
 		this.authors = new Authors(query);
@@ -57,7 +63,7 @@ public class RestManager {
 		@QueryParam("wfm_users") String wfm_users,
 		@QueryParam("byId") String byId,
 		@DefaultValue("true") @QueryParam("byHits") boolean byHits,
-		@DefaultValue("10") @QueryParam("take") int take){
+		@DefaultValue("10") @QueryParam("take") int take) throws JSONException, IOException{
 		
 		String output = "Users";
 		if(tm_users!=null && tm_when!=null){
@@ -117,15 +123,11 @@ public class RestManager {
 		this.authors.take(take);
 		this.authors = this.query.answer();
 		
-		List<Long> result = new ArrayList<Long>();
-		for(Author a : this.authors.getAuthors())
-			result.add(a.getId());
-		String qAndA = output.substring(0, output.length()-1);
-		if(result.size()==0)
-			return Response.status(Response.Status.NOT_FOUND)
-					.entity("No user found for query '" + qAndA + "'").build();
-		qAndA += " ----> " + result;
-		return Response.status(200).entity(qAndA).build();
+		String queryString = output.substring(0, output.length()-1);
+		JSONObject response = formatResponse(queryString, this.authors);
+		if(this.authors.size()==0)
+			return Response.status(Response.Status.NOT_FOUND).entity(response).build();
+		return Response.ok(response.toString(4), MediaType.APPLICATION_JSON_TYPE).build();
 	}
 	
 	@GET
@@ -139,7 +141,7 @@ public class RestManager {
 		@QueryParam("users") String tm_users,
 		@QueryParam("byId") String byId,
 		@DefaultValue("true") @QueryParam("byHits") boolean byHits,
-		@DefaultValue("10") @QueryParam("take") int take){
+		@DefaultValue("10") @QueryParam("take") int take) throws JSONException, IOException{
 		
 		this.authorsThatMentionedSubquery(tm_al, tm_times, tm_when, tm_back, tm_users);
 		if(byId!=null) { // if byId is present, it's got a priority over byHits
@@ -157,22 +159,22 @@ public class RestManager {
 		List<Long> result = new ArrayList<Long>();
 		for(Author a : this.authors.getAuthors())
 			result.add(a.getId());
-		String output = "Users that mentioned" +
+		String queryString = "Users that mentioned" +
 						" at least: " + tm_al + " user";
 		if(tm_al>1)
-			output += "s";
-		output += " exactly or more than " + tm_times + " time";
+			queryString += "s";
+		queryString += " exactly or more than " + tm_times + " time";
 		if(tm_times>1)
-			output += "s";
-		output += " when: " + tm_when;
+			queryString += "s";
+		queryString += " when: " + tm_when;
 		if(tm_back>0)
-			output += " (" + tm_back + ")";
-		output += " amongst: " + tm_users;
-		if(result.size()==0)
-			return Response.status(Response.Status.NOT_FOUND)
-					.entity("No user found for query '" + output + "'").build();
-		output += " ----> " + result;
-		return Response.ok().entity(output).build();
+			queryString += " (" + tm_back + ")";
+		queryString += " amongst: " + tm_users;
+		
+		JSONObject response = formatResponse(queryString, this.authors);
+		if(this.authors.size()==0)
+			return Response.status(Response.Status.NOT_FOUND).entity(response).build();
+		return Response.ok(response.toString(4), MediaType.APPLICATION_JSON_TYPE).build();
 	}
 	
 	@GET
@@ -183,7 +185,7 @@ public class RestManager {
 		@QueryParam("users") String wf_users,
 		@QueryParam("byId") String byId,
 		@DefaultValue("true") @QueryParam("byHits") boolean byHits,
-		@DefaultValue("10") @QueryParam("take") int take){
+		@DefaultValue("10") @QueryParam("take") int take) throws JSONException, IOException{
 			
 		this.authorsWhoFollowSubquery(wf_al, wf_users);
 		if(byId!=null) { // if byId is present, it's got a priority over byHits
@@ -201,16 +203,16 @@ public class RestManager {
 		List<Long> result = new ArrayList<Long>();
 		for(Author a : this.authors.getAuthors())
 			result.add(a.getId());
-		String output = "Users who follow" +
+		String queryString = "Users who follow" +
 						" at least: " + wf_al + " user";
 		if(wf_al>1)
-			output += "s";
-		output += " amongst: " + wf_users;
-		if(result.size()==0)
-			return Response.status(Response.Status.NOT_FOUND)
-					.entity("No user found for query '" + output + "'").build();
-		output += " ----> " + result;
-		return Response.ok().entity(output).build();
+			queryString += "s";
+		queryString += " amongst: " + wf_users;
+		
+		JSONObject response = formatResponse(queryString, this.authors);
+		if(this.authors.size()==0)
+			return Response.status(Response.Status.NOT_FOUND).entity(response).build();
+		return Response.ok(response.toString(4), MediaType.APPLICATION_JSON_TYPE).build();
 	}
 	
 	@GET
@@ -220,7 +222,7 @@ public class RestManager {
 		@QueryParam("users") String users,
 		@QueryParam("byId") String byId,
 		@DefaultValue("true") @QueryParam("byHits") boolean byHits,
-		@DefaultValue("10") @QueryParam("take") int take){
+		@DefaultValue("10") @QueryParam("take") int take) throws JSONException, IOException{
 			
 		this.authorsWhoseFollowersFollowSubquery(users);
 		if(byId!=null) { // if byId is present, it's got a priority over byHits
@@ -238,12 +240,12 @@ public class RestManager {
 		List<Long> result = new ArrayList<Long>();
 		for(Author a : this.authors.getAuthors())
 			result.add(a.getId());
-		String output = "Users whose followers follow one amongst " + users;
-		if(result.size()==0)
-			return Response.status(Response.Status.NOT_FOUND)
-					.entity("No user found for query '" + output + "'").build();
-		output += " ----> " + result;
-		return Response.ok().entity(output).build();
+		
+		String queryString = "Users whose followers follow one amongst " + users;
+		JSONObject response = formatResponse(queryString, this.authors);
+		if(this.authors.size()==0)
+			return Response.status(Response.Status.NOT_FOUND).entity(response).build();
+		return Response.ok(response.toString(4), MediaType.APPLICATION_JSON_TYPE).build();
 	}
 	
 	@GET
@@ -253,7 +255,7 @@ public class RestManager {
 		@QueryParam("users") String users,
 		@QueryParam("byId") String byId,
 		@DefaultValue("true") @QueryParam("byHits") boolean byHits,
-		@DefaultValue("10") @QueryParam("take") int take){
+		@DefaultValue("10") @QueryParam("take") int take) throws JSONException, IOException{
 			
 		this.authorsWhoseFollowersAreFollowedBySubquery(users);
 		if(byId!=null) { // if byId is present, it's got a priority over byHits
@@ -271,12 +273,11 @@ public class RestManager {
 		List<Long> result = new ArrayList<Long>();
 		for(Author a : this.authors.getAuthors())
 			result.add(a.getId());
-		String output = "Users whose followers are followed by one amongst" + users;
-		if(result.size()==0)
-			return Response.status(Response.Status.NOT_FOUND)
-					.entity("No user found for query '" + output + "'").build();
-		output += " ----> " + result;
-		return Response.ok().entity(output).build();
+		String queryString = "Users whose followers are followed by one amongst" + users;
+		JSONObject response = formatResponse(queryString, this.authors);
+		if(this.authors.size()==0)
+			return Response.status(Response.Status.NOT_FOUND).entity(response).build();
+		return Response.ok(response.toString(4), MediaType.APPLICATION_JSON_TYPE).build();
 	}
 	
 	@GET
@@ -290,7 +291,7 @@ public class RestManager {
 		@QueryParam("users") String users,
 		@QueryParam("byId") String byId,
 		@DefaultValue("true") @QueryParam("byHits") boolean byHits,
-		@DefaultValue("10") @QueryParam("take") int take){
+		@DefaultValue("10") @QueryParam("take") int take) throws JSONException, IOException{
 			
 		this.authorsWhoseFollowersMentionedSubquery(al, when, back, users, minTimes);
 		if(byId!=null) { // if byId is present, it's got a priority over byHits
@@ -308,22 +309,22 @@ public class RestManager {
 		List<Long> result = new ArrayList<Long>();
 		for(Author a : this.authors.getAuthors())
 			result.add(a.getId());
-		String output = "Users whose followers mentioned" + 
+		String queryString = "Users whose followers mentioned" + 
 						" at least: " + al + " user";
 		if(al>1)
-			output += "s";
-		output += " when: " + when;
+			queryString += "s";
+		queryString += " when: " + when;
 		if(back>0)
-			output += " (" + back + ")";
-		output += " exactly or more than " + minTimes + " time";
+			queryString += " (" + back + ")";
+		queryString += " exactly or more than " + minTimes + " time";
 		if(minTimes>1)
-			output += "s";
-		output += " amongst: " + users;
-		if(result.size()==0)
-			return Response.status(Response.Status.NOT_FOUND)
-					.entity("No user found for query '" + output + "'").build();
-		output += " ----> " + result;
-		return Response.ok().entity(output).build();
+			queryString += "s";
+		queryString += " amongst: " + users;
+		
+		JSONObject response = formatResponse(queryString, this.authors);
+		if(this.authors.size()==0)
+			return Response.status(Response.Status.NOT_FOUND).entity(response).build();
+		return Response.ok(response, MediaType.APPLICATION_JSON_TYPE).build();
 	}
 	
 	private void authorsThatMentionedSubquery(int atLeast, int minTimes, String when, int back, String users) {
@@ -414,6 +415,21 @@ public class RestManager {
 			mentions[i] = new Mention(Long.parseLong(splitted[i]));
 		}
 		return mentions;
+	}
+	
+	private JSONObject formatResponse(String queryMessage, Authors authors) throws IOException, JSONException {
+		
+		JSONObject response = new JSONObject()
+									.put("query", queryMessage);
+		for(Author a : authors.getAuthors()) {
+			JSONObject user = new JSONObject();
+			user.put("id", a.getId());
+			user.put("hits", a.getHits());
+			JSONObject users = new JSONObject();
+			users.put("user", user);
+			response.accumulate("users", users);
+		}
+		return response;
 	}
  
 }
