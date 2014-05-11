@@ -75,7 +75,7 @@ public class RestManager {
 			output += " that mentioned at least: " + tm_al + " user";
 			if(tm_al>1)
 				output += "s";
-			output += " exactly or more than " + tm_times + " time";
+			output += " no less than " + tm_times + " time";
 			if(tm_times>1)
 				output += "s";
 			output += " when: " + tm_when;
@@ -86,7 +86,7 @@ public class RestManager {
 		
 		if(m_users!=null && m_when!=null){
 			this.authorsMentionedSubquery(m_times, m_when, m_back, m_users);
-			output += " mentioned exactly or more than " + m_times + " time";
+			output += " mentioned no less than " + m_times + " time";
 			if(m_times>1)
 				output += "s";
 			output += " when: " + m_when;
@@ -124,13 +124,13 @@ public class RestManager {
 			if(wfm_back>0)
 				output += " (" + wfm_back + ")";
 			output += " amongst: " + wfm_users +
-						" exactly or more than " + wfm_minTimes + " time";
+						" no less than " + wfm_minTimes + " time";
 			if(wfm_minTimes>1)
 				output += "s";
 			output += ",";
 		}
 		
-		if(byId!=null) { // if byId is present, it's got a priority over byHits
+		if(byId!=null) { // if byId is present, it's got priority over byHits
 			boolean b = Boolean.parseBoolean(byId);
 			this.authors.rankedById(b);
 		}
@@ -161,7 +161,7 @@ public class RestManager {
 		@DefaultValue("10") @QueryParam("take") int take) throws JSONException, IOException{
 		
 		this.authorsThatMentionedSubquery(tm_al, tm_times, tm_when, tm_back, tm_users);
-		if(byId!=null) { // if byId is present, it's got a priority over byHits
+		if(byId!=null) { // if byId is present, it's got priority over byHits
 			boolean b = Boolean.parseBoolean(byId);
 			this.authors.rankedById(b);
 		}
@@ -180,7 +180,7 @@ public class RestManager {
 						" at least: " + tm_al + " user";
 		if(tm_al>1)
 			queryString += "s";
-		queryString += " exactly or more than " + tm_times + " time";
+		queryString += " no less than " + tm_times + " time";
 		if(tm_times>1)
 			queryString += "s";
 		queryString += " when: " + tm_when;
@@ -208,7 +208,7 @@ public class RestManager {
 		@DefaultValue("10") @QueryParam("take") int take) throws JSONException, IOException{
 		
 		this.authorsMentionedSubquery(tm_times, tm_when, tm_back, tm_users);
-		if(byId!=null) { // if byId is present, it's got a priority over byHits
+		if(byId!=null) { // if byId is present, it's got priority over byHits
 			boolean b = Boolean.parseBoolean(byId);
 			this.authors.rankedById(b);
 		}
@@ -223,7 +223,7 @@ public class RestManager {
 		List<Long> result = new ArrayList<Long>();
 		for(Author a : this.authors.getAuthors())
 			result.add(a.getId());
-		String queryString = "Users that mentioned exactly or more than " + tm_times + " time";
+		String queryString = "Users that mentioned no less than " + tm_times + " time";
 		if(tm_times>1)
 			queryString += "s";
 		queryString += " when: " + tm_when;
@@ -249,7 +249,7 @@ public class RestManager {
 		@DefaultValue("10") @QueryParam("take") int take) throws JSONException, IOException{
 			
 		this.authorsWhoFollowSubquery(wf_al, wf_users);
-		if(byId!=null) { // if byId is present, it's got a priority over byHits
+		if(byId!=null) { // if byId is present, it's got priority over byHits
 			boolean b = Boolean.parseBoolean(byId);
 			this.authors.rankedById(b);
 		}
@@ -286,7 +286,7 @@ public class RestManager {
 		@DefaultValue("10") @QueryParam("take") int take) throws JSONException, IOException{
 			
 		this.authorsWhoseFollowersFollowSubquery(users);
-		if(byId!=null) { // if byId is present, it's got a priority over byHits
+		if(byId!=null) { // if byId is present, it's got priority over byHits
 			boolean b = Boolean.parseBoolean(byId);
 			this.authors.rankedById(b);
 		}
@@ -319,7 +319,7 @@ public class RestManager {
 		@DefaultValue("10") @QueryParam("take") int take) throws JSONException, IOException{
 			
 		this.authorsWhoseFollowersAreFollowedBySubquery(users);
-		if(byId!=null) { // if byId is present, it's got a priority over byHits
+		if(byId!=null) { // if byId is present, it's got priority over byHits
 			boolean b = Boolean.parseBoolean(byId);
 			this.authors.rankedById(b);
 		}
@@ -355,7 +355,7 @@ public class RestManager {
 		@DefaultValue("10") @QueryParam("take") int take) throws JSONException, IOException{
 			
 		this.authorsWhoseFollowersMentionedSubquery(al, when, back, users, minTimes);
-		if(byId!=null) { // if byId is present, it's got a priority over byHits
+		if(byId!=null) { // if byId is present, it's got priority over byHits
 			boolean b = Boolean.parseBoolean(byId);
 			this.authors.rankedById(b);
 		}
@@ -377,7 +377,7 @@ public class RestManager {
 		queryString += " when: " + when;
 		if(back>0)
 			queryString += " (" + back + ")";
-		queryString += " exactly or more than " + minTimes + " time";
+		queryString += " no less than " + minTimes + " time";
 		if(minTimes>1)
 			queryString += "s";
 		queryString += " amongst: " + users;
