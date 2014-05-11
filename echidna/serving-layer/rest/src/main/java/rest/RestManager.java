@@ -52,6 +52,10 @@ public class RestManager {
 		@QueryParam("tm_when") String tm_when,
 		@QueryParam("tm_back") int tm_back,
 		@QueryParam("tm_users") String tm_users,
+		@DefaultValue("1") @QueryParam("m_minTimes") int m_times,
+		@QueryParam("m_when") String m_when,
+		@QueryParam("m_back") int m_back,
+		@QueryParam("m_users") String m_users,
 		@DefaultValue("1") @QueryParam("wf_atLeast") int wf_al,
 		@QueryParam("wf_users") String wf_users,
 		@QueryParam("wff_users") String wff_users,
@@ -74,8 +78,21 @@ public class RestManager {
 			output += " exactly or more than " + tm_times + " time";
 			if(tm_times>1)
 				output += "s";
-			output += " when: " + tm_when +
-					" amongst: " + tm_users + ",";
+			output += " when: " + tm_when;
+			if(tm_back>0)
+				output += " (" + tm_back + ")";
+			output += " amongst: " + tm_users + ",";
+		}
+		
+		if(m_users!=null && m_when!=null){
+			this.authorsMentionedSubquery(m_times, m_when, m_back, m_users);
+			output += " mentioned exactly or more than " + m_times + " time";
+			if(m_times>1)
+				output += "s";
+			output += " when: " + m_when;
+			if(m_back>0)
+				output += " (" + m_back + ")";
+			output += " amongst: " + m_users + ",";
 		}
 		
 		if(wf_users!=null){
@@ -176,6 +193,50 @@ public class RestManager {
 			return Response.status(Response.Status.NOT_FOUND).entity(response).build();
 		return Response.ok(response.toString(4), MediaType.APPLICATION_JSON_TYPE).build();
 	}
+	
+	
+	@GET
+	@Path("/users/mentioned")
+	/** Method to answer AuthorsMentioned subquery */
+	public Response usersMentioned(
+		@DefaultValue("1") @QueryParam("minTimes") int tm_times,
+		@QueryParam("when") String tm_when,
+		@QueryParam("back") int tm_back,
+		@QueryParam("users") String tm_users,
+		@QueryParam("byId") String byId,
+		@DefaultValue("true") @QueryParam("byHits") boolean byHits,
+		@DefaultValue("10") @QueryParam("take") int take) throws JSONException, IOException{
+		
+		this.authorsMentionedSubquery(tm_times, tm_when, tm_back, tm_users);
+		if(byId!=null) { // if byId is present, it's got a priority over byHits
+			boolean b = Boolean.parseBoolean(byId);
+			this.authors.rankedById(b);
+		}
+		else {
+			this.authors.rankedByHits(byHits);
+		}
+		if(take>0) {
+			this.authors.take(take);
+		}
+		this.authors = this.query.answer();
+		
+		List<Long> result = new ArrayList<Long>();
+		for(Author a : this.authors.getAuthors())
+			result.add(a.getId());
+		String queryString = "Users that mentioned exactly or more than " + tm_times + " time";
+		if(tm_times>1)
+			queryString += "s";
+		queryString += " when: " + tm_when;
+		if(tm_back>0)
+			queryString += " (" + tm_back + ")";
+		queryString += " amongst: " + tm_users;
+		
+		JSONObject response = formatResponse(queryString, this.authors);
+		if(this.authors.size()==0)
+			return Response.status(Response.Status.NOT_FOUND).entity(response).build();
+		return Response.ok(response.toString(4), MediaType.APPLICATION_JSON_TYPE).build();
+	}
+	
 	
 	@GET
 	@Path("/users/whoFollow")
@@ -352,6 +413,33 @@ public class RestManager {
 			case "weeks_ago":
 				this.authors.thatMentioned(new WeeksAgo(back), new AtLeast(atLeast),
 						new AtLeastTimes(minTimes), mentions);
+				break;
+		}
+	}
+	
+	private void authorsMentionedSubquery(int minTimes, String when, int back, String users) {
+		Mention[] mentions = this.mentionsFromString(users);
+		switch(when) {
+			case "last_month":
+				this.authors.mentioned(new LastMonth(), new AtLeastTimes(minTimes), mentions);
+				break;
+			case "very_last_month":
+				this.authors.mentioned(new LastMonthFromNow(), new AtLeastTimes(minTimes), mentions);
+				break;
+			case "very_last_year":
+				this.authors.mentioned(new LastYearFromNow(), new AtLeastTimes(minTimes), mentions);
+				break;
+			case "last_year":
+				this.authors.mentioned(new LastYear(), new AtLeastTimes(minTimes), mentions);
+				break;
+			case "this_year":
+				this.authors.mentioned(new ThisYear(), new AtLeastTimes(minTimes), mentions);
+				break;
+			case "months_ago":
+				this.authors.mentioned(new MonthsAgo(back), new AtLeastTimes(minTimes), mentions);
+				break;
+			case "weeks_ago":
+				this.authors.mentioned(new WeeksAgo(back), new AtLeastTimes(minTimes), mentions);
 				break;
 		}
 	}
