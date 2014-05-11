@@ -425,9 +425,7 @@ public class RestManager {
 			JSONObject user = new JSONObject();
 			user.put("id", a.getId());
 			user.put("hits", a.getHits());
-			JSONObject users = new JSONObject();
-			users.put("user", user);
-			response.accumulate("users", users);
+			response.accumulate("users", user);
 		}
 		return response;
 	}
