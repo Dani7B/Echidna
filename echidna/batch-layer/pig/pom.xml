@@ -11,7 +11,7 @@
   <name>pig</name>
   <url>http://maven.apache.org</url>
   <properties>
-    <pigunit.version>0.12.1</pigunit.version>
+    <pigunit.version>0.17.0</pigunit.version>
   </properties>
   <dependencies>
   	<dependency>
@@ -22,7 +22,7 @@
     <dependency>
       <groupId>junit</groupId>
       <artifactId>junit</artifactId>
-      <version>4.8.1</version>
+      <version>4.13.2</version>
       <scope>test</scope>
     </dependency>
   </dependencies>
